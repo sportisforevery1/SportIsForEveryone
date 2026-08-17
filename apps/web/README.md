@@ -46,4 +46,14 @@ Only logged-in editors can write. The public API returns published (or approved)
 | Inbox | Submissions | Contact, work-with-us, join-the-database forms |
 | Settings | Media, Users, Site | Uploads, editors, manifesto / socials / contact |
 
-Content seeding happens in a later phase (`npm run seed`). Do not invent copy in the admin before then.
+## Seed content
+
+With Postgres running and `.env` set:
+
+```bash
+npm run seed
+```
+
+This uploads brand photography from `public/seed/` and creates published films, events, pages, tags, database projects, the founder record, and the Oumou x Roots collaboration. Safe to re-run; existing slugs are updated.
+
+Create the first admin user at `/admin` separately.
