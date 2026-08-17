@@ -67,8 +67,18 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    pages: Page;
+    films: Film;
+    interviews: Interview;
+    stories: Story;
+    events: Event;
+    projects: Project;
+    tags: Tag;
+    people: Person;
+    collaborations: Collaboration;
+    submissions: Submission;
     media: Media;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +86,18 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    films: FilmsSelect<false> | FilmsSelect<true>;
+    interviews: InterviewsSelect<false> | InterviewsSelect<true>;
+    stories: StoriesSelect<false> | StoriesSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
+    people: PeopleSelect<false> | PeopleSelect<true>;
+    collaborations: CollaborationsSelect<false> | CollaborationsSelect<true>;
+    submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +107,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    site: Site;
+  };
+  globalsSelect: {
+    site: SiteSelect<false> | SiteSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -118,29 +142,55 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Singleton-style pages such as About, Work with us, and Impressum.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "pages".
  */
-export interface User {
+export interface Page {
   id: number;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
+  title: string;
+  hero?: {
+    heading?: string | null;
+    subheading?: string | null;
+    media?: (number | null) | Media;
+  };
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  gallery?:
     | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
       }[]
     | null;
-  password?: string | null;
-  collection: 'users';
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -160,6 +210,409 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * The screening-room archive of SIFE films.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "films".
+ */
+export interface Film {
+  id: number;
+  title: string;
+  excerpt?: string | null;
+  location?: string | null;
+  year?: number | null;
+  /**
+   * e.g. 1’28”
+   */
+  runtime?: string | null;
+  /**
+   * Vimeo, YouTube, or another embed URL. Do not upload raw film files.
+   */
+  videoUrl?: string | null;
+  poster?: (number | null) | Media;
+  stills?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  credits?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Optional series label, if the film belongs to one.
+   */
+  series?: string | null;
+  tags?: (number | Tag)[] | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Shared vocabulary for the grassroots database and films.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+  group: 'community' | 'access' | 'focus';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Long-form field interviews. Empty on launch until editors publish.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "interviews".
+ */
+export interface Interview {
+  id: number;
+  title: string;
+  guest?: string | null;
+  /**
+   * Optional link to a person record for the guest.
+   */
+  person?: (number | null) | Person;
+  excerpt?: string | null;
+  location?: string | null;
+  cover?: (number | null) | Media;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Founder, collaborators, and film credits as structured records.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people".
+ */
+export interface Person {
+  id: number;
+  name: string;
+  role?: string | null;
+  location?: string | null;
+  portrait?: (number | null) | Media;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Stories across borders, Where She Stands, and education pieces.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stories".
+ */
+export interface Story {
+  id: number;
+  title: string;
+  excerpt?: string | null;
+  category: 'borders' | 'where-she-stands' | 'education';
+  series?: ('dakar' | 'iten') | null;
+  cover?: (number | null) | Media;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Upcoming gatherings and past hikes, screenings, and sessions.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  excerpt?: string | null;
+  cover?: (number | null) | Media;
+  startDate: string;
+  endDate?: string | null;
+  location?: string | null;
+  /**
+   * Shown on the events index. Independent of draft/publish.
+   */
+  timing: 'upcoming' | 'past';
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Grassroots directory entries. Join-the-database submissions arrive as pending until approved.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  name: string;
+  city?: string | null;
+  country?: string | null;
+  region?: string | null;
+  tags?: (number | Tag)[] | null;
+  instagram?: string | null;
+  website?: string | null;
+  image?: (number | null) | Media;
+  description?: string | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Only published projects appear on the public database.
+   */
+  status: 'pending' | 'published' | 'rejected';
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Partnerships such as Oumou x Roots.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collaborations".
+ */
+export interface Collaboration {
+  id: number;
+  title: string;
+  summary?: string | null;
+  url?: string | null;
+  image?: (number | null) | Media;
+  partners?: (number | Person)[] | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Contact, work-with-us, and join-the-database form entries. Public can create; only editors can read.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions".
+ */
+export interface Submission {
+  id: number;
+  type: 'contact' | 'work-with-us' | 'join-database';
+  name: string;
+  email: string;
+  organization?: string | null;
+  projectName?: string | null;
+  location?: string | null;
+  links?: string | null;
+  message?: string | null;
+  /**
+   * Comma-separated tags from the public form, before an editor maps them.
+   */
+  requestedTags?: string | null;
+  /**
+   * Filled after an editor turns a join request into a pending project.
+   */
+  relatedProject?: (number | null) | Project;
+  status: 'new' | 'reviewed' | 'archived';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -186,12 +639,52 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'films';
+        value: number | Film;
+      } | null)
+    | ({
+        relationTo: 'interviews';
+        value: number | Interview;
+      } | null)
+    | ({
+        relationTo: 'stories';
+        value: number | Story;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
+        relationTo: 'people';
+        value: number | Person;
+      } | null)
+    | ({
+        relationTo: 'collaborations';
+        value: number | Collaboration;
+      } | null)
+    | ({
+        relationTo: 'submissions';
+        value: number | Submission;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -237,25 +730,259 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "pages_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  hero?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
+        heading?: T;
+        subheading?: T;
+        media?: T;
       };
+  body?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "films_select".
+ */
+export interface FilmsSelect<T extends boolean = true> {
+  title?: T;
+  excerpt?: T;
+  location?: T;
+  year?: T;
+  runtime?: T;
+  videoUrl?: T;
+  poster?: T;
+  stills?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  credits?: T;
+  body?: T;
+  series?: T;
+  tags?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "interviews_select".
+ */
+export interface InterviewsSelect<T extends boolean = true> {
+  title?: T;
+  guest?: T;
+  person?: T;
+  excerpt?: T;
+  location?: T;
+  cover?: T;
+  body?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stories_select".
+ */
+export interface StoriesSelect<T extends boolean = true> {
+  title?: T;
+  excerpt?: T;
+  category?: T;
+  series?: T;
+  cover?: T;
+  body?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  excerpt?: T;
+  cover?: T;
+  startDate?: T;
+  endDate?: T;
+  location?: T;
+  timing?: T;
+  body?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  name?: T;
+  city?: T;
+  country?: T;
+  region?: T;
+  tags?: T;
+  instagram?: T;
+  website?: T;
+  image?: T;
+  description?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  status?: T;
+  featured?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  group?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "people_select".
+ */
+export interface PeopleSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  location?: T;
+  portrait?: T;
+  bio?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collaborations_select".
+ */
+export interface CollaborationsSelect<T extends boolean = true> {
+  title?: T;
+  summary?: T;
+  url?: T;
+  image?: T;
+  partners?: T;
+  body?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions_select".
+ */
+export interface SubmissionsSelect<T extends boolean = true> {
+  type?: T;
+  name?: T;
+  email?: T;
+  organization?: T;
+  projectName?: T;
+  location?: T;
+  links?: T;
+  message?: T;
+  requestedTags?: T;
+  relatedProject?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -274,6 +1001,29 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +1064,101 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Manifesto, contact, socials, and chrome copy used across the public site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site".
+ */
+export interface Site {
+  id: number;
+  /**
+   * Home hero line. Keep verbatim unless the founder changes it.
+   */
+  heroManifesto?: string | null;
+  /**
+   * Footer / marquee line.
+   */
+  manifesto?: string | null;
+  contactEmail?: string | null;
+  locationLines?:
+    | {
+        line: string;
+        id?: string | null;
+      }[]
+    | null;
+  instagramUrl?: string | null;
+  youtubeUrl?: string | null;
+  defaultOgImage?: (number | null) | Media;
+  /**
+   * Optional override of the public nav. Leave empty to keep the built-in IA.
+   */
+  nav?:
+    | {
+        label: string;
+        href?: string | null;
+        children?:
+          | {
+              label: string;
+              href: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  footerLinks?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site_select".
+ */
+export interface SiteSelect<T extends boolean = true> {
+  heroManifesto?: T;
+  manifesto?: T;
+  contactEmail?: T;
+  locationLines?:
+    | T
+    | {
+        line?: T;
+        id?: T;
+      };
+  instagramUrl?: T;
+  youtubeUrl?: T;
+  defaultOgImage?: T;
+  nav?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        children?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  footerLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

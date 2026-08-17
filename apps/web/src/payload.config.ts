@@ -5,8 +5,19 @@ import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
 
+import { Collaborations } from "./collections/Collaborations";
+import { Events } from "./collections/Events";
+import { Films } from "./collections/Films";
+import { Interviews } from "./collections/Interviews";
 import { Media } from "./collections/Media";
+import { Pages } from "./collections/Pages";
+import { People } from "./collections/People";
+import { Projects } from "./collections/Projects";
+import { Stories } from "./collections/Stories";
+import { Submissions } from "./collections/Submissions";
+import { Tags } from "./collections/Tags";
 import { Users } from "./collections/Users";
+import { Site } from "./globals/Site";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -21,7 +32,21 @@ export default buildConfig({
       titleSuffix: " — SIFE Admin",
     },
   },
-  collections: [Users, Media],
+  collections: [
+    Pages,
+    Films,
+    Interviews,
+    Stories,
+    Events,
+    Projects,
+    Tags,
+    People,
+    Collaborations,
+    Submissions,
+    Media,
+    Users,
+  ],
+  globals: [Site],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {

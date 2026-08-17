@@ -22,4 +22,28 @@ npm run dev
 - Public: http://localhost:3000
 - Admin: http://localhost:3000/admin
 
-Create the first admin user on `/admin` the first time it loads.
+## Admin login
+
+1. Open `/admin`.
+2. The first time, create the first user (email + password). That account is the editor.
+3. Later visits: sign in with that email and password.
+
+Only logged-in editors can write. The public API returns published (or approved) documents only.
+
+## Collections
+
+| Admin group | Collection | Notes |
+|---|---|---|
+| Content | Pages | About, Work with us, Impressum, and other singleton pages |
+| Content | Films | Draft/publish, featured, poster, embed URL |
+| Content | Field Interviews | Ready to publish; empty until editors add pieces |
+| Content | Stories | Category: borders / Where She Stands / education |
+| Content | Events | Upcoming vs past, separate from draft/publish |
+| Network | Database projects | `pending` until approved; only `published` is public |
+| Network | Tags | Shared chips for the database and films |
+| Network | People | Founder and collaborators |
+| Network | Collaborations | Partnerships such as Oumou x Roots |
+| Inbox | Submissions | Contact, work-with-us, join-the-database forms |
+| Settings | Media, Users, Site | Uploads, editors, manifesto / socials / contact |
+
+Content seeding happens in a later phase (`npm run seed`). Do not invent copy in the admin before then.
