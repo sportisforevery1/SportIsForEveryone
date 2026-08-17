@@ -4,7 +4,7 @@ import { Reveal } from "@/components/motion/Reveal";
 type EmptyStateProps = {
   label: string;
   title: string;
-  body: string;
+  body?: string;
 };
 
 export function EmptyState({ label, title, body }: EmptyStateProps) {
@@ -15,7 +15,7 @@ export function EmptyState({ label, title, body }: EmptyStateProps) {
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold uppercase leading-tight tracking-tight text-sife-black md:text-5xl">
           {title}
         </h2>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-sife-ink/80">{body}</p>
+        {body ? <p className="mt-6 max-w-xl text-lg leading-relaxed text-sife-ink/80">{body}</p> : null}
       </Reveal>
     </section>
   );
