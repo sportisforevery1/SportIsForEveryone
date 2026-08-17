@@ -2,18 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { EditorialArticle } from "@/components/editorial/EditorialArticle";
-import { getStoryBySlug, getStorySlugs } from "@/lib/read";
+import { getStoryBySlug } from "@/lib/read";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 type StoryPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const slugs = await getStorySlugs();
-  return slugs.map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
   const { slug } = await params;

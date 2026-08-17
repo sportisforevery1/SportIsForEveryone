@@ -77,21 +77,28 @@ Create the first admin user at `/admin` separately.
 
 ## Deploy notes
 
-Staging is on Vercel. The Next app root is `apps/web`. Custom domain stays off until asked.
+Staging is live at **https://sport-is-for-everyone.vercel.app** (Vercel project root: `apps/web`). Custom domain stays off until asked.
 
-Set these on the host (Preview and Production):
+Set these on the host (Production; Preview when you wire GitHub):
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | Managed Postgres (Neon). Include `?sslmode=require`. |
+| `DATABASE_URL` | Managed Postgres (Azure Flexible Server for current staging). Include `sslmode=require` (or `uselibpqcompat=true&sslmode=require`). |
 | `PAYLOAD_SECRET` | Long random string, 32+ characters. Do not reuse the local example. |
-| `NEXT_PUBLIC_SITE_URL` | Staging origin, no trailing slash |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob. Local Docker omits this and stores uploads on disk. |
+| `NEXT_PUBLIC_SITE_URL` | Staging origin, no trailing slash (`https://sport-is-for-everyone.vercel.app`) |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob store `sife-media`. Local Docker omits this and stores uploads on disk. |
+
+Fresh database (once):
+
+```bash
+# With staging DATABASE_URL in the environment:
+PAYLOAD_DATABASE_PUSH=true npm run payload -- run src/scripts/push-schema.ts
+```
 
 After the first deploy:
 
 1. Open `/admin` and create the editor user.
-2. From `apps/web`, seed against staging (do not commit `.env`):
+2. From `apps/web`, seed against staging (do not commit `.env` or `.env.staging.local`):
 
 ```bash
 # Use staging DATABASE_URL, PAYLOAD_SECRET, NEXT_PUBLIC_SITE_URL, and BLOB_READ_WRITE_TOKEN

@@ -60,6 +60,8 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || "",
     },
+    // Set PAYLOAD_DATABASE_PUSH=true once against a fresh DB (local or staging).
+    push: process.env.PAYLOAD_DATABASE_PUSH === "true",
   }),
   sharp,
   plugins: [

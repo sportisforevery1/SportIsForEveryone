@@ -73,16 +73,20 @@ export async function getEventBySlug(slug: string): Promise<PublicEvent | null> 
 }
 
 export async function getEventSlugs(): Promise<string[]> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "events",
-    where: published,
-    limit: 100,
-    depth: 0,
-    select: { slug: true },
-  });
+  try {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "events",
+      where: published,
+      limit: 100,
+      depth: 0,
+      select: { slug: true },
+    });
 
-  return result.docs.map((event) => event.slug);
+    return result.docs.map((event) => event.slug);
+  } catch {
+    return [];
+  }
 }
 
 export async function getRelatedEvents(slug: string, limit = 2): Promise<PublicEvent[]> {

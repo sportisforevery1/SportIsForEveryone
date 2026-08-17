@@ -109,16 +109,20 @@ export async function getStoryBySlug(slug: string): Promise<ReadStory | null> {
 }
 
 export async function getStorySlugs(): Promise<string[]> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "stories",
-    where: published,
-    limit: 100,
-    depth: 0,
-    select: { slug: true },
-  });
+  try {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "stories",
+      where: published,
+      limit: 100,
+      depth: 0,
+      select: { slug: true },
+    });
 
-  return result.docs.map((story) => story.slug);
+    return result.docs.map((story) => story.slug);
+  } catch {
+    return [];
+  }
 }
 
 async function getCategoryIndex(

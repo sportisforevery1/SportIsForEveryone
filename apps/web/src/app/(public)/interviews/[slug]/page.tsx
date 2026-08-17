@@ -6,18 +6,13 @@ import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { RichText } from "@/components/editorial/RichText";
 import { HoverUnderline } from "@/components/motion/HoverUnderline";
 import { Reveal } from "@/components/motion/Reveal";
-import { getInterviewBySlug, getInterviewSlugs } from "@/lib/watch";
+import { getInterviewBySlug } from "@/lib/watch";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 type InterviewPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const slugs = await getInterviewSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({ params }: InterviewPageProps): Promise<Metadata> {
   const { slug } = await params;

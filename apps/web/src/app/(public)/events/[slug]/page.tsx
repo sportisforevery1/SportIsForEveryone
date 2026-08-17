@@ -7,18 +7,13 @@ import { RichText } from "@/components/editorial/RichText";
 import { EventCards } from "@/components/events/EventCards";
 import { HoverUnderline } from "@/components/motion/HoverUnderline";
 import { Reveal } from "@/components/motion/Reveal";
-import { getEventBySlug, getEventSlugs, getRelatedEvents } from "@/lib/events";
+import { getEventBySlug, getRelatedEvents } from "@/lib/events";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 type EventPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const slugs = await getEventSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
   const { slug } = await params;

@@ -8,18 +8,13 @@ import { RichText } from "@/components/editorial/RichText";
 import { HoverUnderline } from "@/components/motion/HoverUnderline";
 import { Reveal } from "@/components/motion/Reveal";
 import { VideoEmbed } from "@/components/watch/VideoEmbed";
-import { getFilmBySlug, getFilmSlugs, getRelatedFilms } from "@/lib/watch";
+import { getFilmBySlug, getRelatedFilms } from "@/lib/watch";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 type FilmPageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const slugs = await getFilmSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
 
 export async function generateMetadata({ params }: FilmPageProps): Promise<Metadata> {
   const { slug } = await params;

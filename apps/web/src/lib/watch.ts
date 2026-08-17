@@ -117,16 +117,20 @@ export async function getRelatedFilms(slug: string, limit = 2): Promise<Editoria
 }
 
 export async function getFilmSlugs(): Promise<string[]> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "films",
-    where: published,
-    limit: 100,
-    depth: 0,
-    select: { slug: true },
-  });
+  try {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "films",
+      where: published,
+      limit: 100,
+      depth: 0,
+      select: { slug: true },
+    });
 
-  return result.docs.map((film) => film.slug);
+    return result.docs.map((film) => film.slug);
+  } catch {
+    return [];
+  }
 }
 
 export async function getInterviewsIndex(): Promise<InterviewsIndex> {
@@ -163,16 +167,20 @@ export async function getInterviewBySlug(slug: string): Promise<WatchInterview |
 }
 
 export async function getInterviewSlugs(): Promise<string[]> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "interviews",
-    where: published,
-    limit: 100,
-    depth: 0,
-    select: { slug: true },
-  });
+  try {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "interviews",
+      where: published,
+      limit: 100,
+      depth: 0,
+      select: { slug: true },
+    });
 
-  return result.docs.map((interview) => interview.slug);
+    return result.docs.map((interview) => interview.slug);
+  } catch {
+    return [];
+  }
 }
 
 function toWatchFilm(film: Film): WatchFilm {
