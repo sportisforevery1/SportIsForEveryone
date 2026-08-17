@@ -19,7 +19,7 @@ npm run dev
 
 The first `/admin` visit creates the editor account. Seed CMS copy and photography with `npm run seed` from `apps/web`.
 
-See `apps/web/README.md` for collections, env vars, and deploy notes.
+See `apps/web/README.md` for collections, env vars, and staging deploy notes.
 
 ## Docs
 

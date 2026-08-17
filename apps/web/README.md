@@ -77,10 +77,25 @@ Create the first admin user at `/admin` separately.
 
 ## Deploy notes
 
-Do not deploy until asked. When that happens:
+Staging is on Vercel. The Next app root is `apps/web`. Custom domain stays off until asked.
 
-1. Managed Postgres and blob storage for uploads (local `media/` is gitignored).
-2. Set the same env vars on the host. `NEXT_PUBLIC_SITE_URL` must be the live origin.
-3. Run migrations / seed on first boot, then create the admin user.
-4. Staging URL first; custom domain and Squarespace redirects later.
-5. `/admin` stays on the same Next app.
+Set these on the host (Preview and Production):
+
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | Managed Postgres (Neon). Include `?sslmode=require`. |
+| `PAYLOAD_SECRET` | Long random string, 32+ characters. Do not reuse the local example. |
+| `NEXT_PUBLIC_SITE_URL` | Staging origin, no trailing slash |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob. Local Docker omits this and stores uploads on disk. |
+
+After the first deploy:
+
+1. Open `/admin` and create the editor user.
+2. From `apps/web`, seed against staging (do not commit `.env`):
+
+```bash
+# Use staging DATABASE_URL, PAYLOAD_SECRET, NEXT_PUBLIC_SITE_URL, and BLOB_READ_WRITE_TOKEN
+npm run seed
+```
+
+Legacy Squarespace paths such as `/contact` and `/join-the-database` redirect to the new routes. Custom domain and remaining Squarespace redirects wait until the live cutover.

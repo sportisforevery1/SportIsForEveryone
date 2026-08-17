@@ -7,6 +7,18 @@ import { fileURLToPath } from "url";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+const squarespaceRedirects = [
+  ["/contact", "/about"],
+  ["/support", "/donate"],
+  ["/join-the-database", "/join"],
+  ["/films-visual-stories", "/films"],
+  ["/field-interview", "/interviews"],
+  ["/field-interviews", "/interviews"],
+  ["/stories-across-borders", "/stories"],
+  ["/privacy-policy", "/privacy"],
+  ["/datenschutz", "/privacy"],
+] as const;
+
 const nextConfig: NextConfig = {
   agentRules: false,
   images: {
@@ -15,6 +27,16 @@ const nextConfig: NextConfig = {
       { pathname: "/seed/**" },
       { pathname: "/api/media/file/**" },
     ],
+    remotePatterns: [
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      { protocol: "https", hostname: "*.blob.vercel-storage.com" },
+    ],
+  },
+  async redirects() {
+    return squarespaceRedirects.flatMap(([from, to]) => [
+      { source: from, destination: to, permanent: true },
+      { source: `/de${from}`, destination: `/de${to}`, permanent: true },
+    ]);
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

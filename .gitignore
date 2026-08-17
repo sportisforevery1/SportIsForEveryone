@@ -35,6 +35,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Hosting
+.vercel/
+
 # Stray leftover scaffold (the app lives in apps/web)
 /web/
 )
