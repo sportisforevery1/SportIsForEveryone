@@ -1,9 +1,15 @@
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import type { DirectoryProject } from "@/lib/directory";
 
-export function ProjectCards({ projects }: { projects: DirectoryProject[] }) {
+export function ProjectCards({
+  projects,
+  emptyLabel = "No matching projects.",
+}: {
+  projects: DirectoryProject[];
+  emptyLabel?: string;
+}) {
   if (projects.length === 0) {
-    return <p className="mt-10 text-base text-sife-ink/70">No matching projects.</p>;
+    return <p className="mt-10 text-base text-sife-ink/70">{emptyLabel}</p>;
   }
 
   return (

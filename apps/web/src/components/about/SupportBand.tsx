@@ -1,9 +1,12 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
+import { Link } from "@/i18n/navigation";
 import { Reveal } from "@/components/motion/Reveal";
 import { supportCopy } from "@/lib/site";
 
-export function SupportBand() {
+export async function SupportBand() {
+  const t = await getTranslations("chrome");
+
   return (
     <section className="bg-sife-lime px-5 py-20 text-sife-black md:px-12 md:py-24">
       <Reveal>
@@ -18,7 +21,7 @@ export function SupportBand() {
         </ul>
         <p className="mt-6 max-w-2xl text-sm leading-relaxed">{supportCopy.tax}</p>
         <Link href="/donate" className="btn-coral mt-8 inline-flex">
-          Support
+          {t("support")}
         </Link>
       </Reveal>
     </section>

@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useTransition } from "react";
 
 import type { DirectoryFilters, DirectoryTag } from "@/lib/directory-query";
 import { directoryHref } from "@/lib/directory-query";
+import { withLocale } from "@/i18n/path";
 
 type DatabaseFiltersProps = {
   filters: DirectoryFilters;
@@ -26,17 +28,21 @@ export function DatabaseFilters({
   total,
 }: DatabaseFiltersProps) {
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations("database");
   const [pending, startTransition] = useTransition();
 
   const go = (next: DirectoryFilters) => {
     startTransition(() => {
-      router.replace(directoryHref(next), { scroll: false });
+      router.replace(withLocale(directoryHref(next), locale), { scroll: false });
     });
   };
 
   return (
     <div className={`sife-filters ${pending ? "opacity-70" : ""}`}>
       <form
+        role="search"
+        aria-label={t("search")}
         className="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,0.8fr))]"
         onSubmit={(event) => {
           event.preventDefault();
@@ -51,18 +57,18 @@ export function DatabaseFilters({
         }}
       >
         <label className="sife-field">
-          <span>Search</span>
-          <input name="q" type="search" defaultValue={filters.q} placeholder="Name, city, tag" />
+          <span>{t("search")}</span>
+          <input name="q" type="search" defaultValue={filters.q} placeholder={t("searchPlaceholder")} />
         </label>
         <label className="sife-field">
-          <span>City</span>
+          <span>{t("city")}</span>
           <select
             name="city"
             defaultValue={filters.city}
             key={`city-${filters.city}`}
             onChange={(event) => go({ ...filters, city: event.target.value })}
           >
-            <option value="">All</option>
+            <option value="">{t("all")}</option>
             {cities.map((city) => (
               <option key={city} value={city}>
                 {city}
@@ -71,14 +77,14 @@ export function DatabaseFilters({
           </select>
         </label>
         <label className="sife-field">
-          <span>Country</span>
+          <span>{t("country")}</span>
           <select
             name="country"
             defaultValue={filters.country}
             key={`country-${filters.country}`}
             onChange={(event) => go({ ...filters, country: event.target.value })}
           >
-            <option value="">All</option>
+            <option value="">{t("all")}</option>
             {countries.map((country) => (
               <option key={country} value={country}>
                 {country}
@@ -87,14 +93,14 @@ export function DatabaseFilters({
           </select>
         </label>
         <label className="sife-field">
-          <span>Region</span>
+          <span>{t("region")}</span>
           <select
             name="region"
             defaultValue={filters.region}
             key={`region-${filters.region}`}
             onChange={(event) => go({ ...filters, region: event.target.value })}
           >
-            <option value="">All</option>
+            <option value="">{t("all")}</option>
             {regions.map((region) => (
               <option key={region} value={region}>
                 {region}
@@ -104,7 +110,7 @@ export function DatabaseFilters({
         </label>
         <div className="md:col-span-4">
           <button type="submit" className="btn-coral">
-            Filter
+            {t("filter")}
           </button>
         </div>
       </form>
@@ -129,12 +135,10 @@ export function DatabaseFilters({
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-sm uppercase tracking-[0.14em] text-sife-ink/60">
-        <p>
-          {resultCount} of {total} projects
-        </p>
+        <p>{t("results", { count: resultCount, total })}</p>
         {hasFilters(filters) ? (
           <button type="button" className="sife-hover-underline text-sife-navy" onClick={() => go(emptyFilters())}>
-            Clear filters
+            {t("clear")}
           </button>
         ) : null}
       </div>

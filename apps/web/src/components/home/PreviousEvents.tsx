@@ -1,11 +1,14 @@
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { HoverUnderline } from "@/components/motion/HoverUnderline";
 import { Reveal } from "@/components/motion/Reveal";
 import type { HomeEvent } from "@/lib/home";
 
-export function PreviousEvents({ events }: { events: HomeEvent[] }) {
+export async function PreviousEvents({ events }: { events: HomeEvent[] }) {
+  const t = await getTranslations("home");
+  const tChrome = await getTranslations("chrome");
   if (events.length === 0) return null;
 
   return (
@@ -13,13 +16,13 @@ export function PreviousEvents({ events }: { events: HomeEvent[] }) {
       <Reveal>
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
-            <CategoryLabel>Events</CategoryLabel>
+            <CategoryLabel>{tChrome("events")}</CategoryLabel>
             <h2 className="mt-3 text-3xl font-semibold uppercase tracking-tight md:text-5xl">
-              Previous events
+              {t("previousEvents")}
             </h2>
           </div>
           <HoverUnderline href="/events" className="text-sife-lime">
-            All events
+            {t("allEvents")}
           </HoverUnderline>
         </div>
         <ul className="grid gap-8 md:grid-cols-2">
@@ -49,7 +52,7 @@ export function PreviousEvents({ events }: { events: HomeEvent[] }) {
               ) : null}
               <p className="mt-5">
                 <HoverUnderline href={event.href} className="text-sife-lime">
-                  Read more
+                  {t("readMore")}
                 </HoverUnderline>
               </p>
             </li>

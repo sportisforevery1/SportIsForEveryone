@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { Reveal } from "@/components/motion/Reveal";

@@ -12,9 +12,10 @@ type ParallaxMediaProps = {
   width: number;
   height: number;
   className?: string;
+  priority?: boolean;
 };
 
-export function ParallaxMedia({ src, alt, width, height, className }: ParallaxMediaProps) {
+export function ParallaxMedia({ src, alt, width, height, className, priority }: ParallaxMediaProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -52,6 +53,8 @@ export function ParallaxMedia({ src, alt, width, height, className }: ParallaxMe
         alt={alt}
         width={width}
         height={height}
+        priority={priority}
+        sizes="100vw"
         className="h-full w-full scale-110 object-cover"
       />
     </div>

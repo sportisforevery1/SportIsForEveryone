@@ -1,27 +1,35 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { EditorialList } from "@/components/editorial/EditorialList";
 import { EmptyState } from "@/components/editorial/EmptyState";
 import { PageHero } from "@/components/editorial/PageHero";
 import { getEducationIndex } from "@/lib/read";
+import { cmsPageMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Education | Sport is for Everyone",
-  description: "We're building something worth reading. Coming soon.",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return cmsPageMetadata("education", {
+    title: "Education",
+    description: "We're building something worth reading. Coming soon.",
+  });
+}
 
 export default async function EducationPage() {
-  const page = await getEducationIndex();
+  const [page, tChrome, tNav] = await Promise.all([
+    getEducationIndex(),
+    getTranslations("chrome"),
+    getTranslations("nav"),
+  ]);
 
   return (
     <>
-      <PageHero label="Read" heading={page.heading} />
+      <PageHero label={tChrome("read")} heading={page.heading} />
       {page.items.length > 0 ? (
-        <EditorialList items={page.items} label="Education" title="" />
+        <EditorialList items={page.items} label={tNav("education")} title="" />
       ) : (
-        <EmptyState label="Education" title={page.subheading} />
+        <EmptyState label={tNav("education")} title={page.subheading} />
       )}
     </>
   );

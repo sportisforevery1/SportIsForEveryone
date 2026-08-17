@@ -1,6 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
+import { Link } from "@/i18n/navigation";
 import { Reveal } from "@/components/motion/Reveal";
 
 const portals = [
@@ -8,7 +9,7 @@ const portals = [
     href: "/films",
     title: "Films & Field Interviews",
     blurb: "Stories from athletes, artists and communities redefining sport",
-    cta: "WATCH",
+    ctaKey: "portalWatch" as const,
     image: {
       src: "/seed/IMG_0405.jpg",
       alt: "Profile of a man in a beige hoodie, with a map of Newlands in the background, and white text reading 'Admire Muzopambwa Never Too Late'.",
@@ -20,7 +21,7 @@ const portals = [
     href: "/stories",
     title: "Stories Across Borders",
     blurb: "Research, essays and field notes from around the world",
-    cta: "READ",
+    ctaKey: "portalRead" as const,
     image: {
       src: "/seed/DSC_0073.jpg",
       alt: "Vol. 01 — Dakar",
@@ -32,7 +33,7 @@ const portals = [
     href: "/database",
     title: "Explore the Network",
     blurb: "Find grassroots projects and initiatives around the world",
-    cta: "DATABASE",
+    ctaKey: "portalDatabase" as const,
     image: {
       src: "/seed/oumou-x-roots.jpg",
       alt: "Community hike with Sport is for Everyone",
@@ -42,7 +43,9 @@ const portals = [
   },
 ] as const;
 
-export function PortalRow() {
+export async function PortalRow() {
+  const t = await getTranslations("home");
+
   return (
     <section className="px-5 py-20 md:px-12 md:py-28">
       <Reveal>
@@ -64,7 +67,7 @@ export function PortalRow() {
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-sife-white/70">
                 {portal.blurb}
               </p>
-              <span className="sife-hover-underline mt-5 text-sife-lime">{portal.cta}</span>
+              <span className="sife-hover-underline mt-5 text-sife-lime">{t(portal.ctaKey)}</span>
             </Link>
           ))}
         </div>

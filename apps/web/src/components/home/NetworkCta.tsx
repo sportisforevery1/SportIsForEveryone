@@ -1,8 +1,11 @@
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
+import { Link } from "@/i18n/navigation";
 import { Reveal } from "@/components/motion/Reveal";
 
-export function NetworkCta() {
+export async function NetworkCta() {
+  const t = await getTranslations("home");
+
   return (
     <section className="bg-sife-lime px-5 py-20 text-sife-black md:px-12 md:py-24">
       <Reveal>
@@ -13,7 +16,7 @@ export function NetworkCta() {
           Add your project to the global database and connect with the community
         </p>
         <Link href="/join" className="btn-coral mt-8 inline-flex">
-          Join the network
+          {t("joinNetwork")}
         </Link>
       </Reveal>
     </section>

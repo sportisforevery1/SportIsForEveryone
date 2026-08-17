@@ -1,0 +1,106 @@
+{
+  "chrome": {
+    "skip": "Zum Inhalt springen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "language": "Sprache",
+    "en": "EN",
+    "de": "DE",
+    "watch": "Ansehen",
+    "read": "Lesen",
+    "events": "Veranstaltungen",
+    "about": "Über uns",
+    "network": "Netzwerk",
+    "legal": "Rechtliches",
+    "support": "Unterstützen",
+    "scroll": "Scrollen"
+  },
+  "nav": {
+    "films": "Filme",
+    "interviews": "Field Interview",
+    "stories": "Stories across borders",
+    "whereSheStands": "Where She Stands",
+    "education": "Bildung",
+    "events": "Veranstaltungen",
+    "about": "Über uns",
+    "workWithUs": "Zusammenarbeit",
+    "donate": "Unterstützen",
+    "join": "Zur Datenbank",
+    "database": "Datenbank"
+  },
+  "footer": {
+    "explore": "Entdecken",
+    "location": "Ort",
+    "contact": "Kontakt",
+    "partnerships": "Für Kooperationen oder Presseanfragen:",
+    "impressum": "Impressum",
+    "privacy": "Datenschutz",
+    "copyright": "© All Rights Reserved, 2026 SPORT IS FOR EVERYONE"
+  },
+  "home": {
+    "latestLabel": "Ansehen / Lesen",
+    "latestTitle": "The latest stories",
+    "readMore": "Weiterlesen",
+    "featuredFilm": "Featured Kurzfilm",
+    "watch": "Ansehen",
+    "previousEvents": "Vergangene Events",
+    "allEvents": "Alle Events",
+    "portalWatch": "WATCH",
+    "portalRead": "READ",
+    "portalDatabase": "DATABASE",
+    "joinNetwork": "Zum Netzwerk"
+  },
+  "forms": {
+    "name": "Name",
+    "email": "E-Mail",
+    "organisation": "Organisation",
+    "message": "Nachricht",
+    "project": "Projekt",
+    "location": "Ort",
+    "links": "Links",
+    "description": "Beschreibung",
+    "tags": "Tags",
+    "company": "Unternehmen",
+    "send": "Senden",
+    "sending": "Wird gesendet",
+    "join": "Datenbank beitreten",
+    "locationPlaceholder": "Stadt, Land",
+    "linksPlaceholder": "Instagram oder Website",
+    "errorRequired": "Bitte Name, E-Mail und eine Nachricht angeben.",
+    "errorJoinRequired": "Bitte Name, E-Mail und Projekt angeben.",
+    "errorEmail": "Bitte eine gültige E-Mail angeben.",
+    "thanks": "Danke. Wir melden uns in Kürze.",
+    "thanksJoin": "Danke. Wir prüfen dein Projekt und melden uns."
+  },
+  "database": {
+    "search": "Suche",
+    "searchPlaceholder": "Name, Stadt, Tag",
+    "city": "Stadt",
+    "country": "Land",
+    "region": "Region",
+    "all": "Alle",
+    "filter": "Filtern",
+    "clear": "Filter zurücksetzen",
+    "results": "{count} von {total} Projekten",
+    "empty": "Keine passenden Projekte.",
+    "join": "Zur Datenbank",
+    "intro": "Finde Graswurzelprojekte und Initiativen weltweit"
+  },
+  "watch": {
+    "film": "Film",
+    "credits": "Credits",
+    "fullCredits": "Alle Credits",
+    "moreFilms": "Weitere Filme",
+    "filmsBack": "Filme",
+    "archiveFallback": "An ongoing archive of films that move literally and metaphorically"
+  },
+  "notFound": {
+    "label": "404",
+    "title": "Diese Seite gibt es nicht",
+    "body": "Der Link hat sich vielleicht verschoben. Zurück zur Startseite, oder starte bei Ansehen, Lesen oder der Datenbank.",
+    "home": "Zur Startseite"
+  },
+  "note": {
+    "englishOriginal": "Dieser Text liegt noch auf Englisch vor."
+  }
+}

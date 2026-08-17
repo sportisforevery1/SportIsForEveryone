@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { PageHero } from "@/components/editorial/PageHero";
 import { Reveal } from "@/components/motion/Reveal";
@@ -9,10 +10,12 @@ export const metadata: Metadata = {
   description: supportCopy.heading,
 };
 
-export default function DonatePage() {
+export default async function DonatePage() {
+  const t = await getTranslations("chrome");
+
   return (
     <>
-      <PageHero label="Support" heading="Support" subheading={supportCopy.heading} />
+      <PageHero label={t("support")} heading={t("support")} subheading={supportCopy.heading} />
       <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-24">
         <Reveal>
           <p className="max-w-2xl text-lg leading-relaxed">{supportCopy.independent}</p>

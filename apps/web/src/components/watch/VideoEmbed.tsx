@@ -3,9 +3,10 @@ import { embedSrc } from "@/lib/embed";
 type VideoEmbedProps = {
   url: string | null;
   title: string;
+  eager?: boolean;
 };
 
-export function VideoEmbed({ url, title }: VideoEmbedProps) {
+export function VideoEmbed({ url, title, eager }: VideoEmbedProps) {
   const src = embedSrc(url);
 
   if (!src) {
@@ -23,6 +24,7 @@ export function VideoEmbed({ url, title }: VideoEmbedProps) {
       <iframe
         src={src}
         title={title}
+        loading={eager ? "eager" : "lazy"}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
         allowFullScreen
       />

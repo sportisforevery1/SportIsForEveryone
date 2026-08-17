@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Link } from "@/i18n/navigation";
+import { navMessageKey } from "@/i18n/nav";
 import { nav } from "@/lib/site";
 
 function Dropdown({
@@ -13,6 +16,8 @@ function Dropdown({
   label: string;
   items: readonly { href: string; label: string }[];
 }) {
+  const t = useTranslations("nav");
+
   return (
     <div className="group relative">
       <button
@@ -33,7 +38,7 @@ function Dropdown({
                 href={item.href}
                 className="block px-2 py-2 text-sm uppercase tracking-[0.12em] text-sife-white/80 transition hover:text-sife-lime"
               >
-                {item.label}
+                {t(navMessageKey(item.href))}
               </Link>
             </li>
           ))}
@@ -45,6 +50,8 @@ function Dropdown({
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("chrome");
+  const tNav = useTranslations("nav");
 
   return (
     <header className="sticky top-0 z-50 border-b border-sife-lime/15 bg-sife-black/90 backdrop-blur-md">
@@ -64,20 +71,18 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
-          <Dropdown label={nav.watch.label} items={nav.watch.items} />
-          <Dropdown label={nav.read.label} items={nav.read.items} />
+          <Dropdown label={t("watch")} items={nav.watch.items} />
+          <Dropdown label={t("read")} items={nav.read.items} />
           <Link href={nav.events.href} className="nav-link">
-            {nav.events.label}
+            {t("events")}
           </Link>
-          <Dropdown label={nav.about.label} items={nav.about.items} />
+          <Dropdown label={t("about")} items={nav.about.items} />
         </nav>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <span className="text-xs uppercase tracking-[0.16em] text-sife-white/60">
-            English
-          </span>
+          <LanguageSwitcher />
           <Link href={nav.database.href} className="btn-coral">
-            {nav.database.label}
+            {tNav("database")}
           </Link>
         </div>
 
@@ -88,7 +93,7 @@ export function SiteHeader() {
           aria-controls="mobile-menu"
           onClick={() => setOpen((value) => !value)}
         >
-          <span className="sr-only">{open ? "Close Menu" : "Open Menu"}</span>
+          <span className="sr-only">{open ? t("closeMenu") : t("openMenu")}</span>
           <span className="flex flex-col gap-1.5" aria-hidden>
             <span className="block h-px w-6 bg-current" />
             <span className="block h-px w-6 bg-current" />
@@ -103,29 +108,30 @@ export function SiteHeader() {
           className="border-t border-sife-lime/15 bg-sife-black px-5 py-6 lg:hidden"
         >
           <div className="flex flex-col gap-5 text-sm uppercase tracking-[0.14em] text-sife-white">
-            <p className="text-sife-lime">Watch</p>
+            <LanguageSwitcher />
+            <p className="text-sife-lime">{t("watch")}</p>
             {nav.watch.items.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
-                {item.label}
+                {tNav(navMessageKey(item.href))}
               </Link>
             ))}
-            <p className="text-sife-lime">Read</p>
+            <p className="text-sife-lime">{t("read")}</p>
             {nav.read.items.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
-                {item.label}
+                {tNav(navMessageKey(item.href))}
               </Link>
             ))}
             <Link href={nav.events.href} onClick={() => setOpen(false)}>
-              {nav.events.label}
+              {t("events")}
             </Link>
-            <p className="text-sife-lime">About</p>
+            <p className="text-sife-lime">{t("about")}</p>
             {nav.about.items.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
-                {item.label}
+                {tNav(navMessageKey(item.href))}
               </Link>
             ))}
             <Link href={nav.database.href} className="btn-coral w-fit" onClick={() => setOpen(false)}>
-              {nav.database.label}
+              {tNav("database")}
             </Link>
           </div>
         </div>

@@ -1,51 +1,53 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 
 import { joinDatabase, type JoinState } from "@/lib/join";
 import type { DirectoryTag } from "@/lib/directory-query";
 
 export function JoinForm({ tags }: { tags: DirectoryTag[] }) {
+  const t = useTranslations("forms");
   const [state, action, pending] = useActionState<JoinState, FormData>(joinDatabase, null);
 
   return (
     <form action={action} className="sife-form mt-10 max-w-2xl">
       <p className="sife-honeypot" aria-hidden>
         <label>
-          Company
+          {t("company")}
           <input name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </p>
       <label className="sife-field">
-        <span>Name</span>
+        <span>{t("name")}</span>
         <input name="name" type="text" required autoComplete="name" />
       </label>
       <label className="sife-field">
-        <span>Email</span>
+        <span>{t("email")}</span>
         <input name="email" type="email" required autoComplete="email" />
       </label>
       <label className="sife-field">
-        <span>Organisation</span>
+        <span>{t("organisation")}</span>
         <input name="organization" type="text" autoComplete="organization" />
       </label>
       <label className="sife-field">
-        <span>Project</span>
+        <span>{t("project")}</span>
         <input name="projectName" type="text" required />
       </label>
       <label className="sife-field">
-        <span>Location</span>
-        <input name="location" type="text" placeholder="City, country" />
+        <span>{t("location")}</span>
+        <input name="location" type="text" placeholder={t("locationPlaceholder")} />
       </label>
       <label className="sife-field">
-        <span>Links</span>
-        <textarea name="links" rows={3} placeholder="Instagram or website" />
+        <span>{t("links")}</span>
+        <textarea name="links" rows={3} placeholder={t("linksPlaceholder")} />
       </label>
       <label className="sife-field">
-        <span>Description</span>
+        <span>{t("description")}</span>
         <textarea name="message" rows={5} />
       </label>
       <fieldset className="sife-field">
-        <legend>Tags</legend>
+        <legend>{t("tags")}</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           {tags.map((tag) => (
             <label key={tag.slug} className="sife-chip-option">
@@ -55,9 +57,9 @@ export function JoinForm({ tags }: { tags: DirectoryTag[] }) {
           ))}
         </div>
       </fieldset>
-      {state?.error ? <p className="text-sm text-sife-coral">{state.error}</p> : null}
+      {state?.error ? <p className="text-sm text-sife-coral">{t(state.error)}</p> : null}
       <button type="submit" className="btn-coral mt-4" disabled={pending}>
-        {pending ? "Sending" : "Join the database"}
+        {pending ? t("sending") : t("join")}
       </button>
     </form>
   );

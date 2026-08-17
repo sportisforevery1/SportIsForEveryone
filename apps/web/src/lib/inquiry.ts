@@ -1,11 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 
 import { getCms } from "@/lib/cms";
 import { contact } from "@/lib/site";
+import { withLocale } from "@/i18n/path";
 
-export type InquiryState = { error: string } | null;
+export type InquiryState = { error: "errorRequired" | "errorEmail" } | null;
 
 function read(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -14,7 +16,7 @@ function read(formData: FormData, key: string): string {
 
 export async function submitInquiry(_prev: InquiryState, formData: FormData): Promise<InquiryState> {
   if (read(formData, "company")) {
-    redirect(safePath(read(formData, "next")) + "?sent=1");
+    redirect(`${withLocale(safePath(read(formData, "next")), await getLocale())}?sent=1`);
   }
 
   const type = read(formData, "type") === "work-with-us" ? "work-with-us" : "contact";
@@ -25,11 +27,11 @@ export async function submitInquiry(_prev: InquiryState, formData: FormData): Pr
   const next = safePath(read(formData, "next"));
 
   if (!name || !email || !message) {
-    return { error: "Please add your name, email, and a message." };
+    return { error: "errorRequired" };
   }
 
   if (!email.includes("@")) {
-    return { error: "Please add a valid email." };
+    return { error: "errorEmail" };
   }
 
   const payload = await getCms();
@@ -57,7 +59,7 @@ export async function submitInquiry(_prev: InquiryState, formData: FormData): Pr
     console.info(`Inquiry (${type}): ${name} <${email}>`);
   }
 
-  redirect(`${next}?sent=1`);
+  redirect(`${withLocale(next, await getLocale())}?sent=1`);
 }
 
 function safePath(value: string): string {

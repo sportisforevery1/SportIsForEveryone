@@ -1,0 +1,106 @@
+{
+  "chrome": {
+    "skip": "Skip to Content",
+    "openMenu": "Open Menu",
+    "closeMenu": "Close Menu",
+    "language": "Language",
+    "en": "EN",
+    "de": "DE",
+    "watch": "Watch",
+    "read": "Read",
+    "events": "Events",
+    "about": "About",
+    "network": "Network",
+    "legal": "Legal",
+    "support": "Support",
+    "scroll": "Scroll"
+  },
+  "nav": {
+    "films": "Films",
+    "interviews": "Field Interview",
+    "stories": "Stories across borders",
+    "whereSheStands": "Where She Stands",
+    "education": "Education",
+    "events": "Events",
+    "about": "About",
+    "workWithUs": "Work with Us",
+    "donate": "Support",
+    "join": "Join the Database",
+    "database": "Database"
+  },
+  "footer": {
+    "explore": "Explore",
+    "location": "Location",
+    "contact": "Contact",
+    "partnerships": "For partnerships or media inquiries:",
+    "impressum": "Impressum",
+    "privacy": "Privacy",
+    "copyright": "© All Rights Reserved, 2026 SPORT IS FOR EVERYONE"
+  },
+  "home": {
+    "latestLabel": "Watch / Read",
+    "latestTitle": "The latest stories",
+    "readMore": "Read more",
+    "featuredFilm": "Featured short film",
+    "watch": "Watch",
+    "previousEvents": "Previous events",
+    "allEvents": "All events",
+    "portalWatch": "WATCH",
+    "portalRead": "READ",
+    "portalDatabase": "DATABASE",
+    "joinNetwork": "Join the network"
+  },
+  "forms": {
+    "name": "Name",
+    "email": "Email",
+    "organisation": "Organisation",
+    "message": "Message",
+    "project": "Project",
+    "location": "Location",
+    "links": "Links",
+    "description": "Description",
+    "tags": "Tags",
+    "company": "Company",
+    "send": "Send",
+    "sending": "Sending",
+    "join": "Join the database",
+    "locationPlaceholder": "City, country",
+    "linksPlaceholder": "Instagram or website",
+    "errorRequired": "Please add your name, email, and a message.",
+    "errorJoinRequired": "Please add your name, email, and project.",
+    "errorEmail": "Please add a valid email.",
+    "thanks": "Thanks. We’ll be in touch shortly.",
+    "thanksJoin": "Thanks. We'll review your project and be in touch."
+  },
+  "database": {
+    "search": "Search",
+    "searchPlaceholder": "Name, city, tag",
+    "city": "City",
+    "country": "Country",
+    "region": "Region",
+    "all": "All",
+    "filter": "Filter",
+    "clear": "Clear filters",
+    "results": "{count} of {total} projects",
+    "empty": "No matching projects.",
+    "join": "Join the Database",
+    "intro": "Find grassroots projects and initiatives around the world"
+  },
+  "watch": {
+    "film": "Film",
+    "credits": "Credits",
+    "fullCredits": "Full credits",
+    "moreFilms": "More films",
+    "filmsBack": "Films",
+    "archiveFallback": "An ongoing archive of films that move literally and metaphorically"
+  },
+  "notFound": {
+    "label": "404",
+    "title": "This page isn’t here",
+    "body": "The link may have moved. Head home, or start from Watch, Read, or the Database.",
+    "home": "Back home"
+  },
+  "note": {
+    "englishOriginal": "This text is currently available in English."
+  }
+}

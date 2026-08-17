@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import type { MediaRef } from "@/lib/media";
 
@@ -6,7 +8,9 @@ type CinematicHeroProps = {
   image: MediaRef;
 };
 
-export function CinematicHero({ manifesto, image }: CinematicHeroProps) {
+export async function CinematicHero({ manifesto, image }: CinematicHeroProps) {
+  const t = await getTranslations("chrome");
+
   return (
     <section className="relative min-h-[100svh] overflow-hidden bg-sife-black">
       <ParallaxMedia
@@ -15,6 +19,7 @@ export function CinematicHero({ manifesto, image }: CinematicHeroProps) {
         width={image.width}
         height={image.height}
         className="absolute inset-0 h-full w-full"
+        priority
       />
       <div className="absolute inset-0 bg-gradient-to-t from-sife-black via-sife-black/45 to-sife-black/20" />
       <div className="relative z-10 flex min-h-[100svh] flex-col justify-end px-5 pb-20 pt-32 md:px-12 md:pb-24">
@@ -26,7 +31,7 @@ export function CinematicHero({ manifesto, image }: CinematicHeroProps) {
         </h1>
       </div>
       <div className="sife-scroll-cue pointer-events-none absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-sife-lime" aria-hidden>
-        <span className="block text-[0.65rem] uppercase tracking-[0.28em]">Scroll</span>
+        <span className="block text-[0.65rem] uppercase tracking-[0.28em]">{t("scroll")}</span>
         <span className="mx-auto mt-2 block h-8 w-px bg-sife-lime" />
       </div>
     </section>

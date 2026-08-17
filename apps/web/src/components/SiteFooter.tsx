@@ -1,9 +1,14 @@
 import Image from "next/image";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
+import { Link } from "@/i18n/navigation";
+import { navMessageKey } from "@/i18n/nav";
 import { contact, footerLinks, manifesto, socials } from "@/lib/site";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const t = await getTranslations("footer");
+  const tNav = await getTranslations("nav");
+
   return (
     <footer className="mt-auto bg-sife-black text-sife-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-4 md:px-8">
@@ -22,13 +27,13 @@ export function SiteFooter() {
 
         <div>
           <p className="mb-4 text-xs uppercase tracking-[0.18em] text-sife-white/50">
-            Explore
+            {t("explore")}
           </p>
           <ul className="space-y-2">
             {footerLinks.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="nav-link text-sm">
-                  {link.label}
+                  {tNav(navMessageKey(link.href))}
                 </Link>
               </li>
             ))}
@@ -37,7 +42,7 @@ export function SiteFooter() {
 
         <div>
           <p className="mb-4 text-xs uppercase tracking-[0.18em] text-sife-white/50">
-            Location
+            {t("location")}
           </p>
           {contact.locationLines.map((line) => (
             <p key={line} className="text-sm text-sife-white/80">
@@ -48,10 +53,10 @@ export function SiteFooter() {
 
         <div>
           <p className="mb-4 text-xs uppercase tracking-[0.18em] text-sife-white/50">
-            Contact
+            {t("contact")}
           </p>
           <p className="text-sm">
-            For partnerships or media inquiries:{" "}
+            {t("partnerships")}{" "}
             <a className="text-sife-lime underline-offset-4 hover:underline" href={`mailto:${contact.email}`}>
               {contact.email}
             </a>
@@ -71,17 +76,17 @@ export function SiteFooter() {
           </div>
           <p className="mt-6">
             <Link href="/impressum" className="text-xs uppercase tracking-[0.16em] text-sife-white/50 hover:text-sife-lime">
-              Impressum
+              {t("impressum")}
             </Link>
             <span className="mx-2 text-sife-white/30">·</span>
             <Link href="/privacy" className="text-xs uppercase tracking-[0.16em] text-sife-white/50 hover:text-sife-lime">
-              Privacy
+              {t("privacy")}
             </Link>
           </p>
         </div>
       </div>
       <div className="border-t border-sife-lime/15 px-5 py-5 text-center text-xs uppercase tracking-[0.16em] text-sife-white/40">
-        © All Rights Reserved, 2026 SPORT IS FOR EVERYONE
+        {t("copyright")}
       </div>
     </footer>
   );

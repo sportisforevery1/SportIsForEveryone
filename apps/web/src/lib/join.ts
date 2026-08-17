@@ -1,12 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 
 import { slugify } from "@/fields/slug";
 import { getCms } from "@/lib/cms";
 import { contact } from "@/lib/site";
+import { withLocale } from "@/i18n/path";
 
-export type JoinState = { error: string } | null;
+export type JoinState = { error: "errorJoinRequired" | "errorEmail" } | null;
 
 function read(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -15,7 +17,7 @@ function read(formData: FormData, key: string): string {
 
 export async function joinDatabase(_prev: JoinState, formData: FormData): Promise<JoinState> {
   if (read(formData, "company")) {
-    redirect("/join?sent=1");
+    redirect(`${withLocale("/join", await getLocale())}?sent=1`);
   }
 
   const name = read(formData, "name");
@@ -30,11 +32,11 @@ export async function joinDatabase(_prev: JoinState, formData: FormData): Promis
     .filter((value): value is string => typeof value === "string" && value.length > 0);
 
   if (!name || !email || !projectName) {
-    return { error: "Please add your name, email, and project." };
+    return { error: "errorJoinRequired" };
   }
 
   if (!email.includes("@")) {
-    return { error: "Please add a valid email." };
+    return { error: "errorEmail" };
   }
 
   const payload = await getCms();
@@ -98,7 +100,7 @@ export async function joinDatabase(_prev: JoinState, formData: FormData): Promis
     console.info(`Join request pending: ${projectName} <${email}>`);
   }
 
-  redirect("/join?sent=1");
+  redirect(`${withLocale("/join", await getLocale())}?sent=1`);
 }
 
 function splitLocation(location: string): [string | undefined, string | undefined] {

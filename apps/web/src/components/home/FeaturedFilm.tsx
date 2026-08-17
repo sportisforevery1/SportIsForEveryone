@@ -1,16 +1,20 @@
+import { getTranslations } from "next-intl/server";
+
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { HoverUnderline } from "@/components/motion/HoverUnderline";
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { Reveal } from "@/components/motion/Reveal";
 import type { HomeFilm } from "@/lib/home";
 
-export function FeaturedFilm({ film }: { film: HomeFilm }) {
+export async function FeaturedFilm({ film }: { film: HomeFilm }) {
+  const t = await getTranslations("home");
+  const tWatch = await getTranslations("watch");
   return (
     <section className="px-5 py-20 md:px-12 md:py-28">
       <Reveal>
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <div>
-            <CategoryLabel>Featured short film</CategoryLabel>
+            <CategoryLabel>{t("featuredFilm")}</CategoryLabel>
             <h2 className="mt-4 max-w-xl text-3xl font-semibold uppercase leading-tight tracking-tight md:text-5xl">
               {film.title}
             </h2>
@@ -26,7 +30,7 @@ export function FeaturedFilm({ film }: { film: HomeFilm }) {
             ) : null}
             <p className="mt-8">
               <HoverUnderline href={film.href} className="text-sife-lime">
-                Watch
+                {t("watch")}
               </HoverUnderline>
             </p>
           </div>
@@ -41,7 +45,7 @@ export function FeaturedFilm({ film }: { film: HomeFilm }) {
           ) : (
             <div className="flex aspect-[4/5] items-end bg-sife-lime p-8 text-sife-black">
               <p className="text-sm font-semibold uppercase tracking-[0.18em]">
-                An ongoing archive of films that move literally and metaphorically
+                {tWatch("archiveFallback")}
               </p>
             </div>
           )}

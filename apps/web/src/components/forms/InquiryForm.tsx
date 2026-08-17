@@ -1,16 +1,17 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 
 import { submitInquiry, type InquiryState } from "@/lib/inquiry";
 
 type InquiryFormProps = {
   type: "contact" | "work-with-us";
   next: "/about" | "/work-with-us";
-  submitLabel: string;
 };
 
-export function InquiryForm({ type, next, submitLabel }: InquiryFormProps) {
+export function InquiryForm({ type, next }: InquiryFormProps) {
+  const t = useTranslations("forms");
   const [state, action, pending] = useActionState<InquiryState, FormData>(submitInquiry, null);
 
   return (
@@ -19,29 +20,29 @@ export function InquiryForm({ type, next, submitLabel }: InquiryFormProps) {
       <input type="hidden" name="next" value={next} />
       <p className="sife-honeypot" aria-hidden>
         <label>
-          Company
+          {t("company")}
           <input name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </p>
       <label className="sife-field">
-        <span>Name</span>
+        <span>{t("name")}</span>
         <input name="name" type="text" required autoComplete="name" />
       </label>
       <label className="sife-field">
-        <span>Email</span>
+        <span>{t("email")}</span>
         <input name="email" type="email" required autoComplete="email" />
       </label>
       <label className="sife-field">
-        <span>Organisation</span>
+        <span>{t("organisation")}</span>
         <input name="organization" type="text" autoComplete="organization" />
       </label>
       <label className="sife-field">
-        <span>Message</span>
+        <span>{t("message")}</span>
         <textarea name="message" rows={6} required />
       </label>
-      {state?.error ? <p className="text-sm text-sife-coral">{state.error}</p> : null}
+      {state?.error ? <p className="text-sm text-sife-coral">{t(state.error)}</p> : null}
       <button type="submit" className="btn-coral mt-4" disabled={pending}>
-        {pending ? "Sending" : submitLabel}
+        {pending ? t("sending") : t("send")}
       </button>
     </form>
   );

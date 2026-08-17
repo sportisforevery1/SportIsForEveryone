@@ -1,27 +1,35 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { EditorialList } from "@/components/editorial/EditorialList";
 import { EmptyState } from "@/components/editorial/EmptyState";
 import { PageHero } from "@/components/editorial/PageHero";
 import { getWhereSheStandsIndex } from "@/lib/read";
+import { cmsPageMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Where She Stands | Sport is for Everyone",
-  description: "Stories by Women, for Women",
-};
+export function generateMetadata(): Promise<Metadata> {
+  return cmsPageMetadata("where-she-stands", {
+    title: "Where She Stands",
+    description: "Stories by Women, for Women",
+  });
+}
 
 export default async function WhereSheStandsPage() {
-  const page = await getWhereSheStandsIndex();
+  const [page, tChrome, tNav] = await Promise.all([
+    getWhereSheStandsIndex(),
+    getTranslations("chrome"),
+    getTranslations("nav"),
+  ]);
 
   return (
     <>
-      <PageHero label="Read" heading={page.heading} />
+      <PageHero label={tChrome("read")} heading={page.heading} />
       {page.items.length > 0 ? (
-        <EditorialList items={page.items} label="Where She Stands" title="" />
+        <EditorialList items={page.items} label={tNav("whereSheStands")} title="" />
       ) : (
-        <EmptyState label="Where She Stands" title={page.subheading} />
+        <EmptyState label={tNav("whereSheStands")} title={page.subheading} />
       )}
     </>
   );

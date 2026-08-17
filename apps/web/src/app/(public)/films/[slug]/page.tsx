@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { EnglishOriginalNote } from "@/components/editorial/EnglishOriginalNote";
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { EditorialList } from "@/components/editorial/EditorialList";
 import { RichText } from "@/components/editorial/RichText";
@@ -45,6 +46,7 @@ export default async function FilmPage({ params }: FilmPageProps) {
     <>
       <article className="px-5 pb-20 pt-16 md:px-12 md:pb-28 md:pt-24">
         <Reveal>
+          <EnglishOriginalNote />
           <p className="mb-8">
             <HoverUnderline href="/films" className="text-sife-lime">
               Films
@@ -58,7 +60,7 @@ export default async function FilmPage({ params }: FilmPageProps) {
             <p className="mt-4 text-sm uppercase tracking-[0.16em] text-sife-white/60">{meta}</p>
           ) : null}
           <div className="mt-10">
-            <VideoEmbed url={film.videoUrl} title={film.title} />
+            <VideoEmbed url={film.videoUrl} title={film.title} eager />
           </div>
           {film.body ? (
             <div className="mt-12 max-w-3xl text-sife-white/80">
