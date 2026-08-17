@@ -1,0 +1,37 @@
+# Dependencies and build
+node_modules/
+.next/
+dist/
+build/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Payload / uploads (keep seed brand in public/)
+media/
+*.db
+*.sqlite
+
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+
+# Research scrapes (local reference only — too large for git)
+sportisforeveryone.org-1786532313566 (1)/
+earthrise.studio-1786965222830 (1)/
+masindependent.com-1786964714292/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+)
