@@ -1,19 +1,11 @@
-import { heroManifesto, manifesto as fallbackManifesto } from "@/lib/site";
 import { getCms } from "@/lib/cms";
+import type { EditorialItem } from "@/lib/editorial";
 import { mediaSrc, type MediaRef } from "@/lib/media";
+import { published } from "@/lib/query";
+import { heroManifesto, manifesto as fallbackManifesto } from "@/lib/site";
 import type { Event, Film, Interview, Story } from "@/payload-types";
 
-export type EditorialItem = {
-  id: string;
-  kind: "film" | "story" | "interview";
-  section: "Watch" | "Read";
-  category: string;
-  title: string;
-  excerpt: string;
-  href: string;
-  image: MediaRef | null;
-  publishedAt: string;
-};
+export type { EditorialItem };
 
 export type HomeEvent = {
   title: string;
@@ -46,10 +38,6 @@ const fallbackHero: MediaRef = {
   alt: "Athletes in motion",
   width: 2138,
   height: 1425,
-};
-
-const published = {
-  _status: { equals: "published" as const },
 };
 
 export async function getHomeData(): Promise<HomeData> {

@@ -148,6 +148,63 @@ html.sife-cursor-on * {
   cursor: none;
 }
 
+.sife-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+}
+
+.sife-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.sife-prose {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.sife-prose p + p {
+  margin-top: 1em;
+}
+
+.sife-prose h2,
+.sife-prose h3,
+.sife-prose h4 {
+  margin: 1.4em 0 0.5em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.sife-prose h2 {
+  font-size: 1.6rem;
+}
+
+.sife-prose h3 {
+  font-size: 1.25rem;
+}
+
+.sife-prose ul,
+.sife-prose ol {
+  margin: 1em 0;
+  padding-left: 1.2em;
+}
+
+.sife-prose li + li {
+  margin-top: 0.35em;
+}
+
+.sife-prose a {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
 .sife-scroll-cue {
   animation: sife-cue 1.8s ease-in-out infinite;
 }

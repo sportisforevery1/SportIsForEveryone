@@ -3,34 +3,79 @@ import Image from "next/image";
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { HoverUnderline } from "@/components/motion/HoverUnderline";
 import { Reveal } from "@/components/motion/Reveal";
-import type { EditorialItem } from "@/lib/home";
+import type { EditorialItem } from "@/lib/editorial";
 
-export function EditorialList({ items }: { items: EditorialItem[] }) {
+type EditorialListProps = {
+  items: EditorialItem[];
+  label?: string;
+  title?: string;
+  cta?: string;
+  tone?: "cream" | "dark";
+};
+
+export function EditorialList({
+  items,
+  label = "Watch / Read",
+  title = "The latest stories",
+  cta = "Read more",
+  tone = "cream",
+}: EditorialListProps) {
   if (items.length === 0) return null;
 
+  const cream = tone === "cream";
+
   return (
-    <section className="bg-sife-cream px-5 py-20 text-sife-ink md:px-12 md:py-28">
+    <section
+      className={
+        cream
+          ? "bg-sife-cream px-5 py-20 text-sife-ink md:px-12 md:py-28"
+          : "px-5 py-20 md:px-12 md:py-28"
+      }
+    >
       <Reveal>
-        <CategoryLabel tone="navy">Watch / Read</CategoryLabel>
-        <h2 className="mt-3 text-3xl font-semibold uppercase tracking-tight text-sife-black md:text-5xl">
-          The latest stories
-        </h2>
-        <ul className="mt-12 divide-y divide-sife-black/10">
+        {label ? <CategoryLabel tone={cream ? "navy" : "lime"}>{label}</CategoryLabel> : null}
+        {title ? (
+          <h2
+            className={`mt-3 text-3xl font-semibold uppercase tracking-tight md:text-5xl ${
+              cream ? "text-sife-black" : "text-sife-white"
+            }`}
+          >
+            {title}
+          </h2>
+        ) : null}
+        <ul className={`divide-y ${title ? "mt-12" : "mt-0"} ${cream ? "divide-sife-black/10" : "divide-sife-white/10"}`}>
           {items.map((item) => (
             <li key={item.id} className="grid items-center gap-6 py-8 md:grid-cols-[1fr_minmax(12rem,18rem)]">
               <div>
-                <CategoryLabel tone="navy">{item.category}</CategoryLabel>
-                <h3 className="mt-3 max-w-2xl text-2xl font-semibold uppercase leading-tight tracking-tight text-sife-black md:text-3xl">
+                <CategoryLabel tone={cream ? "navy" : "lime"}>{item.category}</CategoryLabel>
+                <h3
+                  className={`mt-3 max-w-2xl text-2xl font-semibold uppercase leading-tight tracking-tight md:text-3xl ${
+                    cream ? "text-sife-black" : "text-sife-white"
+                  }`}
+                >
                   {item.title}
                 </h3>
+                {item.meta ? (
+                  <p
+                    className={`mt-2 text-xs uppercase tracking-[0.16em] ${
+                      cream ? "text-sife-ink/55" : "text-sife-white/55"
+                    }`}
+                  >
+                    {item.meta}
+                  </p>
+                ) : null}
                 {item.excerpt ? (
-                  <p className="mt-3 max-w-xl text-base leading-relaxed text-sife-ink/80">
+                  <p
+                    className={`mt-3 max-w-xl text-base leading-relaxed ${
+                      cream ? "text-sife-ink/80" : "text-sife-white/75"
+                    }`}
+                  >
                     {truncate(item.excerpt, 180)}
                   </p>
                 ) : null}
                 <p className="mt-5">
-                  <HoverUnderline href={item.href} className="text-sife-navy">
-                    Read more
+                  <HoverUnderline href={item.href} className={cream ? "text-sife-navy" : "text-sife-lime"}>
+                    {cta}
                   </HoverUnderline>
                 </p>
               </div>
@@ -43,7 +88,7 @@ export function EditorialList({ items }: { items: EditorialItem[] }) {
                   className="aspect-[16/10] w-full object-cover"
                 />
               ) : (
-                <div className="hidden aspect-[16/10] bg-sife-lime md:block" />
+                <div className={`hidden aspect-[16/10] md:block ${cream ? "bg-sife-lime" : "bg-sife-lime/80"}`} />
               )}
             </li>
           ))}
