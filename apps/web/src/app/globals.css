@@ -250,3 +250,75 @@ html.sife-cursor-on * {
     cursor: auto;
   }
 }
+
+.sife-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sife-field input,
+.sife-field select,
+.sife-field textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--sife-black) 18%, transparent);
+  background: var(--sife-white);
+  color: var(--sife-ink);
+  padding: 0.7rem 0.8rem;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sife-chip,
+.sife-chip-option span {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--sife-navy) 40%, transparent);
+  color: var(--sife-navy);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sife-chip.is-on,
+.sife-chip-option input:checked + span {
+  background: var(--sife-navy);
+  color: var(--sife-white);
+  border-color: var(--sife-navy);
+}
+
+.sife-chip.is-static {
+  pointer-events: none;
+}
+
+.sife-chip-option {
+  position: relative;
+  cursor: pointer;
+}
+
+.sife-chip-option input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.sife-form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.sife-honeypot {
+  position: absolute;
+  left: -9999px;
+  height: 0;
+  overflow: hidden;
+}
