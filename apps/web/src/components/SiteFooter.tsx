@@ -73,6 +73,10 @@ export function SiteFooter() {
             <Link href="/impressum" className="text-xs uppercase tracking-[0.16em] text-sife-white/50 hover:text-sife-lime">
               Impressum
             </Link>
+            <span className="mx-2 text-sife-white/30">·</span>
+            <Link href="/privacy" className="text-xs uppercase tracking-[0.16em] text-sife-white/50 hover:text-sife-lime">
+              Privacy
+            </Link>
           </p>
         </div>
       </div>

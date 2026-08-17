@@ -345,6 +345,7 @@ const seed = async () => {
         { label: "Interviews", href: "/interviews" },
         { label: "Database", href: "/database" },
         { label: "About", href: "/about" },
+        { label: "Support", href: "/donate" },
       ],
       nav: [
         {
@@ -368,6 +369,7 @@ const seed = async () => {
           children: [
             { label: "About", href: "/about" },
             { label: "Work with Us", href: "/work-with-us" },
+            { label: "Support", href: "/donate" },
             { label: "Join the Database", href: "/join" },
           ],
         },
