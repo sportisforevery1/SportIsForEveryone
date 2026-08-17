@@ -22,7 +22,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 body {
@@ -98,4 +98,73 @@ button:focus-visible {
 
 .skip-link:focus {
   top: 1rem;
+}
+
+.sife-reveal {
+  opacity: 0;
+  transform: translate3d(0, 36px, 0);
+}
+
+.sife-hover-underline {
+  position: relative;
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sife-hover-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.15rem;
+  height: 1px;
+  width: 0;
+  background: currentColor;
+  transition: width 280ms ease;
+}
+
+.sife-hover-underline:hover::after,
+.sife-hover-underline:focus-visible::after {
+  width: 100%;
+}
+
+.sife-marquee-track {
+  animation: sife-marquee 42s linear infinite;
+}
+
+@keyframes sife-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+html.sife-cursor-on,
+html.sife-cursor-on * {
+  cursor: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sife-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .sife-marquee-track {
+    animation: none;
+  }
+
+  .sife-hover-underline::after,
+  .nav-link::after {
+    transition: none;
+  }
+
+  html.sife-cursor-on,
+  html.sife-cursor-on * {
+    cursor: auto;
+  }
 }

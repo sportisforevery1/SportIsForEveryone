@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
 
+import { MotionRoot } from "@/components/motion/MotionRoot";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import "../globals.css";
@@ -31,11 +32,13 @@ export default function PublicLayout({
         <a href="#main" className="skip-link">
           Skip to Content
         </a>
-        <SiteHeader />
-        <main id="main" className="flex flex-1 flex-col">
-          {children}
-        </main>
-        <SiteFooter />
+        <MotionRoot>
+          <SiteHeader />
+          <main id="main" className="flex flex-1 flex-col">
+            {children}
+          </main>
+          <SiteFooter />
+        </MotionRoot>
       </body>
     </html>
   );
