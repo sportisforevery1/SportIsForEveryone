@@ -77,13 +77,17 @@ Create the first admin user at `/admin` separately.
 
 ## Deploy notes
 
-Staging is live at **https://sport-is-for-everyone.vercel.app** (Vercel project root: `apps/web`). Custom domain stays off until asked.
+**Hosting split (option A):**
+- **Vercel** — Next.js + Payload (`apps/web`). Staging: https://sport-is-for-everyone.vercel.app
+- **Render** — managed Postgres (`sife-staging-db`, Frankfurt). See root `render.yaml`.
 
-Set these on the host (Production; Preview when you wire GitHub):
+Custom domain stays off until asked.
+
+Set these on Vercel (Production; Preview when you wire GitHub):
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | Managed Postgres (Azure Flexible Server for current staging). Include `sslmode=require` (or `uselibpqcompat=true&sslmode=require`). |
+| `DATABASE_URL` | Render Postgres external URL. Include `sslmode=require` (or `uselibpqcompat=true&sslmode=require`). |
 | `PAYLOAD_SECRET` | Long random string, 32+ characters. Do not reuse the local example. |
 | `NEXT_PUBLIC_SITE_URL` | Staging origin, no trailing slash (`https://sport-is-for-everyone.vercel.app`) |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob store `sife-media`. Local Docker omits this and stores uploads on disk. |
@@ -106,3 +110,5 @@ npm run seed
 ```
 
 Legacy Squarespace paths such as `/contact` and `/join-the-database` redirect to the new routes. Custom domain and remaining Squarespace redirects wait until the live cutover.
+
+The Render free Postgres instance expires after ~30 days unless you add billing and upgrade the plan.

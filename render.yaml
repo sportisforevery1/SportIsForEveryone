@@ -1,0 +1,13 @@
+# Render Blueprint — managed Postgres only (option A).
+# Next.js + Payload stays on Vercel with Root Directory `apps/web`.
+# Free plan expires ~30 days; upgrade to basic-256mb when billing is on the account.
+databases:
+  - name: sife-staging-db
+    plan: free
+    region: frankfurt
+    databaseName: sife
+    user: sife
+    postgresMajorVersion: "16"
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Vercel serverless + local seed (staging)

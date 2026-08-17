@@ -21,7 +21,8 @@ The first `/admin` visit creates the editor account. Seed CMS copy and photograp
 
 See `apps/web/README.md` for collections, env vars, and staging deploy notes.
 
-**Staging:** https://sport-is-for-everyone.vercel.app (admin at `/admin`)
+**Staging:** https://sport-is-for-everyone.vercel.app (admin at `/admin`)  
+**Hosting:** Vercel (app) + Render Postgres (`render.yaml`)
 
 
 ## Docs
