@@ -148,6 +148,22 @@ html.sife-cursor-on * {
   cursor: none;
 }
 
+.sife-scroll-cue {
+  animation: sife-cue 1.8s ease-in-out infinite;
+}
+
+@keyframes sife-cue {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate(-50%, 8px);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sife-reveal {
     opacity: 1;
@@ -158,9 +174,18 @@ html.sife-cursor-on * {
     animation: none;
   }
 
+  .sife-scroll-cue {
+    animation: none;
+    opacity: 1;
+  }
+
   .sife-hover-underline::after,
   .nav-link::after {
     transition: none;
+  }
+
+  .group:hover img {
+    transform: none;
   }
 
   html.sife-cursor-on,

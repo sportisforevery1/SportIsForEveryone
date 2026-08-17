@@ -8,7 +8,7 @@ From the repository root:
 
 ```bash
 docker compose up -d
-# Postgres is published on host port 55432 so it does not collide with a local Postgres service.
+# Postgres is published on host port 15432 so it does not collide with a local Postgres service or Windows reserved ports.
 ```
 
 Then in `apps/web`:
