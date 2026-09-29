@@ -53,7 +53,7 @@ export default async function FilmPage({ params }: FilmPageProps) {
             </HoverUnderline>
           </p>
           <CategoryLabel>Film</CategoryLabel>
-          <h1 className="mt-4 max-w-5xl text-4xl font-semibold uppercase leading-[0.92] tracking-tight md:text-6xl">
+          <h1 className="mt-4 max-w-5xl text-4xl font-semibold uppercase leading-[0.94] tracking-[-0.03em] md:text-[3.5rem]">
             {film.title}
           </h1>
           {meta ? (

@@ -36,7 +36,7 @@ export function EditorialArticle({
           </HoverUnderline>
         </p>
         <CategoryLabel tone="navy">{category}</CategoryLabel>
-        <h1 className="mt-4 max-w-4xl text-4xl font-semibold uppercase leading-[0.92] tracking-tight text-sife-black md:text-6xl">
+        <h1 className="mt-4 max-w-4xl text-4xl font-semibold uppercase leading-[0.94] tracking-[-0.03em] text-sife-black md:text-[3.5rem]">
           {title}
         </h1>
         {meta ? (

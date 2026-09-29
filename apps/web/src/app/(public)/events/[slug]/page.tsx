@@ -51,7 +51,7 @@ export default async function EventPage({ params }: EventPageProps) {
             </HoverUnderline>
           </p>
           <CategoryLabel>{event.timing === "upcoming" ? "Upcoming" : "Past event"}</CategoryLabel>
-          <h1 className="mt-4 max-w-5xl text-4xl font-semibold uppercase leading-[0.92] tracking-tight md:text-6xl">
+          <h1 className="mt-4 max-w-5xl text-4xl font-semibold uppercase leading-[0.94] tracking-[-0.03em] md:text-[3.5rem]">
             {event.title}
           </h1>
           {meta ? (

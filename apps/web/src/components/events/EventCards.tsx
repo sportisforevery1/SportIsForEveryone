@@ -31,7 +31,7 @@ export function EventCards({ events, label, title, tone = "dark" }: EventCardsPr
             {label ? <CategoryLabel tone={cream ? "navy" : "lime"}>{label}</CategoryLabel> : null}
             {title ? (
               <h2
-                className={`mt-3 text-3xl font-semibold uppercase tracking-tight md:text-5xl ${
+                className={`mt-3 text-3xl font-semibold uppercase tracking-[-0.03em] md:text-4xl ${
                   cream ? "text-sife-black" : "text-sife-white"
                 }`}
               >
