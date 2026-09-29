@@ -20,6 +20,7 @@ export type HomeFilm = {
   excerpt: string;
   href: string;
   location: string | null;
+  year: number | null;
   runtime: string | null;
   image: MediaRef | null;
 };
@@ -109,6 +110,7 @@ function toFilm(film: Film): HomeFilm {
     excerpt: film.excerpt || "",
     href: `/films/${film.slug}`,
     location: film.location || null,
+    year: film.year ?? null,
     runtime: film.runtime || null,
     image: mediaSrc(film.poster),
   };

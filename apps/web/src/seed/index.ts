@@ -360,9 +360,9 @@ const seed = async () => {
           children: [
             { label: "Stories across borders", href: "/stories" },
             { label: "Where She Stands", href: "/where-she-stands" },
-            { label: "Education", href: "/education" },
           ],
         },
+        { label: "Academy", href: "/academy" },
         { label: "Events", href: "/events" },
         {
           label: "About",

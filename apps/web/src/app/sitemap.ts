@@ -8,7 +8,7 @@ const paths = [
   "/interviews",
   "/stories",
   "/where-she-stands",
-  "/education",
+  "/academy",
   "/events",
   "/database",
   "/join",

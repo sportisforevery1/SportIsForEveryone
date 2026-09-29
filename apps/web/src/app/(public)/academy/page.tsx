@@ -11,12 +11,12 @@ export const revalidate = 60;
 
 export function generateMetadata(): Promise<Metadata> {
   return cmsPageMetadata("education", {
-    title: "Education",
+    title: "Academy",
     description: "We're building something worth reading. Coming soon.",
   });
 }
 
-export default async function EducationPage() {
+export default async function AcademyPage() {
   const [page, tChrome, tNav] = await Promise.all([
     getEducationIndex(),
     getTranslations("chrome"),
@@ -25,7 +25,7 @@ export default async function EducationPage() {
 
   return (
     <>
-      <PageHero label={tChrome("read")} heading={page.heading} />
+      <PageHero label={tChrome("academy")} heading={page.heading} />
       {page.items.length > 0 ? (
         <EditorialList items={page.items} label={tNav("education")} title="" />
       ) : (

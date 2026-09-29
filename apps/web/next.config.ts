@@ -17,6 +17,8 @@ const squarespaceRedirects = [
   ["/stories-across-borders", "/stories"],
   ["/privacy-policy", "/privacy"],
   ["/datenschutz", "/privacy"],
+  // Education moved under the new Academy section.
+  ["/education", "/academy"],
 ] as const;
 
 const nextConfig: NextConfig = {

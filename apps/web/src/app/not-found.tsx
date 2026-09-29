@@ -19,7 +19,7 @@ export default async function GlobalNotFound() {
 
   return (
     <html lang={locale} className={`${archivo.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-sife-black font-sans text-sife-white antialiased">
+      <body className="flex min-h-full flex-col bg-sife-bg font-sans text-sife-white antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <main className="flex flex-1 flex-col px-5 pb-24 pt-16 md:px-12 md:pt-24">
             <Link href="/" className="mb-16 inline-flex w-fit items-center gap-3">

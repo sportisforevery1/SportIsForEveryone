@@ -36,11 +36,21 @@ export type WatchInterview = {
   seoDescription: string | null;
 };
 
+export type FilmCard = {
+  id: number;
+  title: string;
+  excerpt: string;
+  href: string;
+  meta: string | null;
+  runtime: string | null;
+  image: MediaRef | null;
+};
+
 export type FilmsIndex = {
   heading: string;
   subheading: string;
   featured: WatchFilm | null;
-  more: EditorialItem[];
+  more: FilmCard[];
 };
 
 export type InterviewsIndex = {
@@ -86,7 +96,7 @@ export async function getFilmsIndex(): Promise<FilmsIndex> {
     heading: page?.hero?.heading || filmsHero.heading,
     subheading: page?.hero?.subheading || filmsHero.subheading,
     featured: featuredDoc ? toWatchFilm(featuredDoc) : null,
-    more: more.map(toFilmItem),
+    more: more.map(toFilmCard),
   };
 }
 
@@ -213,6 +223,20 @@ function toWatchInterview(interview: Interview): WatchInterview {
 function filmMeta(film: Film): string | undefined {
   const parts = [film.location, film.year ? String(film.year) : null, film.runtime].filter(Boolean);
   return parts.length ? parts.join(" · ") : undefined;
+}
+
+function toFilmCard(film: Film): FilmCard {
+  const parts = [film.location, film.year ? String(film.year) : null].filter(Boolean);
+
+  return {
+    id: film.id,
+    title: film.title,
+    excerpt: film.excerpt || "",
+    href: `/films/${film.slug}`,
+    meta: parts.length ? parts.join(" · ") : null,
+    runtime: film.runtime || null,
+    image: mediaSrc(film.poster),
+  };
 }
 
 function toFilmItem(film: Film): EditorialItem {
