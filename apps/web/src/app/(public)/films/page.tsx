@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { EditorialList } from "@/components/editorial/EditorialList";
 import { PageHero } from "@/components/editorial/PageHero";
 import { FeaturedPlayer } from "@/components/watch/FeaturedPlayer";
+import { FilmGrid } from "@/components/watch/FilmGrid";
 import { cmsPageMetadata } from "@/lib/seo";
 import { getFilmsIndex } from "@/lib/watch";
 
@@ -17,18 +17,17 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FilmsPage() {
-  const [films, tChrome, tWatch, tHome] = await Promise.all([
+  const [films, tChrome, tWatch] = await Promise.all([
     getFilmsIndex(),
     getTranslations("chrome"),
     getTranslations("watch"),
-    getTranslations("home"),
   ]);
 
   return (
     <>
       <PageHero label={tChrome("watch")} heading={films.heading} subheading={films.subheading} />
       {films.featured ? <FeaturedPlayer film={films.featured} /> : null}
-      <EditorialList items={films.more} label={tChrome("watch")} title={tWatch("moreFilms")} cta={tHome("watch")} />
+      <FilmGrid films={films.more} label={tChrome("watch")} title={tWatch("moreFilms")} />
     </>
   );
 }

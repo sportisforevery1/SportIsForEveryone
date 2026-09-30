@@ -10,17 +10,17 @@ export async function SiteFooter() {
   const tNav = await getTranslations("nav");
 
   return (
-    <footer className="mt-auto bg-sife-black text-sife-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-4 md:px-8">
+    <footer className="mt-auto bg-sife-bg-deep text-sife-white">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.2fr_1fr_1fr_1.2fr] md:px-12">
         <div className="md:col-span-1">
           <Image
             src="/brand/EmblemLime.png"
             alt="Sport is for Everyone"
             width={88}
             height={84}
-            className="mb-5 h-16 w-auto"
+            className="mb-[1.125rem] h-14 w-auto"
           />
-          <p className="max-w-xs text-sm leading-relaxed text-sife-lime">
+          <p className="max-w-[16.25rem] text-sm leading-relaxed text-sife-lime">
             {manifesto}
           </p>
         </div>

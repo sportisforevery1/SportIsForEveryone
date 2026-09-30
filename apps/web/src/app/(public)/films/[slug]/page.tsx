@@ -44,7 +44,7 @@ export default async function FilmPage({ params }: FilmPageProps) {
 
   return (
     <>
-      <article className="px-5 pb-20 pt-16 md:px-12 md:pb-28 md:pt-24">
+      <article className="px-5 pb-20 pt-16 md:px-12 md:pb-20 md:pt-20">
         <Reveal>
           <EnglishOriginalNote />
           <p className="mb-8">
@@ -53,7 +53,7 @@ export default async function FilmPage({ params }: FilmPageProps) {
             </HoverUnderline>
           </p>
           <CategoryLabel>Film</CategoryLabel>
-          <h1 className="mt-4 max-w-5xl text-4xl font-semibold uppercase leading-[0.92] tracking-tight md:text-6xl">
+          <h1 className="mt-4 max-w-5xl text-4xl font-semibold uppercase leading-[0.94] tracking-[-0.03em] md:text-[3.5rem]">
             {film.title}
           </h1>
           {meta ? (

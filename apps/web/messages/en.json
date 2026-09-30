@@ -13,7 +13,9 @@
     "network": "Network",
     "legal": "Legal",
     "support": "Support",
-    "scroll": "Scroll"
+    "scroll": "Scroll",
+    "academy": "Academy",
+    "new": "New"
   },
   "nav": {
     "films": "Films",
@@ -26,7 +28,8 @@
     "workWithUs": "Work with Us",
     "donate": "Support",
     "join": "Join the Database",
-    "database": "Database"
+    "database": "Database",
+    "academy": "Academy"
   },
   "footer": {
     "explore": "Explore",
@@ -41,14 +44,14 @@
     "latestLabel": "Watch / Read",
     "latestTitle": "The latest stories",
     "readMore": "Read more",
-    "featuredFilm": "Featured short film",
+    "featuredFilm": "Featured film",
     "watch": "Watch",
     "previousEvents": "Previous events",
-    "allEvents": "All events",
-    "portalWatch": "WATCH",
-    "portalRead": "READ",
-    "portalDatabase": "DATABASE",
-    "joinNetwork": "Join the network"
+    "joinNetwork": "Join the network",
+    "findWayLabel": "Find your way",
+    "findWayTitle": "What are you looking for?",
+    "findEvents": "Find upcoming events",
+    "watchFilm": "Watch the film"
   },
   "forms": {
     "name": "Name",
@@ -102,5 +105,18 @@
   },
   "note": {
     "englishOriginal": "This text is currently available in English."
+  },
+  "about": {
+    "founderLabel": "Founder & curator",
+    "frameworkLabel": "Our framework",
+    "frameworkTitle": "We operate through three interconnected dimensions",
+    "contactTitle": "Contact us"
+  },
+  "work": {
+    "pastProject": "Past project",
+    "howWeWork": "How we work",
+    "previousCollaboration": "Previous collaboration",
+    "interested": "Interested in working together?",
+    "interestedBody": "Fill out some info and we will be in touch shortly. We can’t wait to hear from you!"
   }
 }

@@ -8,21 +8,32 @@ export async function SupportBand() {
   const t = await getTranslations("chrome");
 
   return (
-    <section className="bg-sife-lime px-5 py-20 text-sife-black md:px-12 md:py-24">
+    <section className="bg-sife-bg-deep px-5 py-20 md:px-12">
       <Reveal>
-        <h2 className="max-w-4xl text-3xl font-semibold uppercase leading-tight tracking-tight md:text-5xl">
-          {supportCopy.heading}
-        </h2>
-        <p className="mt-6 text-base">{supportCopy.intro}</p>
-        <ul className="mt-4 list-disc space-y-1 pl-5 text-base">
-          {supportCopy.items.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-        <p className="mt-6 max-w-2xl text-sm leading-relaxed">{supportCopy.tax}</p>
-        <Link href="/donate" className="btn-coral mt-8 inline-flex">
-          {t("support")}
-        </Link>
+        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+          <div>
+            <h2 className="max-w-[35rem] text-pretty text-3xl font-semibold uppercase leading-[1.05] tracking-[-0.03em] md:text-[2.125rem]">
+              {supportCopy.heading}
+            </h2>
+            <Link href="/donate" className="btn-coral mt-7">
+              {t("support")}
+            </Link>
+          </div>
+          <div className="text-[0.95rem] leading-relaxed text-sife-white/85">
+            <p>{supportCopy.intro}</p>
+            <ul className="mt-3 flex flex-col gap-2">
+              {supportCopy.items.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span aria-hidden className="text-sife-lime">
+                    —
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 max-w-xl text-xs leading-relaxed text-sife-white/60">{supportCopy.tax}</p>
+          </div>
+        </div>
       </Reveal>
     </section>
   );

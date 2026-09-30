@@ -2,11 +2,10 @@ import { getCms } from "@/lib/cms";
 import { mediaSrc, type MediaRef } from "@/lib/media";
 import { getPublishedPage } from "@/lib/pages";
 import { published } from "@/lib/query";
-import type { Collaboration, Page } from "@/payload-types";
+import type { Collaboration } from "@/payload-types";
 
 export type AboutPage = {
   heading: string;
-  body: Page["body"];
   portrait: MediaRef;
 };
 
@@ -19,8 +18,8 @@ export type PublicCollaboration = {
 const fallbackPortrait: MediaRef = {
   src: "/seed/sport-is-for-everyone.png",
   alt: "Oumou Aidara",
-  width: 1600,
-  height: 1066,
+  width: 1080,
+  height: 1350,
 };
 
 export async function getAboutPage(): Promise<AboutPage> {
@@ -28,7 +27,6 @@ export async function getAboutPage(): Promise<AboutPage> {
 
   return {
     heading: page?.hero?.heading || page?.title || "About",
-    body: page?.body ?? null,
     portrait: mediaSrc(page?.hero?.media) ?? fallbackPortrait,
   };
 }
@@ -41,7 +39,6 @@ export async function getWorkWithUsPage() {
 
   return {
     heading: page?.hero?.heading || page?.title || "Work with us",
-    body: page?.body ?? null,
     collaboration,
   };
 }

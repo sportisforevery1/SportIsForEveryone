@@ -21,17 +21,17 @@ export function EventCards({ events, label, title, tone = "dark" }: EventCardsPr
     <section
       className={
         cream
-          ? "bg-sife-cream px-5 py-20 text-sife-ink md:px-12 md:py-28"
-          : "px-5 py-20 md:px-12 md:py-28"
+          ? "bg-sife-cream px-5 py-20 text-sife-ink md:px-12"
+          : "px-5 py-20 md:px-12"
       }
     >
       <Reveal>
         {label || title ? (
-          <div className="mb-10">
+          <div className="mb-9">
             {label ? <CategoryLabel tone={cream ? "navy" : "lime"}>{label}</CategoryLabel> : null}
             {title ? (
               <h2
-                className={`mt-3 text-3xl font-semibold uppercase tracking-tight md:text-5xl ${
+                className={`mt-3 text-3xl font-semibold uppercase tracking-[-0.03em] md:text-4xl ${
                   cream ? "text-sife-black" : "text-sife-white"
                 }`}
               >
@@ -40,7 +40,7 @@ export function EventCards({ events, label, title, tone = "dark" }: EventCardsPr
             ) : null}
           </div>
         ) : null}
-        <ul className="grid gap-8 md:grid-cols-2">
+        <ul className="grid gap-10 md:grid-cols-2 md:gap-8">
           {events.map((event) => (
             <li key={event.href}>
               {event.image ? (
@@ -55,30 +55,30 @@ export function EventCards({ events, label, title, tone = "dark" }: EventCardsPr
                 <div className="aspect-[16/10] bg-sife-lime" />
               )}
               <h3
-                className={`mt-5 text-2xl font-semibold uppercase tracking-tight ${
+                className={`mt-[1.125rem] text-[1.375rem] font-semibold uppercase tracking-[-0.03em] ${
                   cream ? "text-sife-black" : "text-sife-white"
                 }`}
               >
                 {event.title}
               </h3>
               <p
-                className={`mt-2 text-xs uppercase tracking-[0.16em] ${
-                  cream ? "text-sife-ink/55" : "text-sife-white/55"
+                className={`mt-1.5 text-[0.7rem] uppercase tracking-[0.16em] ${
+                  cream ? "text-sife-ink/60" : "text-sife-white/60"
                 }`}
               >
                 {[event.dateLabel, event.location].filter(Boolean).join(" · ")}
               </p>
               {event.excerpt ? (
                 <p
-                  className={`mt-3 max-w-md text-sm leading-relaxed ${
-                    cream ? "text-sife-ink/80" : "text-sife-white/75"
+                  className={`mt-2.5 max-w-[28.75rem] text-sm leading-relaxed ${
+                    cream ? "text-sife-ink/80" : "text-sife-white/80"
                   }`}
                 >
                   {event.excerpt}
                 </p>
               ) : null}
-              <p className="mt-5">
-                <HoverUnderline href={event.href} className={cream ? "text-sife-navy" : "text-sife-lime"}>
+              <p className="mt-3.5">
+                <HoverUnderline href={event.href} className={`text-xs ${cream ? "text-sife-navy" : "text-sife-lime"}`}>
                   Read more
                 </HoverUnderline>
               </p>
