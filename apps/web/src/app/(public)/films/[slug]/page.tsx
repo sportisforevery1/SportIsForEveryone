@@ -44,7 +44,7 @@ export default async function FilmPage({ params }: FilmPageProps) {
 
   return (
     <>
-      <article className="px-5 pb-20 pt-16 md:px-12 md:pb-28 md:pt-24">
+      <article className="px-5 pb-20 pt-16 md:px-12 md:pb-20 md:pt-20">
         <Reveal>
           <EnglishOriginalNote />
           <p className="mb-8">

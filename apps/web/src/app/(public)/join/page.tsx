@@ -35,7 +35,7 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
       {sent ? (
         <EmptyState label={tNav("join")} title={tForms("thanksJoin")} />
       ) : (
-        <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-24">
+        <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-20">
           <Reveal>
             {page.body ? <RichText data={page.body} /> : null}
             <JoinForm tags={page.tags} />

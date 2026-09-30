@@ -28,7 +28,7 @@ export function EditorialArticle({
   excerpt,
 }: EditorialArticleProps) {
   return (
-    <article className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-24">
+    <article className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-20">
       <Reveal>
         <p className="mb-8">
           <HoverUnderline href={backHref} className="text-sife-navy">

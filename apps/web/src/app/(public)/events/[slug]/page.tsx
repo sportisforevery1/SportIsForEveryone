@@ -43,7 +43,7 @@ export default async function EventPage({ params }: EventPageProps) {
 
   return (
     <>
-      <article className="px-5 pb-20 pt-16 md:px-12 md:pb-28 md:pt-24">
+      <article className="px-5 pb-20 pt-16 md:px-12 md:pb-20 md:pt-20">
         <Reveal>
           <p className="mb-8">
             <HoverUnderline href="/events" className="text-sife-lime">

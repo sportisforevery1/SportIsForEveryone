@@ -16,7 +16,7 @@ export default async function DonatePage() {
   return (
     <>
       <PageHero label={t("support")} heading={t("support")} subheading={supportCopy.heading} />
-      <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-24">
+      <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-20">
         <Reveal>
           <p className="max-w-2xl text-lg leading-relaxed">{supportCopy.independent}</p>
           <p className="mt-6 text-base">{supportCopy.intro}</p>

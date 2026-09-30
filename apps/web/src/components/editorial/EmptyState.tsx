@@ -9,7 +9,7 @@ type EmptyStateProps = {
 
 export function EmptyState({ label, title, body }: EmptyStateProps) {
   return (
-    <section className="bg-sife-cream px-5 py-24 text-sife-ink md:px-12 md:py-32">
+    <section className="bg-sife-cream px-5 py-20 text-sife-ink md:px-12 md:py-24">
       <Reveal>
         <CategoryLabel tone="navy">{label}</CategoryLabel>
         <h2 className="mt-4 max-w-3xl text-3xl font-semibold uppercase leading-[1.05] tracking-[-0.03em] text-sife-black md:text-4xl">

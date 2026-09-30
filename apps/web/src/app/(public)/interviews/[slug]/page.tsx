@@ -40,7 +40,7 @@ export default async function InterviewPage({ params }: InterviewPageProps) {
   const meta = [interview.guest, interview.location].filter(Boolean).join(" · ");
 
   return (
-    <article className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-24">
+    <article className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-20">
       <Reveal>
         <p className="mb-8">
           <HoverUnderline href="/interviews" className="text-sife-navy">
