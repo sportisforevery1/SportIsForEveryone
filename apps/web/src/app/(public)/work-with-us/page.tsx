@@ -10,7 +10,6 @@ import { InquiryForm } from "@/components/forms/InquiryForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { getWorkWithUsPage } from "@/lib/about";
 import { cmsPageMetadata } from "@/lib/seo";
-import { howWeWork, workIntro } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -46,12 +45,12 @@ export default async function WorkWithUsPage({ searchParams }: WorkPageProps) {
                 {page.heading}
               </h1>
             </div>
-            <p className="max-w-[32.5rem] text-base leading-normal text-sife-white/85 md:text-lg">{workIntro}</p>
+            <p className="max-w-[32.5rem] text-base leading-normal text-sife-white/85 md:text-lg">{page.intro}</p>
           </div>
         </Reveal>
       </section>
-      <ServiceCards />
-      <NumberedBand label={tWork("howWeWork")} items={howWeWork} />
+      <ServiceCards services={page.services} />
+      <NumberedBand label={tWork("howWeWork")} items={page.steps} />
       {page.collaboration ? <CollaborationCard collaboration={page.collaboration} /> : null}
       <section className="bg-sife-cream px-5 py-20 text-sife-ink md:px-12">
         <Reveal>

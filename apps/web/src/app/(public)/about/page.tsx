@@ -11,7 +11,6 @@ import { InquiryForm } from "@/components/forms/InquiryForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { getAboutPage } from "@/lib/about";
 import { cmsPageMetadata } from "@/lib/seo";
-import { aboutCopy } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -35,7 +34,7 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
     getTranslations("forms"),
     getTranslations("work"),
   ]);
-  const { founder, stats } = aboutCopy;
+  const { founder } = page;
 
   return (
     <>
@@ -44,9 +43,9 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
         <Reveal>
           <EnglishOriginalNoteInk />
           <h2 className="max-w-[68.75rem] text-pretty text-2xl font-semibold uppercase leading-[1.15] tracking-[-0.03em] text-sife-black md:text-[2.125rem]">
-            {aboutCopy.statement}
+            {page.statement}
           </h2>
-          <p className="mt-7 max-w-[45rem] text-base leading-[1.65] text-sife-ink/85">{aboutCopy.intro}</p>
+          <p className="mt-7 max-w-[45rem] text-base leading-[1.65] text-sife-ink/85">{page.lead}</p>
         </Reveal>
       </section>
       <section className="px-5 py-20 md:px-12 md:py-[5.5rem]">
@@ -74,7 +73,7 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
                 </p>
               ))}
               <dl className="mt-9 grid grid-cols-2 gap-8 border-t border-sife-white/20 pt-6">
-                {stats.map((stat) => (
+                {founder.stats.map((stat) => (
                   <div key={stat.value}>
                     <dt className="text-[2.75rem] font-semibold leading-none tracking-[-0.04em] text-sife-lime md:text-[3.25rem]">
                       {stat.value}

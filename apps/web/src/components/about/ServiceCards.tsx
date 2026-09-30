@@ -2,16 +2,17 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { Reveal } from "@/components/motion/Reveal";
-import { numbered, workServices } from "@/lib/site";
+import type { WorkService } from "@/lib/about";
+import { numbered } from "@/lib/site";
 
-export async function ServiceCards() {
+export async function ServiceCards({ services }: { services: WorkService[] }) {
   const t = await getTranslations("work");
 
   return (
     <section className="px-5 pb-20 md:px-12">
       <Reveal>
         <ul className="grid gap-6 md:grid-cols-3">
-          {workServices.map((service, index) => (
+          {services.map((service, index) => (
             <li key={service.title} className="group relative aspect-[3/4] overflow-hidden bg-sife-black">
               <Image
                 src={service.image.src}
@@ -28,9 +29,11 @@ export async function ServiceCards() {
               <div className="absolute inset-x-5 bottom-5">
                 <h3 className="text-[1.625rem] font-semibold uppercase leading-none tracking-[-0.03em]">{service.title}</h3>
                 <p className="mt-2.5 text-sm leading-normal text-sife-white/85">{service.text}</p>
-                <p className="mt-3 text-[0.7rem] uppercase tracking-[0.14em] text-sife-lime">
-                  {t("pastProject")} · {service.project}
-                </p>
+                {service.project ? (
+                  <p className="mt-3 text-[0.7rem] uppercase tracking-[0.14em] text-sife-lime">
+                    {t("pastProject")} · {service.project}
+                  </p>
+                ) : null}
               </div>
             </li>
           ))}

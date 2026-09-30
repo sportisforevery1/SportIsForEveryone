@@ -177,6 +177,57 @@ export interface Page {
         id?: string | null;
       }[]
     | null;
+  /**
+   * About: the large statement. Work with us: the intro beside the heading.
+   */
+  statement?: string | null;
+  /**
+   * Paragraph under the statement.
+   */
+  lead?: string | null;
+  founder?: {
+    name?: string | null;
+    image?: (number | null) | Media;
+    /**
+     * Separate paragraphs with a blank line.
+     */
+    bio?: string | null;
+    stats?:
+      | {
+          /**
+           * e.g. 37%
+           */
+          value: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Photo cards. Each links to a past project.
+   */
+  services?:
+    | {
+        title: string;
+        text: string;
+        /**
+         * Past project name
+         */
+        project?: string | null;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The numbered “How we work” band.
+   */
+  steps?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   seo?: {
     title?: string | null;
     description?: string | null;
@@ -747,6 +798,38 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         image?: T;
         caption?: T;
+        id?: T;
+      };
+  statement?: T;
+  lead?: T;
+  founder?:
+    | T
+    | {
+        name?: T;
+        image?: T;
+        bio?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  services?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        project?: T;
+        image?: T;
+        id?: T;
+      };
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
         id?: T;
       };
   seo?:
