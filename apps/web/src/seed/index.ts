@@ -5,6 +5,7 @@ import { getPayload } from "payload";
 
 import config from "@payload-config";
 import { slugify } from "../fields/slug";
+import { aboutCopy, howWeWork, workIntro, workServices } from "../lib/site";
 import { richText } from "./lexical";
 import {
   aboutBody,
@@ -263,12 +264,28 @@ const seed = async () => {
       media: mediaIds.oumou,
     },
     body: aboutBody,
+    statement: aboutCopy.statement,
+    lead: aboutCopy.intro,
+    founder: {
+      name: aboutCopy.founder.name,
+      image: mediaIds.roots,
+      bio: aboutCopy.founder.paragraphs.join("\n\n"),
+      stats: aboutCopy.stats.map(({ value, text }) => ({ value, text })),
+    },
   });
 
   await upsert("pages", "work-with-us", {
     title: "Work with us",
     hero: { heading: "Work with US" },
     body: workWithUsBody,
+    statement: workIntro,
+    services: workServices.map((service, index) => ({
+      title: service.title,
+      text: service.text,
+      project: service.project,
+      image: [mediaIds.roots, mediaIds.slowHike, mediaIds.admire][index],
+    })),
+    steps: howWeWork.map(({ title, text }) => ({ title, text })),
   });
 
   await upsert("pages", "impressum", {
@@ -360,9 +377,9 @@ const seed = async () => {
           children: [
             { label: "Stories across borders", href: "/stories" },
             { label: "Where She Stands", href: "/where-she-stands" },
-            { label: "Education", href: "/education" },
           ],
         },
+        { label: "Academy", href: "/academy" },
         { label: "Events", href: "/events" },
         {
           label: "About",

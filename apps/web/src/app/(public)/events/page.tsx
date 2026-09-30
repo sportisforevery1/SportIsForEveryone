@@ -22,12 +22,16 @@ export default async function EventsPage() {
   return (
     <>
       <PageHero label={t("events")} heading={events.heading} />
-      {events.upcoming.length > 0 ? (
-        <EventCards events={events.upcoming} label="Upcoming" title="" />
-      ) : (
-        <EmptyState label="Upcoming" title={events.subheading} />
-      )}
-      <EventCards events={events.past} label="Events" title="Previous events" />
+      <div id="upcoming" className="scroll-mt-24">
+        {events.upcoming.length > 0 ? (
+          <EventCards events={events.upcoming} label="Upcoming" title="" />
+        ) : (
+          <EmptyState label="Upcoming" title={events.subheading} />
+        )}
+      </div>
+      <div id="past" className="scroll-mt-24">
+        <EventCards events={events.past} label="Events" title="Previous events" />
+      </div>
     </>
   );
 }

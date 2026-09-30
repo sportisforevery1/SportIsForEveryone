@@ -8,6 +8,11 @@
   --sife-black: #0a0a0a;
   --sife-white: #ffffff;
   --sife-ink: #111111;
+
+  /* Page theme. Bolting Blue per the round-one feedback; swap to
+     --sife-black / #161616 to return to the black theme. */
+  --sife-bg: var(--sife-navy);
+  --sife-bg-deep: #2f3a80;
 }
 
 @theme inline {
@@ -18,6 +23,8 @@
   --color-sife-black: var(--sife-black);
   --color-sife-white: var(--sife-white);
   --color-sife-ink: var(--sife-ink);
+  --color-sife-bg: var(--sife-bg);
+  --color-sife-bg-deep: var(--sife-bg-deep);
   --font-sans: var(--font-archivo);
 }
 
@@ -26,7 +33,7 @@ html {
 }
 
 body {
-  background: var(--sife-black);
+  background: var(--sife-bg);
   color: var(--sife-white);
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -59,7 +66,8 @@ button:focus-visible {
 }
 
 .nav-link:hover::after,
-.nav-link:focus-visible::after {
+.nav-link:focus-visible::after,
+.nav-link.is-active::after {
   width: 100%;
 }
 
@@ -80,6 +88,25 @@ button:focus-visible {
 .btn-coral:hover {
   background: var(--sife-lime);
   color: var(--sife-black);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid currentColor;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.15rem;
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+.btn-outline:hover {
+  background: var(--sife-black);
+  border-color: var(--sife-black);
+  color: var(--sife-lime);
 }
 
 .skip-link {
@@ -322,36 +349,4 @@ html.sife-cursor-on * {
   left: -9999px;
   height: 0;
   overflow: hidden;
-}
-
-.sife-accordion {
-  border-top: 1px solid color-mix(in srgb, var(--sife-black) 18%, transparent);
-  padding: 1.15rem 0;
-}
-
-.sife-accordion:last-child {
-  border-bottom: 1px solid color-mix(in srgb, var(--sife-black) 18%, transparent);
-}
-
-.sife-accordion summary {
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  list-style: none;
-}
-
-.sife-accordion summary::-webkit-details-marker {
-  display: none;
-}
-
-.sife-accordion summary::after {
-  content: "+";
-  float: right;
-  font-weight: 400;
-}
-
-.sife-accordion[open] summary::after {
-  content: "–";
 }

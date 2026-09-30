@@ -3,9 +3,9 @@ import { getTranslations } from "next-intl/server";
 
 import { EditorialList } from "@/components/editorial/EditorialList";
 import { CinematicHero } from "@/components/home/CinematicHero";
+import { DirectoryIndex } from "@/components/home/DirectoryIndex";
 import { FeaturedFilm } from "@/components/home/FeaturedFilm";
 import { NetworkCta } from "@/components/home/NetworkCta";
-import { PortalRow } from "@/components/home/PortalRow";
 import { PreviousEvents } from "@/components/home/PreviousEvents";
 import { Marquee } from "@/components/motion/Marquee";
 import { getHomeData } from "@/lib/home";
@@ -29,9 +29,9 @@ export default async function HomePage() {
       <CinematicHero manifesto={home.heroManifesto} image={home.heroImage} />
       <Marquee
         text={home.manifesto}
-        className="bg-sife-lime py-4 text-sm font-semibold uppercase tracking-[0.18em] text-sife-black"
+        className="bg-sife-lime py-3.5 text-[0.8rem] font-semibold uppercase tracking-[0.18em] text-sife-black"
       />
-      <PortalRow />
+      <DirectoryIndex />
       <EditorialList
         items={home.latest}
         label={t("latestLabel")}

@@ -32,7 +32,7 @@ export default async function DatabasePage({ searchParams }: DatabasePageProps) 
   return (
     <>
       <PageHero label={tChrome("network")} heading={directory.heading} subheading={directory.subheading} />
-      <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-24">
+      <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-20">
         <Reveal>
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
             <p className="max-w-xl text-base leading-relaxed">{tDb("intro")}</p>

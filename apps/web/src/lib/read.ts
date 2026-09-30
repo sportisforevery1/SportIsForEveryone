@@ -162,7 +162,7 @@ function storyBack(category: Story["category"]): { href: string; label: string }
     return { href: "/where-she-stands", label: "Where She Stands" };
   }
   if (category === "education") {
-    return { href: "/education", label: "Education" };
+    return { href: "/academy", label: "Academy" };
   }
   return { href: "/stories", label: "Stories across borders" };
 }

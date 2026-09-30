@@ -11,9 +11,9 @@ export const nav = {
     items: [
       { href: "/stories", label: "Stories across borders" },
       { href: "/where-she-stands", label: "Where She Stands" },
-      { href: "/education", label: "Education" },
     ],
   },
+  academy: { href: "/academy", label: "Academy" },
   events: { href: "/events", label: "Events" },
   about: {
     label: "About",
@@ -30,6 +30,7 @@ export const nav = {
 export const footerLinks = [
   { href: "/films", label: "Films" },
   { href: "/interviews", label: "Interviews" },
+  { href: "/academy", label: "Academy" },
   { href: "/database", label: "Database" },
   { href: "/about", label: "About" },
   { href: "/donate", label: "Support" },
@@ -66,25 +67,123 @@ export const framework = [
   },
 ] as const;
 
+export const directory = [
+  {
+    title: "Watch",
+    blurb: "Films and field interviews with athletes, artists and communities redefining sport.",
+    href: "/films",
+    links: [
+      { href: "/films", label: "Films" },
+      { href: "/interviews", label: "Field Interviews" },
+    ],
+    image: { src: "/seed/IMG_0405.jpg", alt: "Admire Muzopambwa in Never Too Late", width: 1165, height: 1458 },
+  },
+  {
+    title: "Read",
+    blurb: "Research, essays and field notes from around the world.",
+    href: "/stories",
+    links: [
+      { href: "/stories", label: "Stories across borders" },
+      { href: "/where-she-stands", label: "Where She Stands" },
+    ],
+    image: { src: "/seed/DSC_0073.jpg", alt: "Vol. 01 — Dakar", width: 2048, height: 2048 },
+  },
+  {
+    title: "Academy",
+    blurb: "Learning resources, workshops and educational material.",
+    href: "/academy",
+    links: [{ href: "/academy", label: "Education" }],
+    image: { src: "/seed/DSC08685.jpg", alt: "Vol. 02 — Iten", width: 2500, height: 1875 },
+  },
+  {
+    title: "Events",
+    blurb: "Talks, hikes and gatherings. Come for the talks, stay for the adventure.",
+    href: "/events",
+    links: [
+      { href: "/events#upcoming", label: "Upcoming" },
+      { href: "/events#past", label: "Previous" },
+    ],
+    image: { src: "/seed/IMG_0959.jpg", alt: "Slow hike in Usedom", width: 2500, height: 1667 },
+  },
+  {
+    title: "Database",
+    blurb: "Grassroots projects and initiatives around the world.",
+    href: "/database",
+    links: [
+      { href: "/database", label: "Explore" },
+      { href: "/join", label: "Join the database" },
+    ],
+    image: { src: "/seed/oumou-x-roots.jpg", alt: "Community hike with Sport is for Everyone", width: 2267, height: 3400 },
+  },
+] as const;
+
+// Placeholder-short copy until the client rewrite lands.
 export const workServices = [
   {
     title: "Activations & Gatherings",
-    paragraphs: ["Sport/walks, hikes, and collective formats exploring embodiment and community."],
+    text: "Sport walks, hikes and collective formats exploring embodiment and community.",
+    project: "Oumou × Roots",
+    image: { src: "/seed/oumou-x-roots.jpg", alt: "Oumou x Roots community hike", width: 2267, height: 3400 },
   },
   {
-    title: "Talk & Panel",
-    paragraphs: [
-      "Talks & Lectures — Keynotes and talks exploring sport, identity, culture and social dynamics.",
-      "Panel Moderation — Research-driven moderation for conversations, panels and public programs.",
-    ],
+    title: "Talks & Panels",
+    text: "Keynotes, lectures and research-driven moderation on sport, identity and culture.",
+    project: "Slow Hike Usedom",
+    image: { src: "/seed/IMG_0959.jpg", alt: "Slow hike in Usedom", width: 2500, height: 1667 },
   },
   {
     title: "Storytelling & Concepts",
-    paragraphs: [
-      "Conversations and interviews with athletes, coaches, artists and researchers, told with depth and intention and new Story-led concepts for brands and creative projects.",
-    ],
+    text: "Interviews and story-led concepts for brands, institutions and creative projects.",
+    project: "Never Too Late",
+    image: { src: "/seed/IMG_0405.jpg", alt: "Admire Muzopambwa in Never Too Late", width: 1165, height: 1458 },
   },
 ] as const;
+
+export const workIntro =
+  "Each collaboration is shaped through dialogue and grounded in SIFE’s framework. Talks, activations and story-led concepts for institutions, brands and public programs.";
+
+export const howWeWork = [
+  {
+    title: "Approach",
+    text: "Each collaboration is shaped through dialogue and grounded in SIFE's framework.",
+  },
+  {
+    title: "Who it's for",
+    text: "Cultural institutions, brands and creative studios, festivals and public programs, research and academic spaces.",
+  },
+  {
+    title: "Context",
+    text: "Each project responds to specific contexts, communities and questions.",
+  },
+  {
+    title: "Framework",
+    text: "Embodiment, inclusion and relationality: movement, who gets to participate, and connection.",
+  },
+] as const;
+
+export const aboutCopy = {
+  statement:
+    "Sport Is For Everyone is a transdisciplinary platform exploring the cultural, social and structural conditions that shape who sport is truly for.",
+  intro:
+    "A curatorial project and global cultural platform exploring sport as a social, cultural, and political space. Through interviews, artistic research, and collaborative initiatives, the platform documents how movement, bodies, and collective practices reveal broader social dynamics.",
+  founder: {
+    label: "Founder & curator",
+    name: "Oumou Aidara",
+    image: { src: "/seed/oumou-x-roots.jpg", alt: "Oumou Aidara", width: 2267, height: 3400 },
+    paragraphs: [
+      "Senegalese artist, writer, and triathlete based between Berlin and Dakar. As a Black athlete navigating multiple identities across continents, Oumou experienced firsthand the barriers and exclusions that shape many sporting spaces. What began as a personal response evolved into a collective vision: transforming frustration into action.",
+      "From local run crews in Nairobi to cycling collectives in Berlin, grassroots initiatives are building alternative sporting cultures grounded in solidarity, accessibility, and collective care. Sport Is For Everyone exists to connect, support, and amplify these efforts.",
+    ],
+  },
+  stats: [
+    { value: "37%", text: "of women in Europe take part in sport weekly, against 45% of men" },
+    { value: "85%", text: "of adolescent girls globally do not meet recommended activity levels (UNESCO)" },
+  ],
+} as const;
+
+export function numbered(index: number): string {
+  return String(index + 1).padStart(2, "0");
+}
 
 export const supportCopy = {
   heading: "This platform is independent. Your support keeps it free, accessible, and ours.",
