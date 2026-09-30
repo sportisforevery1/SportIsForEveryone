@@ -29,7 +29,7 @@ export default async function PublicLayout({
 
   return (
     <html lang={locale} className={`${archivo.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-sife-black font-sans text-sife-white antialiased">
+      <body className="flex min-h-full flex-col bg-sife-bg font-sans text-sife-white antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <a href="#main" className="skip-link">
             {t("skip")}

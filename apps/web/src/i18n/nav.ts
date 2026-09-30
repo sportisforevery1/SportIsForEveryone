@@ -4,6 +4,7 @@ const keys: Record<string, string> = {
   "/stories": "stories",
   "/where-she-stands": "whereSheStands",
   "/education": "education",
+  "/academy": "academy",
   "/events": "events",
   "/about": "about",
   "/work-with-us": "workWithUs",

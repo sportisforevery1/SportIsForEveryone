@@ -28,28 +28,28 @@ export function EditorialList({
     <section
       className={
         cream
-          ? "bg-sife-cream px-5 py-20 text-sife-ink md:px-12 md:py-28"
-          : "px-5 py-20 md:px-12 md:py-28"
+          ? "bg-sife-cream px-5 py-20 text-sife-ink md:px-12"
+          : "px-5 py-20 md:px-12"
       }
     >
       <Reveal>
         {label ? <CategoryLabel tone={cream ? "navy" : "lime"}>{label}</CategoryLabel> : null}
         {title ? (
           <h2
-            className={`mt-3 text-3xl font-semibold uppercase tracking-tight md:text-5xl ${
+            className={`mt-3 text-3xl font-semibold uppercase tracking-[-0.03em] md:text-4xl ${
               cream ? "text-sife-black" : "text-sife-white"
             }`}
           >
             {title}
           </h2>
         ) : null}
-        <ul className={`divide-y ${title ? "mt-12" : "mt-0"} ${cream ? "divide-sife-black/10" : "divide-sife-white/10"}`}>
+        <ul className={`divide-y ${title ? "mt-9" : "mt-0"} ${cream ? "divide-sife-black/10" : "divide-sife-white/10"}`}>
           {items.map((item) => (
-            <li key={item.id} className="grid items-center gap-6 py-8 md:grid-cols-[1fr_minmax(12rem,18rem)]">
+            <li key={item.id} className="grid items-center gap-6 py-7 md:grid-cols-[1fr_minmax(12rem,18rem)] md:gap-8">
               <div>
                 <CategoryLabel tone={cream ? "navy" : "lime"}>{item.category}</CategoryLabel>
                 <h3
-                  className={`mt-3 max-w-2xl text-2xl font-semibold uppercase leading-tight tracking-tight md:text-3xl ${
+                  className={`mt-2.5 max-w-[40rem] text-xl font-semibold uppercase leading-[1.1] tracking-[-0.03em] md:text-2xl ${
                     cream ? "text-sife-black" : "text-sife-white"
                   }`}
                 >
@@ -66,15 +66,15 @@ export function EditorialList({
                 ) : null}
                 {item.excerpt ? (
                   <p
-                    className={`mt-3 max-w-xl text-base leading-relaxed ${
+                    className={`mt-2.5 max-w-[35rem] text-[0.95rem] leading-relaxed ${
                       cream ? "text-sife-ink/80" : "text-sife-white/75"
                     }`}
                   >
                     {truncate(item.excerpt, 180)}
                   </p>
                 ) : null}
-                <p className="mt-5">
-                  <HoverUnderline href={item.href} className={cream ? "text-sife-navy" : "text-sife-lime"}>
+                <p className="mt-4">
+                  <HoverUnderline href={item.href} className={`text-xs ${cream ? "text-sife-navy" : "text-sife-lime"}`}>
                     {cta}
                   </HoverUnderline>
                 </p>

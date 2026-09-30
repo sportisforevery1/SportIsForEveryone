@@ -21,7 +21,7 @@ export default async function ImpressumPage() {
   return (
     <>
       <PageHero label={t("legal")} heading={page.title} />
-      <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-24">
+      <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-20">
         <Reveal>
           <RichText data={page.body} className="max-w-3xl" />
         </Reveal>
