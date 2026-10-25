@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { EditorialList } from "@/components/editorial/EditorialList";
 import { PageHero } from "@/components/editorial/PageHero";
 import { SeriesCards } from "@/components/editorial/SeriesCards";
+import { StoryArchive } from "@/components/editorial/StoryArchive";
 import { getStoriesIndex } from "@/lib/read";
 import { cmsPageMetadata } from "@/lib/seo";
 
@@ -21,7 +21,12 @@ export default async function StoriesPage() {
 
   return (
     <>
-      <PageHero label={tChrome("read")} heading={stories.heading} subheading={stories.subheading} />
+      <PageHero
+        compact
+        label={tChrome("read")}
+        heading={stories.heading}
+        subheading={stories.subheading}
+      />
       <SeriesCards
         items={stories.series}
         label="Series"
@@ -29,7 +34,13 @@ export default async function StoriesPage() {
         subheading="Dakar and Iten — two chapters from the road. Pick a volume and keep reading."
         cta="Enter volume"
       />
-      <EditorialList items={stories.more} label={tChrome("read")} title="More stories" />
+      <StoryArchive
+        items={stories.more}
+        label={tChrome("read")}
+        title="More stories"
+        subheading="Essays and field notes beyond the volumes."
+        cta="Read"
+      />
     </>
   );
 }
