@@ -17,10 +17,11 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function WhereSheStandsPage() {
-  const [page, tChrome, tNav] = await Promise.all([
+  const [page, tChrome, tNav, tHome] = await Promise.all([
     getWhereSheStandsIndex(),
     getTranslations("chrome"),
     getTranslations("nav"),
+    getTranslations("home"),
   ]);
 
   return (
@@ -29,16 +30,21 @@ export default async function WhereSheStandsPage() {
         label={tChrome("read")}
         heading={page.heading}
         subheading={page.subheading}
+        compact
       />
       {page.items.length > 0 ? (
         <EditorialList
           items={page.items}
           label={tNav("whereSheStands")}
           title="Essays & voices"
-          cta="Read essay"
+          cta={tHome("readMore")}
         />
       ) : (
-        <EmptyState label={tNav("whereSheStands")} title={page.subheading} />
+        <EmptyState
+          label={tNav("whereSheStands")}
+          title={page.heading}
+          body={page.subheading}
+        />
       )}
     </>
   );

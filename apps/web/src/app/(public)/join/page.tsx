@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { JoinForm } from "@/components/database/JoinForm";
+import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { EmptyState } from "@/components/editorial/EmptyState";
 import { PageHero } from "@/components/editorial/PageHero";
 import { RichText } from "@/components/editorial/RichText";
@@ -31,14 +32,33 @@ export default async function JoinPage({ searchParams }: JoinPageProps) {
 
   return (
     <>
-      <PageHero label={tChrome("network")} heading={page.heading} subheading={page.subheading} />
+      <PageHero
+        label={tChrome("network")}
+        heading={page.heading}
+        subheading={page.subheading}
+        compact
+      />
       {sent ? (
-        <EmptyState label={tNav("join")} title={tForms("thanksJoin")} />
+        <EmptyState
+          label={tNav("join")}
+          title={tForms("thanksJoin")}
+          body="We’ll review your submission and get in touch if we need anything else."
+        />
       ) : (
-        <section className="bg-sife-cream px-5 py-16 text-sife-ink md:px-12 md:py-20">
+        <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
           <Reveal>
-            {page.body ? <RichText data={page.body} /> : null}
-            <JoinForm tags={page.tags} />
+            <div className="mx-auto max-w-3xl">
+              <CategoryLabel tone="navy">{tNav("join")}</CategoryLabel>
+              <h2 className="sife-display mt-3 text-sife-ink">Tell us about your space</h2>
+              {page.body ? (
+                <div className="mt-5 max-w-2xl text-base leading-relaxed text-sife-ink/80">
+                  <RichText data={page.body} />
+                </div>
+              ) : null}
+              <div className="mt-8">
+                <JoinForm tags={page.tags} />
+              </div>
+            </div>
           </Reveal>
         </section>
       )}

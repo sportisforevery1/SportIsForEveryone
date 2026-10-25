@@ -35,7 +35,7 @@ function StatusPill({ label, tone = "coral" }: { label: string; tone?: "coral" |
 
 function FeaturedCourse({ course }: { course: CoursePublic }) {
   return (
-    <section className="bg-sife-cream px-4 py-14 text-sife-ink sm:px-5 sm:py-16 md:px-12 md:py-24">
+    <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
       <Reveal eager>
         <div className="mx-auto max-w-5xl">
           <div className="flex flex-wrap items-center gap-3">
@@ -48,33 +48,6 @@ function FeaturedCourse({ course }: { course: CoursePublic }) {
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-sife-ink/80">
             {course.summary}
           </p>
-
-          <dl className="mt-10 grid gap-6 border-y border-sife-ink/15 py-8 sm:grid-cols-3">
-            <div>
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sife-coral">
-                Format
-              </dt>
-              <dd className="mt-2 text-sm font-semibold uppercase tracking-[-0.02em]">
-                {course.format}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sife-coral">
-                Status
-              </dt>
-              <dd className="mt-2 text-sm font-semibold uppercase tracking-[-0.02em]">
-                {course.statusLabel}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sife-coral">
-                Hosted by
-              </dt>
-              <dd className="mt-2 text-sm font-semibold uppercase tracking-[-0.02em]">
-                {course.hostedBy}
-              </dd>
-            </div>
-          </dl>
 
           <ul className="mt-8 space-y-3">
             {course.modules.slice(0, 4).map((mod) => (
@@ -92,22 +65,17 @@ function FeaturedCourse({ course }: { course: CoursePublic }) {
             ))}
           </ul>
 
-          <div className="mt-10 flex flex-col gap-4 bg-sife-navy px-5 py-6 text-sife-white sm:flex-row sm:items-center sm:px-7">
-            <div className="min-w-0 flex-1">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sife-lime">
-                Enter the course
-              </p>
-              <p className="mt-1 text-sm leading-relaxed text-sife-white/80">
-                Open the syllabus, unlock with your access code, or inquire about the next cohort.
-              </p>
-            </div>
+          <div className="mt-10 flex flex-col gap-4 border-t border-sife-ink/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-md text-sm leading-relaxed text-sife-ink/70">
+              Open the syllabus, unlock with your access code, or inquire about the next cohort.
+            </p>
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:shrink-0">
               <Link href={`/academy/${course.slug}`} className="btn-coral text-center">
                 Open {course.title}
               </Link>
               <a
                 href={course.inquireHref}
-                className="inline-flex items-center justify-center border border-sife-lime/50 px-4 py-2 text-[0.72rem] font-bold uppercase tracking-[0.16em] text-sife-lime"
+                className="inline-flex items-center justify-center border border-sife-navy/30 px-4 py-2 text-[0.72rem] font-bold uppercase tracking-[0.16em] text-sife-navy"
               >
                 {course.ctaLabel}
               </a>
@@ -129,27 +97,36 @@ export default async function AcademyPage() {
   const featured =
     courses.find((c) => c.featured) || courses.find((c) => c.slug === "consistency-academy");
   const upcoming = courses.filter((c) => !featured || c.id !== featured.id);
+  const upcomingPrograms =
+    upcoming.length > 0
+      ? upcoming.map((program) => ({
+          id: program.id,
+          title: program.title,
+          summary: program.summary,
+          statusLabel: program.statusLabel,
+          href: `/academy/${program.slug}` as const,
+        }))
+      : academy.upcoming.map((program) => ({
+          id: program.id,
+          title: program.title,
+          summary: program.summary,
+          statusLabel: program.statusLabel,
+          href: null,
+        }));
 
   return (
     <>
       <PageHero
         label={tChrome("academy")}
         heading={academy.heading}
-        subheading={academy.subheading}
+        subheading={academy.subheading || academy.intro}
+        compact
       />
-
-      <section className="border-t border-sife-white/10 bg-sife-navy px-4 py-10 text-sife-white sm:px-5 md:px-12 md:py-12">
-        <Reveal eager>
-          <p className="mx-auto max-w-3xl text-base leading-relaxed text-sife-white/80 md:text-lg">
-            {academy.intro}
-          </p>
-        </Reveal>
-      </section>
 
       {featured ? (
         <FeaturedCourse course={featured} />
       ) : (
-        <section className="bg-sife-cream px-4 py-14 text-sife-ink sm:px-5 md:px-12">
+        <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
           <Reveal eager>
             <div className="mx-auto max-w-5xl">
               <CategoryLabel tone="navy">Featured program</CategoryLabel>
@@ -159,75 +136,60 @@ export default async function AcademyPage() {
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-sife-ink/80">
                 {academy.featured.summary}
               </p>
-              <p className="mt-8 text-sm text-sife-ink/60">
-                Publish a course in Admin → Courses to replace this placeholder.
+              <p className="mt-8">
+                <Link href="/work-with-us" className="btn-coral">
+                  Inquire about Academy
+                </Link>
               </p>
             </div>
           </Reveal>
         </section>
       )}
 
-      <section className="bg-sife-navy px-4 py-14 text-sife-white sm:px-5 md:px-12 md:py-20">
+      <section className="sife-section border-t border-sife-cream/10 bg-sife-navy px-5 text-sife-white md:px-12">
         <Reveal>
           <CategoryLabel>Next</CategoryLabel>
           <h2 className="sife-display mt-3">Future programs</h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-sife-white/75">
-            Programs we’re building after Consistency Academy — each one is a Course in the CMS
-            when ready to announce.
+            Programs we’re building after Consistency Academy — announced here when ready to join.
           </p>
 
           <ul className="mt-12 grid gap-8 md:grid-cols-2">
-            {upcoming.length > 0
-              ? upcoming.map((program) => (
-                  <li
-                    key={program.id}
-                    className="border border-sife-lime/25 px-5 py-6 sm:px-6 sm:py-8"
-                  >
-                    <StatusPill label={program.statusLabel} tone="lime" />
-                    <h3 className="mt-4 text-2xl font-semibold uppercase tracking-[-0.03em]">
-                      {program.title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-sife-white/75 sm:text-base">
-                      {program.summary}
-                    </p>
-                    <p className="mt-6">
-                      <Link
-                        href={`/academy/${program.slug}`}
-                        className="text-xs font-bold uppercase tracking-[0.16em] text-sife-coral"
-                      >
-                        View program →
-                      </Link>
-                    </p>
-                  </li>
-                ))
-              : academy.upcoming.map((program) => (
-                  <li
-                    key={program.id}
-                    className="border border-sife-lime/25 px-5 py-6 sm:px-6 sm:py-8"
-                  >
-                    <StatusPill label={program.statusLabel} tone="lime" />
-                    <h3 className="mt-4 text-2xl font-semibold uppercase tracking-[-0.03em]">
-                      {program.title}
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-sife-white/75 sm:text-base">
-                      {program.summary}
-                    </p>
-                  </li>
-                ))}
-
-            <li className="flex flex-col justify-between border border-dashed border-sife-lime/30 px-5 py-6 sm:px-6 sm:py-8">
-              <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sife-lime/70">
-                  Open slot
-                </p>
-                <h3 className="mt-4 text-2xl font-semibold uppercase tracking-[-0.03em] text-sife-white/50">
-                  Your next program
+            {upcomingPrograms.map((program) => (
+              <li
+                key={program.id}
+                className="border-t border-sife-lime/30 pt-6"
+              >
+                <StatusPill label={program.statusLabel} tone="lime" />
+                <h3 className="mt-4 text-2xl font-semibold uppercase tracking-[-0.03em]">
+                  {program.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-sife-white/55">
-                  When a new course is ready, create it in Admin → Courses — title, dates, and how
-                  to join.
+                <p className="mt-3 text-sm leading-relaxed text-sife-white/75 sm:text-base">
+                  {program.summary}
                 </p>
-              </div>
+                {program.href ? (
+                  <p className="mt-6">
+                    <Link
+                      href={program.href}
+                      className="text-xs font-bold uppercase tracking-[0.16em] text-sife-coral"
+                    >
+                      View program →
+                    </Link>
+                  </p>
+                ) : null}
+              </li>
+            ))}
+
+            <li className="border-t border-dashed border-sife-lime/30 pt-6">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sife-lime/70">
+                Partner
+              </p>
+              <h3 className="mt-4 text-2xl font-semibold uppercase tracking-[-0.03em] text-sife-white/70">
+                Build a program with us
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-sife-white/55">
+                Institutions and collectives can co-shape the next Academy format.
+              </p>
               <p className="mt-8">
                 <Link
                   href="/work-with-us"
@@ -241,7 +203,7 @@ export default async function AcademyPage() {
         </Reveal>
       </section>
 
-      <section className="bg-sife-cream px-4 py-12 text-sife-ink sm:px-5 md:px-12 md:py-16">
+      <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
         <Reveal>
           <div className="mx-auto flex max-w-5xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>

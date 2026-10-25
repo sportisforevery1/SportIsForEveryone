@@ -26,19 +26,24 @@ export default async function InterviewsPage() {
 
   return (
     <>
-      <PageHero label={tChrome("watch")} heading={interviews.heading} />
+      <PageHero
+        label={tChrome("watch")}
+        heading={interviews.heading}
+        subheading={interviews.subheading}
+        compact
+      />
       {interviews.items.length > 0 ? (
         <EditorialList
           items={interviews.items}
           label={tNav("interviews")}
-          title=""
+          title="Conversations"
           cta={tHome("readMore")}
         />
       ) : (
         <EmptyState
           label={tNav("interviews")}
-          title="Unscripted conversations"
-          body="anyone, anywhere, as long as sport is part of the story."
+          title={interviews.heading}
+          body={interviews.subheading}
         />
       )}
     </>

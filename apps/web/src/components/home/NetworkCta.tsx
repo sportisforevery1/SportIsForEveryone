@@ -9,12 +9,8 @@ export async function NetworkCta() {
   return (
     <section className="sife-section bg-sife-lime px-5 text-sife-black md:px-12">
       <Reveal>
-        <h2 className="sife-display max-w-3xl">
-          Are you part of a grassroots initiative?
-        </h2>
-        <p className="mt-4 max-w-xl text-base leading-relaxed">
-          Add your project to the global database and connect with the community
-        </p>
+        <h2 className="sife-display max-w-3xl">{t("networkHeading")}</h2>
+        <p className="mt-4 max-w-xl text-base leading-relaxed">{t("networkBody")}</p>
         <Link href="/join" className="btn-coral mt-8 inline-flex">
           {t("joinNetwork")}
         </Link>

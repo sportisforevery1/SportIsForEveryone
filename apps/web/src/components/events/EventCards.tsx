@@ -52,8 +52,8 @@ export function EventCards({
     <section
       className={
         cream
-          ? "bg-sife-cream px-4 py-14 text-sife-ink sm:px-5 sm:py-16 md:px-12"
-          : "px-4 pb-14 pt-8 sm:px-5 sm:pb-16 sm:pt-10 md:px-12"
+          ? "sife-section bg-sife-cream px-5 text-sife-ink md:px-12"
+          : "sife-section px-5 md:px-12"
       }
     >
       <Reveal eager={eager}>

@@ -17,7 +17,7 @@ export async function UpcomingStrip() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <CategoryLabel>{t("upcomingEvents")}</CategoryLabel>
-            <h2 className="sife-display mt-3">{t("upcomingEvents")}</h2>
+            <h2 className="sife-display mt-3">{t("upcomingTitle")}</h2>
           </div>
           <Link
             href="/events"
