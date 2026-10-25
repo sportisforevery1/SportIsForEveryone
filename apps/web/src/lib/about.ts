@@ -1,16 +1,13 @@
 import { getCms } from "@/lib/cms";
+import { cmsCache } from "@/lib/cms-cache";
 import { mediaSrc, type MediaRef } from "@/lib/media";
 import { getPublishedPage } from "@/lib/pages";
 import { published } from "@/lib/query";
-import { aboutCopy, howWeWork, workIntro, workServices } from "@/lib/site";
-import type { Collaboration } from "@/payload-types";
-
-export type TitledText = { title: string; text: string };
-
-export type AboutStat = { value: string; text: string };
+import type { Collaboration, Page } from "@/payload-types";
 
 export type AboutPage = {
   heading: string;
+  body: Page["body"];
   portrait: MediaRef;
   statement: string;
   lead: string;
@@ -18,21 +15,8 @@ export type AboutPage = {
     name: string;
     image: MediaRef;
     paragraphs: string[];
-    stats: AboutStat[];
+    stats: Array<{ value: string; text: string }>;
   };
-};
-
-export type WorkService = TitledText & {
-  project: string | null;
-  image: MediaRef;
-};
-
-export type WorkWithUsPage = {
-  heading: string;
-  intro: string;
-  services: WorkService[];
-  steps: TitledText[];
-  collaboration: PublicCollaboration | null;
 };
 
 export type PublicCollaboration = {
@@ -50,53 +34,44 @@ const fallbackPortrait: MediaRef = {
 
 export async function getAboutPage(): Promise<AboutPage> {
   const page = await getPublishedPage("about");
-  const founder = page?.founder;
-  const bio = paragraphs(founder?.bio);
-  const stats = (founder?.stats ?? []).map(({ value, text }) => ({ value, text }));
 
   return {
     heading: page?.hero?.heading || page?.title || "About",
+    body: page?.body ?? null,
     portrait: mediaSrc(page?.hero?.media) ?? fallbackPortrait,
-    statement: page?.statement || aboutCopy.statement,
-    lead: page?.lead || aboutCopy.intro,
+    statement:
+      page?.statement ||
+      "Sport Is For Everyone is a transdisciplinary platform exploring the cultural, social and structural conditions that shape who sport is truly for.",
+    lead:
+      page?.lead ||
+      "Through films, conversations, research, and collaborations, SIFE connects people who are making sport more inclusive.",
     founder: {
-      name: founder?.name || aboutCopy.founder.name,
-      image: mediaSrc(founder?.image) ?? aboutCopy.founder.image,
-      paragraphs: bio.length ? bio : [...aboutCopy.founder.paragraphs],
-      stats: stats.length ? stats : aboutCopy.stats.map((stat) => ({ ...stat })),
+      name: page?.founder?.name || "Oumou Aidara",
+      image: mediaSrc(page?.founder?.image) ?? fallbackPortrait,
+      paragraphs: (page?.founder?.bio ||
+        "Sport Is For Everyone was founded by Oumou Aidara, a Senegalese artist, writer, and triathlete based between Berlin and Dakar.")
+        .split(/\n\s*\n/)
+        .filter(Boolean),
+      stats: (page?.founder?.stats || [
+        { value: "37%", text: "of women participate in sport weekly in Europe" },
+        { value: "85%", text: "of adolescent girls do not meet recommended activity levels" },
+      ]).map((stat) => ({ value: stat.value, text: stat.text })),
     },
   };
 }
 
-export async function getWorkWithUsPage(): Promise<WorkWithUsPage> {
-  const [page, collaboration] = await Promise.all([
+export async function getWorkWithUsPage() {
+  const [page, collaborations] = await Promise.all([
     getPublishedPage("work-with-us"),
-    getFeaturedCollaboration(),
+    getPublishedCollaborations(),
   ]);
-
-  // Cards without an uploaded photo keep the matching fallback photo.
-  const services = (page?.services ?? []).map((service, index) => ({
-    title: service.title,
-    text: service.text,
-    project: service.project || null,
-    image: mediaSrc(service.image) ?? workServices[index % workServices.length].image,
-  }));
-  const steps = (page?.steps ?? []).map(({ title, text }) => ({ title, text }));
 
   return {
     heading: page?.hero?.heading || page?.title || "Work with us",
-    intro: page?.statement || workIntro,
-    services: services.length ? services : workServices.map((service) => ({ ...service })),
-    steps: steps.length ? steps : howWeWork.map((step) => ({ ...step })),
-    collaboration,
+    body: page?.body ?? null,
+    collaborations,
+    collaboration: collaborations[0] ?? null,
   };
-}
-
-function paragraphs(value: string | null | undefined): string[] {
-  return (value ?? "")
-    .split(/\n\s*\n/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
 }
 
 export async function getLegalPage(slug: "impressum" | "privacy") {
@@ -107,22 +82,24 @@ export async function getLegalPage(slug: "impressum" | "privacy") {
   };
 }
 
-async function getFeaturedCollaboration(): Promise<PublicCollaboration | null> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "collaborations",
-    where: { and: [published, { featured: { equals: true } }] },
-    depth: 1,
-    limit: 1,
-    sort: "-publishedAt",
-  });
-
-  const doc = result.docs[0] as Collaboration | undefined;
-  if (!doc) return null;
-
+function toPublicCollaboration(doc: Collaboration): PublicCollaboration {
   return {
     title: doc.title,
     summary: doc.summary || "",
     image: mediaSrc(doc.image),
   };
+}
+
+async function getPublishedCollaborations(): Promise<PublicCollaboration[]> {
+  return cmsCache(["collaborations-published"], async () => {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "collaborations",
+      where: published,
+      depth: 1,
+      limit: 12,
+      sort: "-publishedAt",
+    });
+    return result.docs.map((doc) => toPublicCollaboration(doc as Collaboration));
+  });
 }

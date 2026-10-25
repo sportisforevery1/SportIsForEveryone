@@ -1,7 +1,7 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
-import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import type { MediaRef } from "@/lib/media";
 
 type PortraitHeroProps = {
@@ -13,19 +13,21 @@ export async function PortraitHero({ heading, image }: PortraitHeroProps) {
   const t = await getTranslations("chrome");
 
   return (
-    <section className="relative min-h-[70svh] overflow-hidden bg-sife-black md:min-h-[37.5rem]">
-      <ParallaxMedia
-        src={image.src}
-        alt={image.alt}
-        width={image.width}
-        height={image.height}
-        className="absolute inset-0 h-full w-full"
-        priority
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-sife-bg via-sife-bg/50 to-sife-bg/15" />
-      <div className="relative z-10 flex min-h-[70svh] flex-col justify-end px-5 pb-16 pt-32 md:min-h-[37.5rem] md:px-12">
+    <section className="relative bg-sife-black">
+      <div className="flex max-h-[92svh] justify-center overflow-hidden">
+        <Image
+          src={image.src}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          priority
+          sizes="100vw"
+          className="h-auto max-h-[92svh] w-auto max-w-full object-contain"
+        />
+      </div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-sife-black via-sife-black/55 to-transparent px-5 pb-12 pt-28 md:px-12 md:pb-16">
         <CategoryLabel>{t("about")}</CategoryLabel>
-        <h1 className="mt-3.5 max-w-[56.25rem] text-4xl font-semibold uppercase leading-[0.94] tracking-[-0.03em] md:text-[3.5rem]">
+        <h1 className="mt-4 max-w-4xl text-4xl font-semibold uppercase leading-[0.92] tracking-tight md:text-7xl">
           {heading}
         </h1>
       </div>

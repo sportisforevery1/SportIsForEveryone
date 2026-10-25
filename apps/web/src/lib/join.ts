@@ -5,7 +5,6 @@ import { getLocale } from "next-intl/server";
 
 import { slugify } from "@/fields/slug";
 import { getCms } from "@/lib/cms";
-import { contact } from "@/lib/site";
 import { withLocale } from "@/i18n/path";
 
 export type JoinState = { error: "errorJoinRequired" | "errorEmail" } | null;
@@ -87,19 +86,7 @@ export async function joinDatabase(_prev: JoinState, formData: FormData): Promis
     },
   });
 
-  try {
-    await payload.sendEmail({
-      to: contact.email,
-      subject: `Database request: ${projectName}`,
-      html: `<p>${escapeHtml(name)} (${escapeHtml(email)}) asked to add <strong>${escapeHtml(projectName)}</strong>.</p>
-<p>${escapeHtml(location)}</p>
-<p>${escapeHtml(message)}</p>
-<p>Status: pending. Review it in /admin.</p>`,
-    });
-  } catch {
-    console.info(`Join request pending: ${projectName} <${email}>`);
-  }
-
+  console.info(`Join request pending: ${projectName} <${email}>`);
   redirect(`${withLocale("/join", await getLocale())}?sent=1`);
 }
 
@@ -116,12 +103,4 @@ function parseUrls(links: string): string[] {
     .split(/[\s,]+/)
     .map((item) => item.trim())
     .filter((item) => /^https?:\/\//i.test(item));
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
 }

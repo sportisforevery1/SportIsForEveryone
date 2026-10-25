@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { defaultLocale, isLocale, type Locale } from "@/i18n/config";
+import { type Locale } from "@/i18n/config";
 import { localeFromPath, stripLocale } from "@/i18n/path";
 
 function skipped(pathname: string): boolean {
@@ -22,20 +22,15 @@ export function middleware(request: NextRequest) {
   const headers = new Headers(request.headers);
   headers.set("x-locale", locale);
 
+  // Path decides locale (/ vs /de). Do not Set-Cookie here — that forces
+  // cache MISS on every HTML response and makes staging feel slow.
   if (locale === "de") {
     const url = request.nextUrl.clone();
     url.pathname = stripLocale(pathname);
-    const response = NextResponse.rewrite(url, { request: { headers } });
-    response.cookies.set("NEXT_LOCALE", locale, { path: "/", maxAge: 60 * 60 * 24 * 365 });
-    return response;
+    return NextResponse.rewrite(url, { request: { headers } });
   }
 
-  const response = NextResponse.next({ request: { headers } });
-  const cookie = request.cookies.get("NEXT_LOCALE")?.value;
-  if (!isLocale(cookie) || cookie === defaultLocale) {
-    response.cookies.set("NEXT_LOCALE", defaultLocale, { path: "/", maxAge: 60 * 60 * 24 * 365 });
-  }
-  return response;
+  return NextResponse.next({ request: { headers } });
 }
 
 export const config = {

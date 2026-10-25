@@ -11,6 +11,8 @@ type EditorialListProps = {
   title?: string;
   cta?: string;
   tone?: "cream" | "dark";
+  /** Use on index pages where the list is near the first fold. */
+  eager?: boolean;
 };
 
 export function EditorialList({
@@ -19,6 +21,7 @@ export function EditorialList({
   title = "The latest stories",
   cta = "Read more",
   tone = "cream",
+  eager = false,
 }: EditorialListProps) {
   if (items.length === 0) return null;
 
@@ -28,28 +31,26 @@ export function EditorialList({
     <section
       className={
         cream
-          ? "bg-sife-cream px-5 py-20 text-sife-ink md:px-12"
-          : "px-5 py-20 md:px-12"
+          ? "sife-section bg-sife-cream px-4 text-sife-ink sm:px-5 md:px-12"
+          : "sife-section px-4 sm:px-5 md:px-12"
       }
     >
-      <Reveal>
+      <Reveal eager={eager}>
         {label ? <CategoryLabel tone={cream ? "navy" : "lime"}>{label}</CategoryLabel> : null}
         {title ? (
           <h2
-            className={`mt-3 text-3xl font-semibold uppercase tracking-[-0.03em] md:text-4xl ${
-              cream ? "text-sife-black" : "text-sife-white"
-            }`}
+            className={`sife-display mt-3 ${cream ? "text-sife-black" : "text-sife-white"}`}
           >
             {title}
           </h2>
         ) : null}
-        <ul className={`divide-y ${title ? "mt-9" : "mt-0"} ${cream ? "divide-sife-black/10" : "divide-sife-white/10"}`}>
+        <ul className={`divide-y ${title ? "mt-10 sm:mt-12" : "mt-0"} ${cream ? "divide-sife-black/10" : "divide-sife-white/10"}`}>
           {items.map((item) => (
-            <li key={item.id} className="grid items-center gap-6 py-7 md:grid-cols-[1fr_minmax(12rem,18rem)] md:gap-8">
-              <div>
+            <li key={item.id} className="grid items-center gap-5 py-7 sm:gap-6 sm:py-8 md:grid-cols-[1fr_minmax(12rem,18rem)]">
+              <div className="min-w-0">
                 <CategoryLabel tone={cream ? "navy" : "lime"}>{item.category}</CategoryLabel>
                 <h3
-                  className={`mt-2.5 max-w-[40rem] text-xl font-semibold uppercase leading-[1.1] tracking-[-0.03em] md:text-2xl ${
+                  className={`mt-3 max-w-2xl break-words text-xl font-semibold uppercase leading-tight tracking-tight sm:text-2xl md:text-3xl ${
                     cream ? "text-sife-black" : "text-sife-white"
                   }`}
                 >
@@ -66,15 +67,15 @@ export function EditorialList({
                 ) : null}
                 {item.excerpt ? (
                   <p
-                    className={`mt-2.5 max-w-[35rem] text-[0.95rem] leading-relaxed ${
+                    className={`mt-3 max-w-xl text-base leading-relaxed ${
                       cream ? "text-sife-ink/80" : "text-sife-white/75"
                     }`}
                   >
                     {truncate(item.excerpt, 180)}
                   </p>
                 ) : null}
-                <p className="mt-4">
-                  <HoverUnderline href={item.href} className={`text-xs ${cream ? "text-sife-navy" : "text-sife-lime"}`}>
+                <p className="mt-5">
+                  <HoverUnderline href={item.href} className={cream ? "text-sife-navy" : "text-sife-lime"}>
                     {cta}
                   </HoverUnderline>
                 </p>

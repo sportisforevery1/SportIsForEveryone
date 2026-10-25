@@ -42,7 +42,7 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
       <section className="bg-sife-cream px-5 py-20 text-sife-ink md:px-12 md:py-[5.5rem]">
         <Reveal>
           <EnglishOriginalNoteInk />
-          <h2 className="max-w-[68.75rem] text-pretty text-2xl font-semibold uppercase leading-[1.15] tracking-[-0.03em] text-sife-black md:text-[2.125rem]">
+          <h2 className="max-w-[68.75rem] text-pretty text-2xl font-semibold uppercase leading-[1.15] tracking-[-0.03em] text-sife-ink md:text-[2.125rem]">
             {page.statement}
           </h2>
           <p className="mt-7 max-w-[45rem] text-base leading-[1.65] text-sife-ink/85">{page.lead}</p>
@@ -94,7 +94,7 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
           ) : (
             <div className="grid gap-10 md:grid-cols-2 md:gap-16">
               <div>
-                <h2 className="text-3xl font-semibold uppercase leading-[1.05] tracking-[-0.03em] text-sife-black md:text-4xl">
+                <h2 className="text-3xl font-semibold uppercase leading-[1.05] tracking-[-0.03em] text-sife-ink md:text-4xl">
                   {t("contactTitle")}
                 </h2>
                 <p className="mt-4 max-w-[27.5rem] text-[0.95rem] leading-relaxed text-sife-ink/80">

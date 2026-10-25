@@ -1,30 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { CartButton } from "@/components/shop/CartButton";
 import { Link } from "@/i18n/navigation";
 import { navMessageKey } from "@/i18n/nav";
-import { stripLocale } from "@/i18n/path";
 import { nav } from "@/lib/site";
-
-type NavItem = { href: string; label: string };
-
-function isActive(pathname: string, hrefs: readonly string[]): boolean {
-  return hrefs.some((href) => pathname === href || pathname.startsWith(`${href}/`));
-}
 
 function Dropdown({
   label,
   items,
-  active,
 }: {
   label: string;
-  items: readonly NavItem[];
-  active: boolean;
+  items: readonly { href: string; label: string }[];
 }) {
   const t = useTranslations("nav");
 
@@ -32,16 +23,16 @@ function Dropdown({
     <div className="group relative">
       <button
         type="button"
-        className={`nav-link inline-flex items-center gap-1 ${active ? "is-active" : ""}`.trim()}
+        className="nav-link inline-flex items-center gap-1"
         aria-haspopup="true"
       >
         {label}
-        <span aria-hidden className="text-[0.6rem] opacity-80">
+        <span aria-hidden className="text-[0.65rem]">
           ▾
         </span>
       </button>
-      <div className="invisible absolute left-0 top-full z-40 min-w-56 translate-y-1 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-        <ul className="border border-sife-lime/20 bg-sife-bg-deep p-3 shadow-xl">
+      <div className="invisible absolute left-0 top-full z-40 min-w-56 translate-y-1 bg-sife-black pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+        <ul className="border border-sife-lime/20 bg-sife-black p-3">
           {items.map((item) => (
             <li key={item.href}>
               <Link
@@ -58,26 +49,14 @@ function Dropdown({
   );
 }
 
-function NewBadge({ label }: { label: string }) {
-  return (
-    <span className="bg-sife-lime px-[0.3rem] py-[0.1rem] text-[0.56rem] font-bold tracking-[0.1em] text-sife-black">
-      {label}
-    </span>
-  );
-}
-
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const pathname = stripLocale(usePathname() || "/");
   const t = useTranslations("chrome");
   const tNav = useTranslations("nav");
 
-  const activeClass = (hrefs: readonly string[]) => (isActive(pathname, hrefs) ? "is-active" : "");
-  const hrefs = (items: readonly NavItem[]) => items.map((item) => item.href);
-
   return (
-    <header className="sticky top-0 z-50 border-b border-sife-lime/15 bg-sife-bg/95 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 md:px-12">
+    <header className="sticky top-0 z-50 border-b border-sife-lime/15 bg-sife-black/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 md:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-3">
           <Image
             src="/brand/EmblemLime.png"
@@ -85,28 +64,31 @@ export function SiteHeader() {
             width={48}
             height={46}
             priority
-            className="h-10 w-auto md:h-11"
+            className="h-10 w-auto md:h-12"
           />
-          <span className="hidden max-w-28 text-[0.625rem] font-semibold uppercase leading-tight tracking-[0.14em] text-sife-lime sm:block">
+          <span className="hidden max-w-28 text-[0.65rem] font-semibold uppercase leading-tight tracking-[0.14em] text-sife-lime sm:block">
             Sport is for Everyone
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-[1.875rem] lg:flex" aria-label="Primary">
-          <Dropdown label={t("watch")} items={nav.watch.items} active={isActive(pathname, hrefs(nav.watch.items))} />
-          <Dropdown label={t("read")} items={nav.read.items} active={isActive(pathname, hrefs(nav.read.items))} />
-          <Link href={nav.academy.href} className={`nav-link inline-flex items-center gap-2 ${activeClass([nav.academy.href])}`.trim()}>
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          <Dropdown label={t("watch")} items={nav.watch.items} />
+          <Dropdown label={t("read")} items={nav.read.items} />
+          <Link href={nav.academy.href} className="nav-link">
             {t("academy")}
-            <NewBadge label={t("new")} />
           </Link>
-          <Link href={nav.events.href} className={`nav-link ${activeClass([nav.events.href])}`.trim()}>
+          <Link href={nav.events.href} className="nav-link">
             {t("events")}
           </Link>
-          <Dropdown label={t("about")} items={nav.about.items} active={isActive(pathname, hrefs(nav.about.items))} />
+          <Link href={nav.shop.href} className="nav-link">
+            {tNav("shop")}
+          </Link>
+          <Dropdown label={t("about")} items={nav.about.items} />
         </nav>
 
-        <div className="hidden items-center gap-[1.125rem] lg:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <LanguageSwitcher />
+          <CartButton />
           <Link href={nav.database.href} className="btn-coral">
             {tNav("database")}
           </Link>
@@ -131,7 +113,7 @@ export function SiteHeader() {
       {open ? (
         <div
           id="mobile-menu"
-          className="border-t border-sife-lime/15 bg-sife-bg px-5 py-6 lg:hidden"
+          className="border-t border-sife-lime/15 bg-sife-black px-5 py-6 lg:hidden"
         >
           <div className="flex flex-col gap-5 text-sm uppercase tracking-[0.14em] text-sife-white">
             <LanguageSwitcher />
@@ -147,12 +129,14 @@ export function SiteHeader() {
                 {tNav(navMessageKey(item.href))}
               </Link>
             ))}
-            <Link href={nav.academy.href} className="inline-flex items-center gap-2" onClick={() => setOpen(false)}>
+            <Link href={nav.academy.href} onClick={() => setOpen(false)}>
               {t("academy")}
-              <NewBadge label={t("new")} />
             </Link>
             <Link href={nav.events.href} onClick={() => setOpen(false)}>
               {t("events")}
+            </Link>
+            <Link href={nav.shop.href} onClick={() => setOpen(false)}>
+              {tNav("shop")}
             </Link>
             <p className="text-sife-lime">{t("about")}</p>
             {nav.about.items.map((item) => (
@@ -163,6 +147,9 @@ export function SiteHeader() {
             <Link href={nav.database.href} className="btn-coral w-fit" onClick={() => setOpen(false)}>
               {tNav("database")}
             </Link>
+            <div className="pt-2">
+              <CartButton />
+            </div>
           </div>
         </div>
       ) : null}

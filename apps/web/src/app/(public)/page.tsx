@@ -5,11 +5,14 @@ import { EditorialList } from "@/components/editorial/EditorialList";
 import { CinematicHero } from "@/components/home/CinematicHero";
 import { DirectoryIndex } from "@/components/home/DirectoryIndex";
 import { FeaturedFilm } from "@/components/home/FeaturedFilm";
+import { InstagramStrip } from "@/components/home/InstagramStrip";
+import { ManifestoBand } from "@/components/home/ManifestoBand";
 import { NetworkCta } from "@/components/home/NetworkCta";
-import { PreviousEvents } from "@/components/home/PreviousEvents";
-import { Marquee } from "@/components/motion/Marquee";
+import { SurfaceRoot } from "@/components/home/SurfaceRoot";
+import { UpcomingStrip } from "@/components/home/UpcomingStrip";
 import { getHomeData } from "@/lib/home";
 import { cmsPageMetadata } from "@/lib/seo";
+import { parseHomeSurface } from "@/lib/surfaces";
 
 export const revalidate = 60;
 
@@ -21,26 +24,34 @@ export function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function HomePage() {
-  const [home, t] = await Promise.all([getHomeData(), getTranslations("home")]);
+type HomePageProps = {
+  searchParams: Promise<{ surface?: string }>;
+};
+
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const [{ surface: surfaceParam }, home, t] = await Promise.all([
+    searchParams,
+    getHomeData(),
+    getTranslations("home"),
+  ]);
+  const surface = parseHomeSurface(surfaceParam);
 
   return (
     <>
+      <SurfaceRoot surface={surface} />
       <CinematicHero manifesto={home.heroManifesto} image={home.heroImage} />
-      <Marquee
-        text={home.manifesto}
-        className="bg-sife-lime py-3.5 text-[0.8rem] font-semibold uppercase tracking-[0.18em] text-sife-black"
-      />
+      <ManifestoBand text={home.manifesto} />
       <DirectoryIndex />
+      <InstagramStrip />
+      {home.featuredFilm ? <FeaturedFilm film={home.featuredFilm} /> : null}
       <EditorialList
         items={home.latest}
         label={t("latestLabel")}
         title={t("latestTitle")}
         cta={t("readMore")}
       />
-      {home.featuredFilm ? <FeaturedFilm film={home.featuredFilm} /> : null}
+      <UpcomingStrip />
       <NetworkCta />
-      <PreviousEvents events={home.events} />
     </>
   );
 }

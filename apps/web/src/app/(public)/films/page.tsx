@@ -27,7 +27,7 @@ export default async function FilmsPage() {
     <>
       <PageHero label={tChrome("watch")} heading={films.heading} subheading={films.subheading} />
       {films.featured ? <FeaturedPlayer film={films.featured} /> : null}
-      <FilmGrid films={films.more} label={tChrome("watch")} title={tWatch("moreFilms")} />
+      <FilmGrid films={films.more} label={tWatch("moreFilms")} />
     </>
   );
 }

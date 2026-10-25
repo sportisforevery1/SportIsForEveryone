@@ -1,4 +1,5 @@
 import { getCms } from "@/lib/cms";
+import { cmsCache } from "@/lib/cms-cache";
 import { mediaSrc, type MediaRef } from "@/lib/media";
 import { getPublishedPage } from "@/lib/pages";
 import { published } from "@/lib/query";
@@ -32,44 +33,48 @@ const eventsHero = {
 };
 
 export async function getEventsIndex(): Promise<EventsIndex> {
-  const payload = await getCms();
-  const [page, upcoming, past] = await Promise.all([
-    getPublishedPage("events"),
-    payload.find({
-      collection: "events",
-      where: { and: [published, { timing: { equals: "upcoming" } }] },
-      depth: 1,
-      limit: 24,
-      sort: "startDate",
-    }),
-    payload.find({
-      collection: "events",
-      where: { and: [published, { timing: { equals: "past" } }] },
-      depth: 1,
-      limit: 24,
-      sort: "-startDate",
-    }),
-  ]);
+  return cmsCache(["events-index"], async () => {
+    const payload = await getCms();
+    const [page, upcoming, past] = await Promise.all([
+      getPublishedPage("events"),
+      payload.find({
+        collection: "events",
+        where: { and: [published, { timing: { equals: "upcoming" } }] },
+        depth: 1,
+        limit: 24,
+        sort: "startDate",
+      }),
+      payload.find({
+        collection: "events",
+        where: { and: [published, { timing: { equals: "past" } }] },
+        depth: 1,
+        limit: 24,
+        sort: "-startDate",
+      }),
+    ]);
 
-  return {
-    heading: page?.hero?.heading || eventsHero.heading,
-    subheading: page?.hero?.subheading || eventsHero.subheading,
-    upcoming: upcoming.docs.map(toPublicEvent),
-    past: past.docs.map(toPublicEvent),
-  };
+    return {
+      heading: page?.hero?.heading || eventsHero.heading,
+      subheading: page?.hero?.subheading || eventsHero.subheading,
+      upcoming: upcoming.docs.map(toPublicEvent),
+      past: past.docs.map(toPublicEvent),
+    };
+  });
 }
 
 export async function getEventBySlug(slug: string): Promise<PublicEvent | null> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "events",
-    where: { and: [published, { slug: { equals: slug } }] },
-    depth: 1,
-    limit: 1,
-  });
+  return cmsCache(["event", slug], async () => {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "events",
+      where: { and: [published, { slug: { equals: slug } }] },
+      depth: 1,
+      limit: 1,
+    });
 
-  const event = result.docs[0];
-  return event ? toPublicEvent(event) : null;
+    const event = result.docs[0];
+    return event ? toPublicEvent(event) : null;
+  });
 }
 
 export async function getEventSlugs(): Promise<string[]> {
@@ -90,16 +95,18 @@ export async function getEventSlugs(): Promise<string[]> {
 }
 
 export async function getRelatedEvents(slug: string, limit = 2): Promise<PublicEvent[]> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "events",
-    where: { and: [published, { slug: { not_equals: slug } }] },
-    depth: 1,
-    limit,
-    sort: "-startDate",
-  });
+  return cmsCache(["events-related", slug, String(limit)], async () => {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "events",
+      where: { and: [published, { slug: { not_equals: slug } }] },
+      depth: 1,
+      limit,
+      sort: "-startDate",
+    });
 
-  return result.docs.map(toPublicEvent);
+    return result.docs.map(toPublicEvent);
+  });
 }
 
 export function formatEventDate(start: string, end?: string | null): string {

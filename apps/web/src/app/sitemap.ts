@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { listPublicCourses } from "@/lib/courses";
 import { absoluteUrl } from "@/lib/seo";
 
 const paths = [
@@ -15,23 +16,34 @@ const paths = [
   "/about",
   "/work-with-us",
   "/donate",
+  "/shop",
   "/impressum",
   "/privacy",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return paths.flatMap((path) => {
-    const en = absoluteUrl(path);
-    const de = absoluteUrl(path === "/" ? "/de" : `/de${path}`);
-    return [
-      {
-        url: en,
-        alternates: { languages: { en, de, "x-default": en } },
-      },
-      {
-        url: de,
-        alternates: { languages: { en, de, "x-default": en } },
-      },
-    ];
-  });
+function entriesFor(path: string): MetadataRoute.Sitemap {
+  const en = absoluteUrl(path);
+  const de = absoluteUrl(path === "/" ? "/de" : `/de${path}`);
+  return [
+    {
+      url: en,
+      alternates: { languages: { en, de, "x-default": en } },
+    },
+    {
+      url: de,
+      alternates: { languages: { en, de, "x-default": en } },
+    },
+  ];
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const courses = await listPublicCourses().catch(() => []);
+  const coursePaths = courses.flatMap((course) => [
+    `/academy/${course.slug}`,
+    ...course.modules
+      .filter((m) => m.unlockMode === "always")
+      .map((m) => `/academy/${course.slug}/${m.slug}`),
+  ]);
+
+  return [...paths, ...coursePaths].flatMap(entriesFor);
 }

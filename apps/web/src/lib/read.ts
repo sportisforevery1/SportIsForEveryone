@@ -1,4 +1,5 @@
 import { getCms } from "@/lib/cms";
+import { cmsCache } from "@/lib/cms-cache";
 import type { EditorialItem } from "@/lib/editorial";
 import { mediaSrc, type MediaRef } from "@/lib/media";
 import { getPublishedPage } from "@/lib/pages";
@@ -43,12 +44,12 @@ const storiesHero = {
 
 const whereSheStandsHero = {
   heading: "Where She Stands",
-  subheading: "Stories by Women, for Women",
+  subheading: "Stories by women, for women — risk, joy, and visibility in sport.",
 };
 
 const educationHero = {
-  heading: "Educational Materials",
-  subheading: "We're building something worth reading. Coming soon.",
+  heading: "Academy",
+  subheading: "Consistency Academy and future programs — course + info.",
 };
 
 const seriesOrder: Record<NonNullable<Story["series"]>, number> = {
@@ -57,34 +58,36 @@ const seriesOrder: Record<NonNullable<Story["series"]>, number> = {
 };
 
 export async function getStoriesIndex(): Promise<StoriesIndex> {
-  const payload = await getCms();
-  const [page, stories] = await Promise.all([
-    getPublishedPage("stories"),
-    payload.find({
-      collection: "stories",
-      where: { and: [published, { category: { equals: "borders" } }] },
-      depth: 1,
-      limit: 24,
-      sort: "-publishedAt",
-    }),
-  ]);
+  return cmsCache(["stories-index"], async () => {
+    const payload = await getCms();
+    const [page, stories] = await Promise.all([
+      getPublishedPage("stories"),
+      payload.find({
+        collection: "stories",
+        where: { and: [published, { category: { equals: "borders" } }] },
+        depth: 1,
+        limit: 24,
+        sort: "-publishedAt",
+      }),
+    ]);
 
-  const volumes = stories.docs.filter(
-    (story) => story.series === "dakar" || story.series === "iten",
-  );
-  const series = [...volumes]
-    .sort((a, b) => (seriesOrder[a.series as "dakar" | "iten"] ?? 9) - (seriesOrder[b.series as "dakar" | "iten"] ?? 9))
-    .map(toStoryItem);
-  const more = stories.docs
-    .filter((story) => story.series !== "dakar" && story.series !== "iten")
-    .map(toStoryItem);
+    const volumes = stories.docs.filter(
+      (story) => story.series === "dakar" || story.series === "iten",
+    );
+    const series = [...volumes]
+      .sort((a, b) => (seriesOrder[a.series as "dakar" | "iten"] ?? 9) - (seriesOrder[b.series as "dakar" | "iten"] ?? 9))
+      .map(toStoryItem);
+    const more = stories.docs
+      .filter((story) => story.series !== "dakar" && story.series !== "iten")
+      .map(toStoryItem);
 
-  return {
-    heading: page?.hero?.heading || storiesHero.heading,
-    subheading: page?.hero?.subheading || storiesHero.subheading,
-    series,
-    more,
-  };
+    return {
+      heading: page?.hero?.heading || storiesHero.heading,
+      subheading: page?.hero?.subheading || storiesHero.subheading,
+      series,
+      more,
+    };
+  });
 }
 
 export async function getWhereSheStandsIndex(): Promise<ReadIndex> {
@@ -92,20 +95,22 @@ export async function getWhereSheStandsIndex(): Promise<ReadIndex> {
 }
 
 export async function getEducationIndex(): Promise<ReadIndex> {
-  return getCategoryIndex("education", "education", educationHero);
+  return getCategoryIndex("academy", "education", educationHero);
 }
 
 export async function getStoryBySlug(slug: string): Promise<ReadStory | null> {
-  const payload = await getCms();
-  const result = await payload.find({
-    collection: "stories",
-    where: { and: [published, { slug: { equals: slug } }] },
-    depth: 1,
-    limit: 1,
-  });
+  return cmsCache(["story", slug], async () => {
+    const payload = await getCms();
+    const result = await payload.find({
+      collection: "stories",
+      where: { and: [published, { slug: { equals: slug } }] },
+      depth: 1,
+      limit: 1,
+    });
 
-  const story = result.docs[0];
-  return story ? toReadStory(story) : null;
+    const story = result.docs[0];
+    return story ? toReadStory(story) : null;
+  });
 }
 
 export async function getStorySlugs(): Promise<string[]> {
@@ -130,23 +135,25 @@ async function getCategoryIndex(
   category: Story["category"],
   fallback: { heading: string; subheading: string },
 ): Promise<ReadIndex> {
-  const payload = await getCms();
-  const [page, stories] = await Promise.all([
-    getPublishedPage(pageSlug),
-    payload.find({
-      collection: "stories",
-      where: { and: [published, { category: { equals: category } }] },
-      depth: 1,
-      limit: 24,
-      sort: "-publishedAt",
-    }),
-  ]);
+  return cmsCache(["category-index", pageSlug, String(category)], async () => {
+    const payload = await getCms();
+    const [page, stories] = await Promise.all([
+      getPublishedPage(pageSlug),
+      payload.find({
+        collection: "stories",
+        where: { and: [published, { category: { equals: category } }] },
+        depth: 1,
+        limit: 24,
+        sort: "-publishedAt",
+      }),
+    ]);
 
-  return {
-    heading: page?.hero?.heading || fallback.heading,
-    subheading: page?.hero?.subheading || fallback.subheading,
-    items: stories.docs.map(toStoryItem),
-  };
+    return {
+      heading: page?.hero?.heading || fallback.heading,
+      subheading: page?.hero?.subheading || fallback.subheading,
+      items: stories.docs.map(toStoryItem),
+    };
+  });
 }
 
 export function storyCategoryLabel(category: Story["category"]): string {

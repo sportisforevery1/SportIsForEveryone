@@ -13,9 +13,19 @@ type ParallaxMediaProps = {
   height: number;
   className?: string;
   priority?: boolean;
+  /** CSS object-position — portraits need a high focus so faces aren't cropped out on desktop. */
+  objectPosition?: string;
 };
 
-export function ParallaxMedia({ src, alt, width, height, className, priority }: ParallaxMediaProps) {
+export function ParallaxMedia({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  priority,
+  objectPosition = "50% 50%",
+}: ParallaxMediaProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -28,9 +38,9 @@ export function ParallaxMedia({ src, alt, width, height, className, priority }: 
     const ctx = gsap.context(() => {
       gsap.fromTo(
         image,
-        { yPercent: -8 },
+        { yPercent: -6 },
         {
-          yPercent: 8,
+          yPercent: 6,
           ease: "none",
           scrollTrigger: {
             trigger: frame,
@@ -55,7 +65,8 @@ export function ParallaxMedia({ src, alt, width, height, className, priority }: 
         height={height}
         priority={priority}
         sizes="100vw"
-        className="h-full w-full scale-110 object-cover"
+        style={{ objectPosition }}
+        className="h-full w-full scale-105 object-cover"
       />
     </div>
   );
