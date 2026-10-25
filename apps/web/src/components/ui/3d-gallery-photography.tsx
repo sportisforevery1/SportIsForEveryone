@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { Suspense, useRef, useMemo, useCallback, useState, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -267,52 +267,116 @@ function GalleryScene({
     }));
   }, [depthRange, spatialPositions, totalImages, visibleCount]);
 
-  const handleWheel = useCallback(
-    (event: WheelEvent) => {
-      event.preventDefault();
-      const next = scrollVelocityRef.current + event.deltaY * 0.01 * speed;
+  const { gl } = useThree();
+  const touchY = useRef<number | null>(null);
+
+  const bumpVelocity = useCallback(
+    (delta: number) => {
+      const next = scrollVelocityRef.current + delta;
       scrollVelocityRef.current = next;
       setScrollVelocity(next);
       setAutoPlay(false);
       autoPlayRef.current = false;
       lastInteraction.current = Date.now();
     },
-    [speed],
+    [],
+  );
+
+  const handleWheel = useCallback(
+    (event: WheelEvent) => {
+      event.preventDefault();
+      bumpVelocity(event.deltaY * 0.01 * speed);
+    },
+    [bumpVelocity, speed],
   );
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
-        const next = scrollVelocityRef.current - 2 * speed;
-        scrollVelocityRef.current = next;
-        setScrollVelocity(next);
-        setAutoPlay(false);
-        autoPlayRef.current = false;
-        lastInteraction.current = Date.now();
+        bumpVelocity(-2 * speed);
       } else if (event.key === "ArrowDown" || event.key === "ArrowRight") {
-        const next = scrollVelocityRef.current + 2 * speed;
-        scrollVelocityRef.current = next;
-        setScrollVelocity(next);
-        setAutoPlay(false);
-        autoPlayRef.current = false;
-        lastInteraction.current = Date.now();
+        bumpVelocity(2 * speed);
       }
     },
-    [speed],
+    [bumpVelocity, speed],
   );
 
   useEffect(() => {
-    const canvas = document.querySelector("canvas");
-    if (canvas) {
-      canvas.addEventListener("wheel", handleWheel, { passive: false });
-      document.addEventListener("keydown", handleKeyDown);
+    const canvas = gl.domElement;
 
-      return () => {
-        canvas.removeEventListener("wheel", handleWheel);
-        document.removeEventListener("keydown", handleKeyDown);
-      };
-    }
-  }, [handleWheel, handleKeyDown]);
+    const onTouchStart = (event: TouchEvent) => {
+      if (event.touches.length !== 1) return;
+      touchY.current = event.touches[0].clientY;
+      setAutoPlay(false);
+      autoPlayRef.current = false;
+      lastInteraction.current = Date.now();
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (touchY.current == null || event.touches.length !== 1) return;
+      const y = event.touches[0].clientY;
+      const delta = touchY.current - y;
+      touchY.current = y;
+      if (Math.abs(delta) < 0.5) return;
+      event.preventDefault();
+      bumpVelocity(delta * 0.04 * speed);
+    };
+
+    const onTouchEnd = () => {
+      touchY.current = null;
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      touchY.current = event.clientY;
+      canvas.setPointerCapture(event.pointerId);
+      setAutoPlay(false);
+      autoPlayRef.current = false;
+      lastInteraction.current = Date.now();
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      if (touchY.current == null || (event.buttons & 1) === 0) return;
+      const delta = touchY.current - event.clientY;
+      touchY.current = event.clientY;
+      bumpVelocity(delta * 0.04 * speed);
+    };
+
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      touchY.current = null;
+      try {
+        canvas.releasePointerCapture(event.pointerId);
+      } catch {
+        // ignore
+      }
+    };
+
+    canvas.addEventListener("wheel", handleWheel, { passive: false });
+    canvas.addEventListener("touchstart", onTouchStart, { passive: true });
+    canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+    canvas.addEventListener("touchend", onTouchEnd);
+    canvas.addEventListener("touchcancel", onTouchEnd);
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointercancel", onPointerUp);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      canvas.removeEventListener("wheel", handleWheel);
+      canvas.removeEventListener("touchstart", onTouchStart);
+      canvas.removeEventListener("touchmove", onTouchMove);
+      canvas.removeEventListener("touchend", onTouchEnd);
+      canvas.removeEventListener("touchcancel", onTouchEnd);
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("pointercancel", onPointerUp);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [bumpVelocity, gl, handleKeyDown, handleWheel, speed]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -537,10 +601,11 @@ export default function InfiniteGallery({
   }
 
   return (
-    <div className={className} style={style}>
+    <div className={`${className} touch-none`.trim()} style={style}>
       <Canvas
         camera={{ position: [0, 0, 0], fov: 55 }}
         gl={{ antialias: true, alpha: true }}
+        style={{ touchAction: "none" }}
       >
         <Suspense fallback={null}>
           <GalleryScene

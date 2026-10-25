@@ -10,6 +10,8 @@ import { prefersReducedMotion } from "@/lib/motion/reducedMotion";
 export function SmoothScroll() {
   useEffect(() => {
     if (prefersReducedMotion()) return;
+    // Native scroll on phones — Lenis steals touch and makes section/gallery motion feel dead.
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     const { gsap, ScrollTrigger } = registerScroll();
     const lenis = new Lenis({ autoRaf: false });
