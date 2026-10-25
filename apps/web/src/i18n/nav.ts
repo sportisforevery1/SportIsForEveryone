@@ -6,6 +6,7 @@ const keys: Record<string, string> = {
   "/education": "education",
   "/academy": "academy",
   "/events": "events",
+  "/shop": "shop",
   "/about": "about",
   "/work-with-us": "workWithUs",
   "/donate": "donate",

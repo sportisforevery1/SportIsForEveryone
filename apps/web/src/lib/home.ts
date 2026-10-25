@@ -1,4 +1,5 @@
 import { getCms } from "@/lib/cms";
+import { cmsCache } from "@/lib/cms-cache";
 import type { EditorialItem } from "@/lib/editorial";
 import { mediaSrc, type MediaRef } from "@/lib/media";
 import { published } from "@/lib/query";
@@ -31,6 +32,7 @@ export type HomeData = {
   heroImage: MediaRef;
   featuredFilm: HomeFilm | null;
   latest: EditorialItem[];
+  upcomingEvents: HomeEvent[];
   events: HomeEvent[];
 };
 
@@ -42,9 +44,13 @@ const fallbackHero: MediaRef = {
 };
 
 export async function getHomeData(): Promise<HomeData> {
+  return cmsCache(["home-data"], loadHomeData, 60);
+}
+
+async function loadHomeData(): Promise<HomeData> {
   const payload = await getCms();
 
-  const [site, homePages, featuredFilms, films, stories, interviews, events] = await Promise.all([
+  const [site, homePages, featuredFilms, films, stories, interviews, upcomingEvents, events] = await Promise.all([
     payload.findGlobal({ slug: "site", depth: 1 }),
     payload.find({
       collection: "pages",
@@ -82,6 +88,13 @@ export async function getHomeData(): Promise<HomeData> {
     }),
     payload.find({
       collection: "events",
+      where: { and: [published, { timing: { equals: "upcoming" } }] },
+      depth: 1,
+      limit: 3,
+      sort: "startDate",
+    }),
+    payload.find({
+      collection: "events",
       where: { and: [published, { timing: { equals: "past" } }] },
       depth: 1,
       limit: 4,
@@ -100,6 +113,7 @@ export async function getHomeData(): Promise<HomeData> {
     heroImage,
     featuredFilm: featuredDoc ? toFilm(featuredDoc) : null,
     latest: collectLatest(films.docs, stories.docs, interviews.docs),
+    upcomingEvents: upcomingEvents.docs.map(toEvent),
     events: events.docs.map(toEvent),
   };
 }

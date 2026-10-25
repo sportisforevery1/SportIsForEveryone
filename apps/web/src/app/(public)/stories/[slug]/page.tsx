@@ -33,13 +33,21 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
   if (!story) notFound();
 
+  const isAcademy = story.category === "education";
+  const meta =
+    isAcademy
+      ? "Education"
+      : story.seriesLabel && story.seriesLabel !== story.title
+        ? story.seriesLabel
+        : undefined;
+
   return (
     <EditorialArticle
       backHref={story.backHref}
       backLabel={story.backLabel}
-      category={story.categoryLabel}
+      category={isAcademy ? "Academy" : story.categoryLabel}
       title={story.title}
-      meta={story.seriesLabel && story.seriesLabel !== story.title ? story.seriesLabel : undefined}
+      meta={meta}
       image={story.image}
       body={story.body}
       excerpt={story.excerpt}

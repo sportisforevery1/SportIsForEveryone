@@ -22,7 +22,13 @@ export default async function StoriesPage() {
   return (
     <>
       <PageHero label={tChrome("read")} heading={stories.heading} subheading={stories.subheading} />
-      <SeriesCards items={stories.series} />
+      <SeriesCards
+        items={stories.series}
+        label="Series"
+        title="Field volumes"
+        subheading="Dakar and Iten — two chapters from the road. Pick a volume and keep reading."
+        cta="Enter volume"
+      />
       <EditorialList items={stories.more} label={tChrome("read")} title="More stories" />
     </>
   );

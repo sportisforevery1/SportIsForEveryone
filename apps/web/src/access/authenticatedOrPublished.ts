@@ -1,7 +1,7 @@
 import type { Access, Where } from "payload";
 
-export const authenticatedOrPublished: Access = ({ req: { user } }) => {
-  if (user) return true;
+export const authenticatedOrPublished: Access = ({ req }) => {
+  if (req?.user) return true;
 
   return {
     _status: {
@@ -10,8 +10,8 @@ export const authenticatedOrPublished: Access = ({ req: { user } }) => {
   } satisfies Where;
 };
 
-export const authenticatedOrApprovedProject: Access = ({ req: { user } }) => {
-  if (user) return true;
+export const authenticatedOrApprovedProject: Access = ({ req }) => {
+  if (req?.user) return true;
 
   return {
     status: {
@@ -19,3 +19,5 @@ export const authenticatedOrApprovedProject: Access = ({ req: { user } }) => {
     },
   } satisfies Where;
 };
+
+export const authenticatedOrPublishedStatus: Access = authenticatedOrApprovedProject;

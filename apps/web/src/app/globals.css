@@ -5,14 +5,19 @@
   --sife-cream: #fafaed;
   --sife-coral: #ce4846;
   --sife-navy: #3a4798;
-  --sife-black: #0a0a0a;
+  /* Chosen theme (feedback round 1): Bolting Blue chrome. True black via ?surface=black */
+  --sife-black: #3a4798;
+  --sife-true-black: #0a0a0a;
   --sife-white: #ffffff;
   --sife-ink: #111111;
-
-  /* Page theme. Bolting Blue per the round-one feedback; swap to
-     --sife-black / #161616 to return to the black theme. */
-  --sife-bg: var(--sife-navy);
-  --sife-bg-deep: #2f3a80;
+  --sife-site-header: 3.75rem;
+  --sife-course-header: 3.35rem;
+  /* Feedback pass: slightly calmer display + denser sections */
+  --sife-section-y: clamp(3.5rem, 6vw, 5.5rem);
+  --sife-section-y-lg: clamp(4.5rem, 7vw, 6.5rem);
+  --sife-display: clamp(1.85rem, 3.4vw, 2.75rem);
+  --sife-display-lg: clamp(2.25rem, 4.2vw, 3.35rem);
+  --sife-hero-display: clamp(2.35rem, 6vw, 5.25rem);
 }
 
 @theme inline {
@@ -21,10 +26,9 @@
   --color-sife-coral: var(--sife-coral);
   --color-sife-navy: var(--sife-navy);
   --color-sife-black: var(--sife-black);
+  --color-sife-true-black: var(--sife-true-black);
   --color-sife-white: var(--sife-white);
   --color-sife-ink: var(--sife-ink);
-  --color-sife-bg: var(--sife-bg);
-  --color-sife-bg-deep: var(--sife-bg-deep);
   --font-sans: var(--font-archivo);
 }
 
@@ -33,7 +37,7 @@ html {
 }
 
 body {
-  background: var(--sife-bg);
+  background: var(--sife-black);
   color: var(--sife-white);
   font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -66,8 +70,7 @@ button:focus-visible {
 }
 
 .nav-link:hover::after,
-.nav-link:focus-visible::after,
-.nav-link.is-active::after {
+.nav-link:focus-visible::after {
   width: 100%;
 }
 
@@ -88,25 +91,6 @@ button:focus-visible {
 .btn-coral:hover {
   background: var(--sife-lime);
   color: var(--sife-black);
-}
-
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid currentColor;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 0.7rem 1.15rem;
-  transition: background 200ms ease, color 200ms ease, border-color 200ms ease;
-}
-
-.btn-outline:hover {
-  background: var(--sife-black);
-  border-color: var(--sife-black);
-  color: var(--sife-lime);
 }
 
 .skip-link {
@@ -130,6 +114,23 @@ button:focus-visible {
 .sife-reveal {
   opacity: 0;
   transform: translate3d(0, 36px, 0);
+}
+
+.sife-reveal.sife-reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* If motion JS never runs, still show content after a beat */
+@keyframes sife-reveal-fallback {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.sife-reveal:not(.sife-reveal-visible) {
+  animation: sife-reveal-fallback 0.4s ease 1.5s forwards;
 }
 
 .sife-hover-underline {
@@ -175,6 +176,34 @@ html.sife-cursor-on * {
   cursor: none;
 }
 
+/* Academy lesson: page scroll; video sticks; notes + footer follow */
+.sife-course-shell--split {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .sife-course-shell--split {
+    align-items: stretch;
+    grid-template-columns:
+      minmax(0, var(--sife-split-left, 58fr))
+      8px
+      minmax(0, var(--sife-split-right, 42fr));
+  }
+
+  .sife-course-stage {
+    background: var(--sife-cream);
+  }
+
+  .sife-course-stage-sticky {
+    position: sticky;
+    top: calc(var(--sife-site-header) + var(--sife-course-header));
+  }
+
+  .sife-course-divider {
+    min-height: 100%;
+  }
+}
+
 .sife-embed {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -182,7 +211,8 @@ html.sife-cursor-on * {
   background: #000;
 }
 
-.sife-embed iframe {
+.sife-embed iframe,
+.sife-embed video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -249,12 +279,23 @@ html.sife-cursor-on * {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sife-reveal {
+  .sife-reveal,
+  .sife-reveal:not(.sife-reveal-visible) {
     opacity: 1;
     transform: none;
+    animation: none;
   }
 
   .sife-marquee-track {
+    animation: none;
+  }
+
+  .sife-ig-ribbon {
+    overflow-x: auto;
+    mask-image: none;
+  }
+
+  .sife-ig-track {
     animation: none;
   }
 
@@ -349,4 +390,108 @@ html.sife-cursor-on * {
   left: -9999px;
   height: 0;
   overflow: hidden;
+}
+
+.sife-accordion {
+  border-top: 1px solid color-mix(in srgb, var(--sife-black) 18%, transparent);
+  padding: 1.15rem 0;
+}
+
+.sife-accordion:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--sife-black) 18%, transparent);
+}
+
+.sife-accordion summary {
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  list-style: none;
+}
+
+.sife-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.sife-accordion summary::after {
+  content: "+";
+  float: right;
+  font-weight: 400;
+}
+
+.sife-accordion[open] summary::after {
+  content: "–";
+}
+
+.sife-ig-ribbon {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+
+.sife-ig-track {
+  display: flex;
+  width: max-content;
+  padding: 0.5rem 0 1.25rem;
+  will-change: transform;
+  animation: sife-ig-marquee var(--ig-duration, 90s) linear infinite;
+}
+
+.sife-ig-set {
+  display: flex;
+  gap: 0.85rem;
+  padding-right: 0.85rem;
+}
+
+.sife-ig-ribbon:hover .sife-ig-track {
+  animation-play-state: paused;
+}
+
+.sife-ig-frame {
+  width: min(58vw, 14.5rem);
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+@keyframes sife-ig-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Feedback pass — section rhythm */
+.sife-section {
+  padding-top: var(--sife-section-y);
+  padding-bottom: var(--sife-section-y);
+}
+
+@media (min-width: 768px) {
+  .sife-section {
+    padding-top: var(--sife-section-y-lg);
+    padding-bottom: var(--sife-section-y-lg);
+  }
+}
+
+.sife-display {
+  font-size: var(--sife-display);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .sife-display {
+    font-size: var(--sife-display-lg);
+  }
+}
+
+/* A/B: cinematic black preview (?surface=black). Default is Bolting Blue. */
+html[data-sife-surface="black"] {
+  --sife-black: #0a0a0a;
+  --color-sife-black: #0a0a0a;
 }

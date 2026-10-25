@@ -5,12 +5,16 @@ import { authenticated } from "../access/authenticated";
 
 export const Submissions: CollectionConfig = {
   slug: "submissions",
+  labels: {
+    singular: "Contact message",
+    plural: "Contact messages",
+  },
   admin: {
     group: "Inbox",
     useAsTitle: "name",
     defaultColumns: ["type", "name", "email", "status", "createdAt"],
     description:
-      "Contact, work-with-us, and join-the-database form entries. Public can create; only editors can read.",
+      "Messages from About → Contact us, Work with us, and Join the database. They also appear on the dashboard.",
   },
   access: {
     create: anyone,

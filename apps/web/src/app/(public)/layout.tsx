@@ -5,8 +5,10 @@ import { Archivo } from "next/font/google";
 import { Suspense } from "react";
 
 import { MotionRoot } from "@/components/motion/MotionRoot";
+import { CartDrawer } from "@/components/shop/CartDrawer";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { CartProvider } from "@/lib/shop-cart";
 import { defaultMetadata } from "@/lib/seo";
 import "../globals.css";
 
@@ -28,21 +30,31 @@ export default async function PublicLayout({
   const t = await getTranslations("chrome");
 
   return (
-    <html lang={locale} className={`${archivo.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-sife-bg font-sans text-sife-white antialiased">
+    <html lang={locale} className={`${archivo.variable} h-full`} suppressHydrationWarning>
+      <head>
+        {/* Required for YouTube embeds (avoids Error 153 when Referer is stripped). */}
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+      </head>
+      <body
+        className="flex min-h-full flex-col bg-sife-black font-sans text-sife-white antialiased"
+        suppressHydrationWarning
+      >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <a href="#main" className="skip-link">
-            {t("skip")}
-          </a>
-          <MotionRoot>
-            <Suspense>
-              <SiteHeader />
-            </Suspense>
-            <main id="main" className="flex flex-1 flex-col">
-              {children}
-            </main>
-            <SiteFooter />
-          </MotionRoot>
+          <CartProvider>
+            <a href="#main" className="skip-link">
+              {t("skip")}
+            </a>
+            <MotionRoot>
+              <Suspense>
+                <SiteHeader />
+              </Suspense>
+              <main id="main" className="flex w-full min-w-0 flex-1 flex-col overflow-x-clip">
+                {children}
+              </main>
+              <SiteFooter />
+              <CartDrawer />
+            </MotionRoot>
+          </CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

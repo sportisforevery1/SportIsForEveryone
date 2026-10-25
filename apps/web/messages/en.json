@@ -8,14 +8,13 @@
     "de": "DE",
     "watch": "Watch",
     "read": "Read",
+    "academy": "Academy",
     "events": "Events",
     "about": "About",
     "network": "Network",
     "legal": "Legal",
     "support": "Support",
-    "scroll": "Scroll",
-    "academy": "Academy",
-    "new": "New"
+    "scroll": "Scroll"
   },
   "nav": {
     "films": "Films",
@@ -23,13 +22,14 @@
     "stories": "Stories across borders",
     "whereSheStands": "Where She Stands",
     "education": "Education",
+    "academy": "Academy",
     "events": "Events",
     "about": "About",
     "workWithUs": "Work with Us",
     "donate": "Support",
     "join": "Join the Database",
     "database": "Database",
-    "academy": "Academy"
+    "shop": "Shop"
   },
   "footer": {
     "explore": "Explore",
@@ -44,14 +44,23 @@
     "latestLabel": "Watch / Read",
     "latestTitle": "The latest stories",
     "readMore": "Read more",
-    "featuredFilm": "Featured film",
+    "featuredFilm": "Featured short film",
     "watch": "Watch",
     "previousEvents": "Previous events",
+    "upcomingEvents": "Upcoming events",
+    "findUpcomingEvents": "Find upcoming events",
+    "upcomingEmpty": "No upcoming gatherings published yet — check back soon, or browse past events below.",
+    "allEvents": "All events",
+    "portalWatch": "WATCH",
+    "portalRead": "READ",
+    "portalDatabase": "DATABASE",
     "joinNetwork": "Join the network",
+    "instagramLabel": "Instagram",
+    "instagramTitle": "On Instagram",
+    "instagramFollow": "Follow @sportisforevery1",
+    "instagramThemeCompare": "Theme",
     "findWayLabel": "Find your way",
-    "findWayTitle": "What are you looking for?",
-    "findEvents": "Find upcoming events",
-    "watchFilm": "Watch the film"
+    "findWayTitle": "What are you looking for?"
   },
   "forms": {
     "name": "Name",
@@ -106,17 +115,44 @@
   "note": {
     "englishOriginal": "This text is currently available in English."
   },
-  "about": {
-    "founderLabel": "Founder & curator",
-    "frameworkLabel": "Our framework",
-    "frameworkTitle": "We operate through three interconnected dimensions",
-    "contactTitle": "Contact us"
-  },
-  "work": {
-    "pastProject": "Past project",
-    "howWeWork": "How we work",
-    "previousCollaboration": "Previous collaboration",
-    "interested": "Interested in working together?",
-    "interestedBody": "Fill out some info and we will be in touch shortly. We can’t wait to hear from you!"
+  "shop": {
+    "label": "Shop",
+    "heading": "Editions",
+    "subheading": "Running Fist merch in numbered drops. Independent, small-batch, shipped from Berlin.",
+    "marquee": "SIFE editions · The Running Fist · Support independent sport media",
+    "aboutLabel": "Why merch",
+    "aboutTitle": "Objects that keep the platform moving",
+    "aboutBody": "These editions put the Running Fist on things you can wear and carry. Sales help film interviews, keep the database open, and hold the project independent.",
+    "taxNote": "Sport is for Everyone is an independent project. Shop purchases support production and are not tax-deductible donations.",
+    "add": "Add",
+    "soldOut": "Sold out",
+    "size": "Size",
+    "bag": "Bag",
+    "closeBag": "Close",
+    "empty": "Your bag is empty.",
+    "emptyCatalog": "No editions are live yet.",
+    "remove": "Remove",
+    "total": "Total",
+    "checkout": "Checkout",
+    "viewBag": "View bag",
+    "continue": "Continue shopping",
+    "back": "All editions",
+    "shipNote": "Ships from Berlin. We email payment details after you place the order, then pack when it is marked paid.",
+    "checkoutIntro": "Place the order. We confirm payment by email, then ship. In admin that is Paid (bought) and Shipped.",
+    "phone": "Phone",
+    "address": "Address",
+    "city": "City",
+    "postalCode": "Postcode",
+    "country": "Country",
+    "notes": "Notes",
+    "placeOrder": "Place order",
+    "placing": "Placing",
+    "thanksTitle": "Order received",
+    "thanksBody": "We will email payment details. Once paid, we pack and ship from Berlin.",
+    "orderNumber": "Order",
+    "errorRequired": "Please add your name, email, and shipping address.",
+    "errorEmail": "Please add a valid email.",
+    "errorStock": "One of these editions just sold out. Refresh the bag and try again.",
+    "errorCart": "Your bag is empty."
   }
 }

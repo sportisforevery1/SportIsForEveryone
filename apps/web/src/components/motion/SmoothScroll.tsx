@@ -22,6 +22,7 @@ export function SmoothScroll() {
 
     gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
+    requestAnimationFrame(() => ScrollTrigger.refresh());
 
     const onChange = (event: MediaQueryListEvent) => {
       if (event.matches) {

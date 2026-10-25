@@ -25,9 +25,18 @@ export default async function WhereSheStandsPage() {
 
   return (
     <>
-      <PageHero label={tChrome("read")} heading={page.heading} />
+      <PageHero
+        label={tChrome("read")}
+        heading={page.heading}
+        subheading={page.subheading}
+      />
       {page.items.length > 0 ? (
-        <EditorialList items={page.items} label={tNav("whereSheStands")} title="" />
+        <EditorialList
+          items={page.items}
+          label={tNav("whereSheStands")}
+          title="Essays & voices"
+          cta="Read essay"
+        />
       ) : (
         <EmptyState label={tNav("whereSheStands")} title={page.subheading} />
       )}

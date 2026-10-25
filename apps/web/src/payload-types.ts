@@ -72,10 +72,15 @@ export interface Config {
     interviews: Interview;
     stories: Story;
     events: Event;
+    courses: Course;
+    'course-enrolments': CourseEnrolment;
+    'instagram-posts': InstagramPost;
     projects: Project;
     tags: Tag;
     people: Person;
     collaborations: Collaboration;
+    products: Product;
+    orders: Order;
     submissions: Submission;
     media: Media;
     users: User;
@@ -91,10 +96,15 @@ export interface Config {
     interviews: InterviewsSelect<false> | InterviewsSelect<true>;
     stories: StoriesSelect<false> | StoriesSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    courses: CoursesSelect<false> | CoursesSelect<true>;
+    'course-enrolments': CourseEnrolmentsSelect<false> | CourseEnrolmentsSelect<true>;
+    'instagram-posts': InstagramPostsSelect<false> | InstagramPostsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     people: PeopleSelect<false> | PeopleSelect<true>;
     collaborations: CollaborationsSelect<false> | CollaborationsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -178,7 +188,7 @@ export interface Page {
       }[]
     | null;
   /**
-   * About: the large statement. Work with us: the intro beside the heading.
+   * About: large statement. Work with us: intro. Academy: short intro under the hero.
    */
   statement?: string | null;
   /**
@@ -225,6 +235,72 @@ export interface Page {
     | {
         title: string;
         text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Consistency Academy (or whichever program should lead the page).
+   */
+  academyFeatured?: {
+    title: string;
+    status?: ('building' | 'waitlist' | 'open') | null;
+    /**
+     * Optional override (e.g. “Enrolment opens March”).
+     */
+    statusLabel?: string | null;
+    summary: string;
+    points?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Shown in the fact row (e.g. “8-week cohort”).
+     */
+    format?: string | null;
+    hostedBy?: string | null;
+    /**
+     * Button label (Inquire / Join waitlist / Enrol).
+     */
+    ctaLabel?: string | null;
+    /**
+     * Full course info: syllabus, dates, who it’s for, pricing — edit anytime.
+     */
+    courseBody?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
+  /**
+   * Programs in development. Add a row when a new course is ready to announce.
+   */
+  academyPrograms?:
+    | {
+        title: string;
+        status?: ('building' | 'waitlist' | 'open') | null;
+        /**
+         * Optional override (e.g. “Enrolment opens March”).
+         */
+        statusLabel?: string | null;
+        summary: string;
+        points?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -535,6 +611,197 @@ export interface Event {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Academy programs (e.g. Consistency Academy). Access codes unlock module bodies for learners — never shown on the public site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses".
+ */
+export interface Course {
+  id: number;
+  title: string;
+  /**
+   * Short pitch on Academy index and course landing.
+   */
+  summary: string;
+  /**
+   * Public program state (separate from draft/publish). Open = enrolment / unlock active.
+   */
+  programStatus: 'building' | 'waitlist' | 'open' | 'archived';
+  /**
+   * e.g. 4-week cohort
+   */
+  format?: string | null;
+  hostedBy?: string | null;
+  cover?: (number | null) | Media;
+  /**
+   * Public course overview — who it’s for, what’s included (safe to show locked).
+   */
+  infoBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  ctaLabel?: string | null;
+  /**
+   * You invent this (e.g. SIFE-CONSIST or a per-cohort phrase). Stored only in the CMS/DB — never shown on the public site. Share it by email/WhatsApp with learners. Rotate anytime; old cookies stay valid until they expire (~90 days) unless you ask learners to re-enter.
+   */
+  accessCode?: string | null;
+  /**
+   * Shown on the unlock form. If someone forgets their code, they use “Forgot code?” → mailto you; look it up here or under Course enrolments and resend.
+   */
+  accessHint?: string | null;
+  /**
+   * Ordered lessons. Unlock mode controls when the body is visible.
+   */
+  modules?:
+    | {
+        title: string;
+        /**
+         * URL segment under the course (e.g. arrive).
+         */
+        slug: string;
+        /**
+         * Always visible — one or two sentences.
+         */
+        teaser: string;
+        unlockMode: 'always' | 'with_course' | 'sequential';
+        /**
+         * Optional reading / practice time.
+         */
+        estimatedMinutes?: number | null;
+        /**
+         * Lesson player (left). Paste YouTube / Vimeo / Loom / mp4. First URL is the main player with controls. Learners can widen Video or Split from the toolbar.
+         */
+        videos?:
+          | {
+              /**
+               * Shown under the player (e.g. "Week 1 welcome").
+               */
+              label?: string | null;
+              /**
+               * Watch/share link or direct .mp4 — not a raw upload here.
+               */
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Stills / worksheets. Shown in notes; learners tap “Open wide” to view them in the main player area (same space as video).
+         */
+        images?:
+          | {
+              image: number | Media;
+              /**
+               * Optional label under the still.
+               */
+              caption?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Chapter notes (right panel). Keep scannable — headings + short lists work best beside video.
+         */
+        body?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+  };
+  slug: string;
+  /**
+   * Pin this on the home page or section landing.
+   */
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Who was invited or unlocked for a course — audit trail for Oumou / admins.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-enrolments".
+ */
+export interface CourseEnrolment {
+  id: number;
+  email: string;
+  course: number | Course;
+  /**
+   * Code issued to this person (may match the course default).
+   */
+  accessCode?: string | null;
+  status: 'invited' | 'active' | 'revoked';
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Homepage Instagram ribbon. Published posts show when there is no live token. With INSTAGRAM_ACCESS_TOKEN, the Graph API feed is used and Hidden rows (matched by External ID) are excluded. You can also add extra stills here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instagram-posts".
+ */
+export interface InstagramPost {
+  id: number;
+  /**
+   * Admin label. Defaults from the caption if you leave it blank.
+   */
+  title: string;
+  /**
+   * Instagram media ID. Used to hide a live API post or skip duplicates when syncing.
+   */
+  externalId?: string | null;
+  caption?: string | null;
+  /**
+   * Link opened from the homepage. Falls back to the profile if empty.
+   */
+  permalink?: string | null;
+  postedAt?: string | null;
+  /**
+   * Still for this post. Prefer this over a remote URL so the image stays on SIFE hosting.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Optional CDN URL from Instagram. Ignored when an image is uploaded.
+   */
+  remoteUrl?: string | null;
+  /**
+   * Higher numbers appear first. Then newest posted date.
+   */
+  sort?: number | null;
+  status: 'published' | 'hidden';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Grassroots directory entries. Join-the-database submissions arrive as pending until approved.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -612,7 +879,94 @@ export interface Collaboration {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Contact, work-with-us, and join-the-database form entries. Public can create; only editors can read.
+ * Edition merch. Stock lives on each size variant.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  /**
+   * Public edition code, e.g. SIFE ED1
+   */
+  code: string;
+  /**
+   * Object name, e.g. Tee
+   */
+  title: string;
+  category: 'apparel' | 'accessory' | 'print';
+  /**
+   * EUR
+   */
+  price: number;
+  featured?: boolean | null;
+  image: number | Media;
+  gallery?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  description?: string | null;
+  /**
+   * Each row is a sellable size. Set stock to 0 to mark sold out.
+   */
+  variants: {
+    /**
+     * XS, S, M, L, XL, or One size
+     */
+    label: string;
+    sku: string;
+    stock: number;
+    id?: string | null;
+  }[];
+  status: 'draft' | 'published' | 'archived';
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Sales. Paid = bought. Shipped = sent. Cancelling restocks inventory.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  orderNumber?: string | null;
+  paymentStatus: 'unpaid' | 'paid' | 'refunded';
+  fulfillmentStatus: 'unfulfilled' | 'shipped' | 'cancelled';
+  name: string;
+  email: string;
+  phone?: string | null;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  items: {
+    product?: (number | null) | Product;
+    code?: string | null;
+    title?: string | null;
+    size?: string | null;
+    quantity: number;
+    unitPrice: number;
+    id?: string | null;
+  }[];
+  subtotal?: number | null;
+  total?: number | null;
+  tracking?: string | null;
+  notes?: string | null;
+  paidAt?: string | null;
+  shippedAt?: string | null;
+  /**
+   * Stock already taken for this order.
+   */
+  inventoryAdjusted?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Messages from About → Contact us, Work with us, and Join the database. They also appear on the dashboard.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "submissions".
@@ -640,12 +994,18 @@ export interface Submission {
   createdAt: string;
 }
 /**
+ * Account access. Super admins can invite and remove users; editors only see themselves.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * Super admins can invite and remove other users. Editors can edit content only.
+   */
+  role: 'super-admin' | 'editor';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -710,6 +1070,18 @@ export interface PayloadLockedDocument {
         value: number | Event;
       } | null)
     | ({
+        relationTo: 'courses';
+        value: number | Course;
+      } | null)
+    | ({
+        relationTo: 'course-enrolments';
+        value: number | CourseEnrolment;
+      } | null)
+    | ({
+        relationTo: 'instagram-posts';
+        value: number | InstagramPost;
+      } | null)
+    | ({
         relationTo: 'projects';
         value: number | Project;
       } | null)
@@ -724,6 +1096,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'collaborations';
         value: number | Collaboration;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
       } | null)
     | ({
         relationTo: 'submissions';
@@ -830,6 +1210,39 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         title?: T;
         text?: T;
+        id?: T;
+      };
+  academyFeatured?:
+    | T
+    | {
+        title?: T;
+        status?: T;
+        statusLabel?: T;
+        summary?: T;
+        points?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        format?: T;
+        hostedBy?: T;
+        ctaLabel?: T;
+        courseBody?: T;
+      };
+  academyPrograms?:
+    | T
+    | {
+        title?: T;
+        status?: T;
+        statusLabel?: T;
+        summary?: T;
+        points?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         id?: T;
       };
   seo?:
@@ -963,6 +1376,90 @@ export interface EventsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses_select".
+ */
+export interface CoursesSelect<T extends boolean = true> {
+  title?: T;
+  summary?: T;
+  programStatus?: T;
+  format?: T;
+  hostedBy?: T;
+  cover?: T;
+  infoBody?: T;
+  ctaLabel?: T;
+  accessCode?: T;
+  accessHint?: T;
+  modules?:
+    | T
+    | {
+        title?: T;
+        slug?: T;
+        teaser?: T;
+        unlockMode?: T;
+        estimatedMinutes?: T;
+        videos?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        images?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              id?: T;
+            };
+        body?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  slug?: T;
+  featured?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-enrolments_select".
+ */
+export interface CourseEnrolmentsSelect<T extends boolean = true> {
+  email?: T;
+  course?: T;
+  accessCode?: T;
+  status?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "instagram-posts_select".
+ */
+export interface InstagramPostsSelect<T extends boolean = true> {
+  title?: T;
+  externalId?: T;
+  caption?: T;
+  permalink?: T;
+  postedAt?: T;
+  image?: T;
+  remoteUrl?: T;
+  sort?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects_select".
  */
 export interface ProjectsSelect<T extends boolean = true> {
@@ -1050,6 +1547,73 @@ export interface CollaborationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  code?: T;
+  title?: T;
+  category?: T;
+  price?: T;
+  featured?: T;
+  image?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  description?: T;
+  variants?:
+    | T
+    | {
+        label?: T;
+        sku?: T;
+        stock?: T;
+        id?: T;
+      };
+  status?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  paymentStatus?: T;
+  fulfillmentStatus?: T;
+  name?: T;
+  email?: T;
+  phone?: T;
+  address?: T;
+  city?: T;
+  postalCode?: T;
+  country?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        code?: T;
+        title?: T;
+        size?: T;
+        quantity?: T;
+        unitPrice?: T;
+        id?: T;
+      };
+  subtotal?: T;
+  total?: T;
+  tracking?: T;
+  notes?: T;
+  paidAt?: T;
+  shippedAt?: T;
+  inventoryAdjusted?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "submissions_select".
  */
 export interface SubmissionsSelect<T extends boolean = true> {
@@ -1091,6 +1655,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

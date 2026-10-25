@@ -1,4 +1,5 @@
 import { getCms } from "@/lib/cms";
+import { cmsCache } from "@/lib/cms-cache";
 import { parseDirectoryFilters, type DirectoryFilters, type DirectoryTag } from "@/lib/directory-query";
 import { getPublishedPage } from "@/lib/pages";
 import type { Project, Tag } from "@/payload-types";
@@ -44,39 +45,50 @@ const publishedProject = {
 export async function getDirectoryIndex(
   params: Record<string, string | string[] | undefined>,
 ): Promise<DirectoryIndex> {
-  const payload = await getCms();
   const filters = parseDirectoryFilters(params);
+  const cacheKey = [
+    "directory",
+    filters.q,
+    filters.city,
+    filters.country,
+    filters.region,
+    ...filters.tags,
+  ].join("|");
 
-  const [page, projects, tags] = await Promise.all([
-    getPublishedPage("database"),
-    payload.find({
-      collection: "projects",
-      where: publishedProject,
-      depth: 1,
-      limit: 100,
-      sort: "name",
-    }),
-    payload.find({
-      collection: "tags",
-      limit: 100,
-      sort: "name",
-    }),
-  ]);
+  return cmsCache(["directory-index", cacheKey], async () => {
+    const payload = await getCms();
 
-  const all = projects.docs.map(toDirectoryProject);
-  const filtered = all.filter((project) => matches(project, filters));
+    const [page, projects, tags] = await Promise.all([
+      getPublishedPage("database"),
+      payload.find({
+        collection: "projects",
+        where: publishedProject,
+        depth: 1,
+        limit: 100,
+        sort: "name",
+      }),
+      payload.find({
+        collection: "tags",
+        limit: 100,
+        sort: "name",
+      }),
+    ]);
 
-  return {
-    heading: page?.hero?.heading || databaseHero.heading,
-    subheading: page?.hero?.subheading || databaseHero.subheading,
-    filters,
-    projects: filtered,
-    total: all.length,
-    tags: tags.docs.map(toDirectoryTag),
-    cities: unique(all.map((project) => project.city)),
-    countries: unique(all.map((project) => project.country)),
-    regions: unique(all.map((project) => project.region)),
-  };
+    const all = projects.docs.map(toDirectoryProject);
+    const filtered = all.filter((project) => matches(project, filters));
+
+    return {
+      heading: page?.hero?.heading || databaseHero.heading,
+      subheading: page?.hero?.subheading || databaseHero.subheading,
+      filters,
+      projects: filtered,
+      total: all.length,
+      tags: tags.docs.map(toDirectoryTag),
+      cities: unique(all.map((project) => project.city)),
+      countries: unique(all.map((project) => project.country)),
+      regions: unique(all.map((project) => project.region)),
+    };
+  });
 }
 
 export async function getJoinPage() {
