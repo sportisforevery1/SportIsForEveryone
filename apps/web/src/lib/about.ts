@@ -66,8 +66,18 @@ export async function getWorkWithUsPage() {
     getPublishedCollaborations(),
   ]);
 
+  const rawHeading = page?.hero?.heading || page?.title || "Work with us";
+  const heading =
+    /^work with us$/i.test(rawHeading.trim()) || /^work with US$/i.test(rawHeading.trim())
+      ? "Work with us"
+      : rawHeading;
+
   return {
-    heading: page?.hero?.heading || page?.title || "Work with us",
+    heading,
+    subheading:
+      page?.hero?.subheading ||
+      page?.statement ||
+      "Each collaboration is shaped through dialogue and grounded in SIFE’s framework.",
     body: page?.body ?? null,
     collaborations,
     collaboration: collaborations[0] ?? null,

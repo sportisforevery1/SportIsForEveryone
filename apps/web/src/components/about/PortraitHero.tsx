@@ -1,7 +1,5 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
 
-import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import type { MediaRef } from "@/lib/media";
 
 type PortraitHeroProps = {
@@ -9,27 +7,27 @@ type PortraitHeroProps = {
   image: MediaRef;
 };
 
-export async function PortraitHero({ heading, image }: PortraitHeroProps) {
-  const t = await getTranslations("chrome");
-
+export function PortraitHero({ heading, image }: PortraitHeroProps) {
   return (
-    <section className="relative bg-sife-black">
-      <div className="flex max-h-[92svh] justify-center overflow-hidden">
-        <Image
-          src={image.src}
-          alt={image.alt}
-          width={image.width}
-          height={image.height}
-          priority
-          sizes="100vw"
-          className="h-auto max-h-[92svh] w-auto max-w-full object-contain"
-        />
-      </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-sife-black via-sife-black/55 to-transparent px-5 pb-12 pt-28 md:px-12 md:pb-16">
-        <CategoryLabel>{t("about")}</CategoryLabel>
-        <h1 className="mt-4 max-w-4xl text-4xl font-semibold uppercase leading-[0.92] tracking-tight md:text-7xl">
-          {heading}
-        </h1>
+    <section className="relative min-h-[min(88svh,52rem)] overflow-hidden bg-sife-navy text-sife-cream">
+      <Image
+        src={image.src}
+        alt={image.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-[center_22%]"
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-sife-true-black via-sife-true-black/50 to-sife-true-black/20"
+        aria-hidden
+      />
+      <div className="relative z-10 flex min-h-[min(88svh,52rem)] flex-col justify-end px-5 pb-10 pt-28 md:px-10 md:pb-14 md:pt-32">
+        <div className="mx-auto w-full max-w-6xl">
+          <h1 className="max-w-3xl font-display text-[clamp(2.75rem,9vw,5.5rem)] font-bold uppercase leading-[0.9] tracking-tight text-sife-cream">
+            {heading}
+          </h1>
+        </div>
       </div>
     </section>
   );

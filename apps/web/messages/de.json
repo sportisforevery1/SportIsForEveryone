@@ -115,6 +115,14 @@
   "note": {
     "englishOriginal": "Dieser Text liegt noch auf Englisch vor."
   },
+  "about": {
+    "founderLabel": "Gründerin",
+    "contactTitle": "Kontakt"
+  },
+  "work": {
+    "interested": "Interesse an einer Zusammenarbeit?",
+    "interestedBody": "Erzähl uns kurz vom Projekt — wir melden uns."
+  },
   "shop": {
     "label": "Shop",
     "heading": "Editions",

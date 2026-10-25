@@ -8,7 +8,7 @@ export async function SupportBand() {
   const t = await getTranslations("chrome");
 
   return (
-    <section className="bg-sife-bg-deep px-5 py-20 md:px-12">
+    <section className="border-t border-sife-cream/15 bg-sife-true-black px-5 py-16 md:px-12 md:py-20">
       <Reveal>
         <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
           <div>

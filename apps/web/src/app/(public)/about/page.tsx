@@ -39,16 +39,16 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
   return (
     <>
       <PortraitHero heading={page.heading} image={page.portrait} />
-      <section className="bg-sife-cream px-5 py-20 text-sife-ink md:px-12 md:py-[5.5rem]">
+      <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
         <Reveal>
           <EnglishOriginalNoteInk />
           <h2 className="max-w-[68.75rem] text-pretty text-2xl font-semibold uppercase leading-[1.15] tracking-[-0.03em] text-sife-ink md:text-[2.125rem]">
             {page.statement}
           </h2>
-          <p className="mt-7 max-w-[45rem] text-base leading-[1.65] text-sife-ink/85">{page.lead}</p>
+          <p className="mt-6 max-w-[45rem] text-base leading-[1.65] text-sife-ink/85">{page.lead}</p>
         </Reveal>
       </section>
-      <section className="px-5 py-20 md:px-12 md:py-[5.5rem]">
+      <section className="sife-section px-5 md:px-12">
         <Reveal>
           <div className="grid items-center gap-10 lg:grid-cols-[35rem_minmax(0,1fr)] lg:gap-16">
             <Image
@@ -75,7 +75,7 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
               <dl className="mt-9 grid grid-cols-2 gap-8 border-t border-sife-white/20 pt-6">
                 {founder.stats.map((stat) => (
                   <div key={stat.value}>
-                    <dt className="text-[2.75rem] font-semibold leading-none tracking-[-0.04em] text-sife-lime md:text-[3.25rem]">
+                    <dt className="text-[2.25rem] font-semibold leading-none tracking-[-0.04em] text-sife-lime md:text-[2.75rem]">
                       {stat.value}
                     </dt>
                     <dd className="mt-2.5 text-[0.8125rem] leading-normal text-sife-white/75">{stat.text}</dd>
@@ -87,10 +87,12 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
         </Reveal>
       </section>
       <Framework />
-      <section className="bg-sife-cream px-5 py-20 text-sife-ink md:px-12">
+      <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
         <Reveal>
           {sent ? (
-            <p className="max-w-xl text-2xl font-semibold uppercase tracking-tight text-sife-black">{tForms("thanks")}</p>
+            <p className="max-w-xl text-2xl font-semibold uppercase tracking-tight text-sife-black">
+              {tForms("thanks")}
+            </p>
           ) : (
             <div className="grid gap-10 md:grid-cols-2 md:gap-16">
               <div>

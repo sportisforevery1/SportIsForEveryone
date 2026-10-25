@@ -115,6 +115,14 @@
   "note": {
     "englishOriginal": "This text is currently available in English."
   },
+  "about": {
+    "founderLabel": "Founder",
+    "contactTitle": "Get in touch"
+  },
+  "work": {
+    "interested": "Interested in working together?",
+    "interestedBody": "Tell us a little about the project — we’ll get back to you."
+  },
   "shop": {
     "label": "Shop",
     "heading": "Editions",

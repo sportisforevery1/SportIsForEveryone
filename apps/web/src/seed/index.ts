@@ -485,7 +485,10 @@ const seed = async () => {
 
   await upsert("pages", "work-with-us", {
     title: "Work with us",
-    hero: { heading: "Work with US" },
+    hero: {
+      heading: "Work with us",
+      subheading: workIntro,
+    },
     body: workWithUsBody,
     statement: workIntro,
     services: workServices.slice(0, 3).map((service, index) => ({

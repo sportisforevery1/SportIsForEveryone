@@ -5,6 +5,7 @@ import { CollaborationPortfolio } from "@/components/about/CollaborationPortfoli
 import { WorkPoints } from "@/components/about/WorkPoints";
 import { EnglishOriginalNoteInk } from "@/components/editorial/EnglishOriginalNote";
 import { PageHero } from "@/components/editorial/PageHero";
+import { RichText } from "@/components/editorial/RichText";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { getWorkWithUsPage } from "@/lib/about";
@@ -24,16 +25,29 @@ type WorkPageProps = {
 };
 
 export default async function WorkWithUsPage({ searchParams }: WorkPageProps) {
-  const [{ sent }, page, t, tChrome] = await Promise.all([
+  const [{ sent }, page, t, tChrome, tWork] = await Promise.all([
     searchParams,
     getWorkWithUsPage(),
     getTranslations("forms"),
     getTranslations("chrome"),
+    getTranslations("work"),
   ]);
 
   return (
     <>
-      <PageHero label={tChrome("about")} heading={page.heading} />
+      <PageHero
+        label={tChrome("about")}
+        heading={page.heading}
+        subheading={page.subheading}
+        compact
+      />
+      {page.body ? (
+        <section className="border-t border-sife-cream/10 bg-sife-navy px-5 py-10 md:px-12 md:py-12">
+          <div className="mx-auto max-w-2xl">
+            <RichText data={page.body} />
+          </div>
+        </section>
+      ) : null}
       <CollaborationPortfolio items={page.collaborations} />
       <WorkPoints />
       <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
@@ -44,11 +58,11 @@ export default async function WorkWithUsPage({ searchParams }: WorkPageProps) {
               {t("thanks")}
             </p>
           ) : (
-            <div className="max-w-2xl">
-              <h2 className="sife-display text-sife-ink">Interested in working together?</h2>
-              <p className="mt-4 text-base text-sife-ink/75">
-                Tell us a little about the project — we’ll get back to you.
-              </p>
+            <div className="grid gap-10 md:grid-cols-2 md:items-start md:gap-16">
+              <div>
+                <h2 className="sife-display text-sife-ink">{tWork("interested")}</h2>
+                <p className="mt-4 max-w-md text-base text-sife-ink/75">{tWork("interestedBody")}</p>
+              </div>
               <InquiryForm type="work-with-us" next="/work-with-us" />
             </div>
           )}
