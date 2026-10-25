@@ -64,7 +64,9 @@ export function ParallaxMedia({
         width={width}
         height={height}
         priority={priority}
+        fetchPriority={priority ? "high" : undefined}
         sizes="100vw"
+        quality={priority ? 72 : 75}
         style={{ objectPosition }}
         className="h-full w-full scale-105 object-cover"
       />

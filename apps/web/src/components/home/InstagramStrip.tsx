@@ -27,7 +27,7 @@ export async function InstagramStrip() {
           </a>
         </div>
       </Reveal>
-      <InstagramThemes posts={posts} compareLabel={t("instagramThemeCompare")} />
+      <InstagramThemes posts={posts} />
     </section>
   );
 }
