@@ -29,9 +29,27 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+/** Admin saves 403 if the browser origin ≠ serverURL CSRF allowlist (zeta vs eta aliases). */
+const csrfOrigins = [
+  ...new Set(
+    [
+      siteUrl,
+      process.env.PAYLOAD_CSRF_EXTRA,
+      "http://localhost:3000",
+      "https://sport-is-for-everyone-zeta.vercel.app",
+      "https://sport-is-for-everyone-eta.vercel.app",
+      "https://sport-is-for-everyone.vercel.app",
+      "https://sport-is-for-everyone-gihozo.vercel.app",
+    ]
+      .flatMap((value) => (value ? value.split(",") : []))
+      .map((value) => value.trim().replace(/\/$/, ""))
+      .filter(Boolean),
+  ),
+];
+
 export default buildConfig({
   serverURL: siteUrl,
-  csrf: [siteUrl],
+  csrf: csrfOrigins,
   admin: {
     user: Users.slug,
     importMap: {
