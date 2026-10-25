@@ -497,7 +497,7 @@ const seed = async () => {
       project: service.project,
       image: [mediaIds.roots, mediaIds.slowHike, mediaIds.admire][index],
     })),
-    steps: howWeWork.map(({ title, text }) => ({ title, text })),
+    steps: workServices.map(({ title, text }) => ({ title, text })),
   });
 
   await upsert("pages", "impressum", {

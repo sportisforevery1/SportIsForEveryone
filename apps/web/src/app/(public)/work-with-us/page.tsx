@@ -5,7 +5,6 @@ import { CollaborationPortfolio } from "@/components/about/CollaborationPortfoli
 import { WorkPoints } from "@/components/about/WorkPoints";
 import { EnglishOriginalNoteInk } from "@/components/editorial/EnglishOriginalNote";
 import { PageHero } from "@/components/editorial/PageHero";
-import { RichText } from "@/components/editorial/RichText";
 import { InquiryForm } from "@/components/forms/InquiryForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { getWorkWithUsPage } from "@/lib/about";
@@ -25,29 +24,21 @@ type WorkPageProps = {
 };
 
 export default async function WorkWithUsPage({ searchParams }: WorkPageProps) {
-  const [{ sent }, page, t, tChrome, tWork] = await Promise.all([
+  const [{ sent }, page, t, tWork] = await Promise.all([
     searchParams,
     getWorkWithUsPage(),
     getTranslations("forms"),
-    getTranslations("chrome"),
     getTranslations("work"),
   ]);
 
   return (
     <>
       <PageHero
-        label={tChrome("about")}
+        label="Collaborate"
         heading={page.heading}
         subheading={page.subheading}
         compact
       />
-      {page.body ? (
-        <section className="border-t border-sife-cream/10 bg-sife-navy px-5 py-10 md:px-12 md:py-12">
-          <div className="mx-auto max-w-2xl">
-            <RichText data={page.body} />
-          </div>
-        </section>
-      ) : null}
       <CollaborationPortfolio items={page.collaborations} />
       <WorkPoints />
       <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">

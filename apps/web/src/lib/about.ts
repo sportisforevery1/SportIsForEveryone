@@ -60,6 +60,11 @@ export async function getAboutPage(): Promise<AboutPage> {
   };
 }
 
+export type WorkPoint = {
+  title: string;
+  text: string;
+};
+
 export async function getWorkWithUsPage() {
   const [page, collaborations] = await Promise.all([
     getPublishedPage("work-with-us"),
@@ -72,15 +77,29 @@ export async function getWorkWithUsPage() {
       ? "Work with us"
       : rawHeading;
 
+  const servicePortfolio: PublicCollaboration[] = (page?.services || [])
+    .map((service) => ({
+      title: service.project || service.title,
+      summary: service.text,
+      image: mediaSrc(service.image),
+    }))
+    .filter((item) => item.title);
+
+  const points: WorkPoint[] =
+    (page?.steps || [])
+      .map((step) => ({ title: step.title, text: step.text }))
+      .filter((step) => step.title && step.text) || [];
+
   return {
     heading,
     subheading:
       page?.hero?.subheading ||
       page?.statement ||
       "Each collaboration is shaped through dialogue and grounded in SIFE’s framework.",
-    body: page?.body ?? null,
-    collaborations,
-    collaboration: collaborations[0] ?? null,
+    /** Prefer published collaborations; fall back to page service photo cards. */
+    collaborations: collaborations.length > 0 ? collaborations : servicePortfolio,
+    points,
+    collaboration: collaborations[0] ?? servicePortfolio[0] ?? null,
   };
 }
 
