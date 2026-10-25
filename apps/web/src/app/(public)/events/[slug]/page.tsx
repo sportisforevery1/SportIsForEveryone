@@ -12,8 +12,12 @@ type EventPageProps = {
 };
 
 export async function generateStaticParams() {
-  const slugs = await getEventSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getEventSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {

@@ -80,6 +80,12 @@ export default buildConfig({
       max: 5,
       idleTimeoutMillis: process.env.VERCEL ? 10_000 : 20_000,
       connectionTimeoutMillis: process.env.VERCEL ? 15_000 : 60_000,
+      // Render Postgres terminates clients that negotiate verify-full SSL poorly.
+      ssl:
+        process.env.DATABASE_URL?.includes("render.com") ||
+        process.env.DATABASE_URL?.includes("sslmode=require")
+          ? { rejectUnauthorized: false }
+          : undefined,
     },
     // Set PAYLOAD_DATABASE_PUSH=true once against a fresh DB (local or staging).
     push: process.env.PAYLOAD_DATABASE_PUSH === "true",

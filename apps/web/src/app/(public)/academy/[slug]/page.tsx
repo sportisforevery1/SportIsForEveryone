@@ -15,8 +15,13 @@ export const revalidate = 60;
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  const courses = await listPublicCourses();
-  return courses.map((c) => ({ slug: c.slug }));
+  try {
+    const courses = await listPublicCourses();
+    return courses.map((c) => ({ slug: c.slug }));
+  } catch {
+    // Build must succeed even if Render Postgres is cold/unreachable.
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

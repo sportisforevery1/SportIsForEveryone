@@ -11,8 +11,12 @@ type StoryPageProps = {
 };
 
 export async function generateStaticParams() {
-  const slugs = await getStorySlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getStorySlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
