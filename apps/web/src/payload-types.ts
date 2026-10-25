@@ -74,6 +74,7 @@ export interface Config {
     events: Event;
     courses: Course;
     'course-enrolments': CourseEnrolment;
+    'course-progress': CourseProgress;
     'instagram-posts': InstagramPost;
     projects: Project;
     tags: Tag;
@@ -98,6 +99,7 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     'course-enrolments': CourseEnrolmentsSelect<false> | CourseEnrolmentsSelect<true>;
+    'course-progress': CourseProgressSelect<false> | CourseProgressSelect<true>;
     'instagram-posts': InstagramPostsSelect<false> | InstagramPostsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
@@ -563,7 +565,7 @@ export interface Story {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Upcoming gatherings and past hikes, screenings, and sessions.
+ * Dated gatherings — talks, hikes, runs, open sessions, camps. Optional join link for video calls.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
@@ -576,6 +578,14 @@ export interface Event {
   startDate: string;
   endDate?: string | null;
   location?: string | null;
+  /**
+   * Camps and open sessions are Events — not a separate nav item.
+   */
+  eventType?: ('talk' | 'hike' | 'run' | 'open-session' | 'camp' | 'other') | null;
+  /**
+   * Zoom / Meet / other link shared with attendees (opens in a new tab).
+   */
+  joinUrl?: string | null;
   /**
    * Shown on the events index. Independent of draft/publish.
    */
@@ -753,13 +763,67 @@ export interface Course {
 export interface CourseEnrolment {
   id: number;
   email: string;
+  /**
+   * Linked when the learner signs up or unlocks while logged in.
+   */
+  user?: (number | null) | User;
   course: number | Course;
   /**
    * Code issued to this person (may match the course default).
    */
   accessCode?: string | null;
   status: 'invited' | 'active' | 'revoked';
+  source?: ('admin' | 'code' | 'request') | null;
+  enrolledAt?: string | null;
   notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * One user table for everyone. Super admins assign roles. Public signup is always Learner. Shop checkout and database join do not require an account.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  /**
+   * Super admin: Users + full CMS. Editor: content only (no Users). Learner: public account (Academy/orders) — no /admin. Shop + database join work as guests without an account.
+   */
+  role: 'super-admin' | 'editor' | 'learner';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * Modules a learner has opened (sequential unlock source of truth).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-progress".
+ */
+export interface CourseProgress {
+  id: number;
+  user: number | User;
+  course: number | Course;
+  moduleSlug: string;
+  openedAt: string;
+  completedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -933,6 +997,10 @@ export interface Product {
  */
 export interface Order {
   id: number;
+  /**
+   * Set when the buyer was logged in at checkout.
+   */
+  user?: (number | null) | User;
   orderNumber?: string | null;
   paymentStatus: 'unpaid' | 'paid' | 'refunded';
   fulfillmentStatus: 'unfulfilled' | 'shipped' | 'cancelled';
@@ -994,38 +1062,6 @@ export interface Submission {
   createdAt: string;
 }
 /**
- * Account access. Super admins can invite and remove users; editors only see themselves.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  /**
-   * Super admins can invite and remove other users. Editors can edit content only.
-   */
-  role: 'super-admin' | 'editor';
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -1076,6 +1112,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'course-enrolments';
         value: number | CourseEnrolment;
+      } | null)
+    | ({
+        relationTo: 'course-progress';
+        value: number | CourseProgress;
       } | null)
     | ({
         relationTo: 'instagram-posts';
@@ -1358,6 +1398,8 @@ export interface EventsSelect<T extends boolean = true> {
   startDate?: T;
   endDate?: T;
   location?: T;
+  eventType?: T;
+  joinUrl?: T;
   timing?: T;
   body?: T;
   seo?:
@@ -1434,10 +1476,26 @@ export interface CoursesSelect<T extends boolean = true> {
  */
 export interface CourseEnrolmentsSelect<T extends boolean = true> {
   email?: T;
+  user?: T;
   course?: T;
   accessCode?: T;
   status?: T;
+  source?: T;
+  enrolledAt?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-progress_select".
+ */
+export interface CourseProgressSelect<T extends boolean = true> {
+  user?: T;
+  course?: T;
+  moduleSlug?: T;
+  openedAt?: T;
+  completedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1581,6 +1639,7 @@ export interface ProductsSelect<T extends boolean = true> {
  * via the `definition` "orders_select".
  */
 export interface OrdersSelect<T extends boolean = true> {
+  user?: T;
   orderNumber?: T;
   paymentStatus?: T;
   fulfillmentStatus?: T;

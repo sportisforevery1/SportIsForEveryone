@@ -8,6 +8,7 @@ import { PageHero } from "@/components/editorial/PageHero";
 import { RichText } from "@/components/editorial/RichText";
 import { Reveal } from "@/components/motion/Reveal";
 import { Link } from "@/i18n/navigation";
+import { getSessionUser } from "@/lib/auth/session";
 import { getCourseBySlug, listPublicCourses } from "@/lib/courses";
 
 export const revalidate = 60;
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CoursePage({ params }: Props) {
   const { slug } = await params;
-  const course = await getCourseBySlug(slug);
+  const [course, user] = await Promise.all([getCourseBySlug(slug), getSessionUser()]);
   if (!course) notFound();
 
   return (
@@ -98,6 +99,7 @@ export default async function CoursePage({ params }: Props) {
                 accessHint={course.accessHint}
                 forgotCodeHref={course.forgotCodeHref}
                 unlocked={course.unlocked}
+                loggedIn={Boolean(user)}
               />
             </div>
 

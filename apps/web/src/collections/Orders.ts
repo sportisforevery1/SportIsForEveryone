@@ -133,6 +133,15 @@ export const Orders: CollectionConfig = {
   },
   fields: [
     {
+      name: "user",
+      type: "relationship",
+      relationTo: "users",
+      admin: {
+        position: "sidebar",
+        description: "Set when the buyer was logged in at checkout.",
+      },
+    },
+    {
       name: "orderNumber",
       type: "text",
       unique: true,

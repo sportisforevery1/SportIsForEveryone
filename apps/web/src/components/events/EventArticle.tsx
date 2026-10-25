@@ -9,13 +9,19 @@ type EventArticleProps = {
   event: PublicEvent;
 };
 
-/**
- * Event detail — image-led gathering page.
- * Content types: status, title, when/where facts, lead, join CTA, programme body.
- */
+const TYPE_LABEL: Record<PublicEvent["eventType"], string | null> = {
+  talk: "Talk",
+  hike: "Hike",
+  run: "Run",
+  "open-session": "Open session",
+  camp: "Camp",
+  other: null,
+};
+
 export function EventArticle({ event }: EventArticleProps) {
   const upcoming = event.timing === "upcoming";
   const statusLabel = upcoming ? "Upcoming" : "Past event";
+  const typeLabel = TYPE_LABEL[event.eventType];
   const inquireHref = `mailto:${contact.email}?subject=${encodeURIComponent(`Event: ${event.title}`)}`;
 
   return (
@@ -48,6 +54,7 @@ export function EventArticle({ event }: EventArticleProps) {
           <header className={event.image ? "-mt-8 sm:-mt-12 md:-mt-16" : "pt-8"}>
             <p className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-sife-coral sm:text-[0.7rem]">
               Events · {statusLabel}
+              {typeLabel ? ` · ${typeLabel}` : ""}
             </p>
             <h1 className="mt-3 text-[clamp(1.75rem,6.5vw,3.5rem)] font-semibold uppercase leading-[0.92] tracking-[-0.04em] text-sife-ink break-words">
               {event.title}
@@ -91,15 +98,28 @@ export function EventArticle({ event }: EventArticleProps) {
             <div className="mt-8 flex flex-col gap-4 bg-sife-navy px-4 py-5 text-sife-white sm:mt-10 sm:flex-row sm:items-center sm:px-7 sm:py-6">
               <div className="min-w-0 flex-1">
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-sife-lime">
-                  Join
+                  {event.joinUrl ? "Join session" : "Join"}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-sife-white/80">
-                  Ask for access details, timing, and how to show up.
+                  {event.joinUrl
+                    ? "Open the call link when it’s time — same link we share with attendees."
+                    : "Ask for access details, timing, and how to show up."}
                 </p>
               </div>
-              <a href={inquireHref} className="btn-coral w-full text-center sm:w-auto sm:shrink-0">
-                Inquire
-              </a>
+              {event.joinUrl ? (
+                <a
+                  href={event.joinUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-coral w-full text-center sm:w-auto sm:shrink-0"
+                >
+                  Join call
+                </a>
+              ) : (
+                <a href={inquireHref} className="btn-coral w-full text-center sm:w-auto sm:shrink-0">
+                  Inquire
+                </a>
+              )}
             </div>
           ) : (
             <p className="mt-8 text-xs uppercase tracking-[0.16em] text-sife-ink/50 sm:mt-10 sm:text-sm">

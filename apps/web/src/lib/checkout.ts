@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 
+import { getSessionUser } from "@/lib/auth/session";
 import { getCms } from "@/lib/cms";
 import { withLocale } from "@/i18n/path";
 
@@ -87,10 +88,13 @@ export async function submitOrder(_prev: CheckoutState, formData: FormData): Pro
     });
   }
 
+  const user = await getSessionUser();
+
   const order = await payload.create({
     collection: "orders",
     overrideAccess: true,
     data: {
+      user: user?.id,
       name,
       email,
       phone: phone || undefined,

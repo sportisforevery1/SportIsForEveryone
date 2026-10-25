@@ -14,8 +14,33 @@ function skipped(pathname: string): boolean {
   );
 }
 
+/** Read role from Payload JWT without verifying (redirect hint only). */
+function jwtRole(token: string | undefined): string | null {
+  if (!token) return null;
+  try {
+    const part = token.split(".")[1];
+    if (!part) return null;
+    const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+    const json = JSON.parse(atob(padded)) as { role?: string };
+    return typeof json.role === "string" ? json.role : null;
+  } catch {
+    return null;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Learners never use the CMS — send them to the public account area.
+  if (pathname.startsWith("/admin")) {
+    const role = jwtRole(request.cookies.get("payload-token")?.value);
+    if (role === "learner") {
+      return NextResponse.redirect(new URL("/account", request.url));
+    }
+    return NextResponse.next();
+  }
+
   if (skipped(pathname)) return NextResponse.next();
 
   const locale: Locale = localeFromPath(pathname);

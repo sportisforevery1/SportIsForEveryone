@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { canViewModule, getCourseAccess, markModuleOpened } from "@/lib/academy/unlock";
+import { recordModuleOpened } from "@/lib/academy/progress";
+import {
+  buildAccessToken,
+  canViewModule,
+  getCourseAccess,
+  markModuleOpened,
+  resolveCourseAccess,
+  setCourseAccess,
+} from "@/lib/academy/unlock";
+import { getSessionUser } from "@/lib/auth/session";
 import { getCms } from "@/lib/cms";
 
 export const runtime = "nodejs";
@@ -19,7 +28,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "required" }, { status: 400 });
   }
 
-  const access = await getCourseAccess(slug);
+  const access = await resolveCourseAccess(slug);
   const payload = await getCms();
   const result = await payload.find({
     collection: "courses",
@@ -44,13 +53,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "locked" }, { status: 403 });
   }
 
-  // always modules can progress without a cookie; create a short-lived opener token if needed
   if (!access && modules.find((m) => m.slug === moduleSlug)?.unlockMode === "always") {
-    const { buildAccessToken, setCourseAccess } = await import("@/lib/academy/unlock");
     await setCourseAccess(buildAccessToken(doc.id, slug, [moduleSlug]));
-    return NextResponse.json({ ok: true });
+  } else if (await getCourseAccess(slug)) {
+    await markModuleOpened(slug, moduleSlug);
+  } else if (access) {
+    // Enrolment-only (no cookie yet) — seed a cookie so sequential mode keeps working offline.
+    await setCourseAccess(
+      buildAccessToken(doc.id, slug, [...access.opened, moduleSlug]),
+    );
   }
 
-  await markModuleOpened(slug, moduleSlug);
+  const user = await getSessionUser();
+  if (user) {
+    await recordModuleOpened({
+      userId: user.id,
+      courseId: doc.id,
+      moduleSlug,
+    });
+  }
+
   return NextResponse.json({ ok: true });
 }

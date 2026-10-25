@@ -94,6 +94,69 @@ export async function getCourseAccess(slug: string): Promise<CourseAccessToken |
   }
 }
 
+/**
+ * Cookie unlock and/or logged-in active enrolment + DB progress.
+ * Prefer this for public course/module rendering.
+ */
+export async function resolveCourseAccess(slug: string): Promise<CourseAccessToken | null> {
+  const cookieAccess = await getCourseAccess(slug);
+
+  try {
+    const { getSessionUser } = await import("@/lib/auth/session");
+    const user = await getSessionUser();
+    if (!user) return cookieAccess;
+
+    const { getCms } = await import("@/lib/cms");
+    const payload = await getCms();
+    const courseResult = await payload.find({
+      collection: "courses",
+      where: {
+        and: [{ slug: { equals: slug } }, { _status: { equals: "published" } }],
+      },
+      limit: 1,
+      depth: 0,
+      overrideAccess: true,
+    });
+    const course = courseResult.docs[0];
+    if (!course) return cookieAccess;
+
+    const { getActiveEnrolment } = await import("@/lib/academy/enrolment");
+    const enrolment = await getActiveEnrolment(user.id, course.id);
+
+    // Revoked learners must not keep access via an old device cookie.
+    if (!enrolment) {
+      const revoked = await payload.find({
+        collection: "course-enrolments",
+        where: {
+          and: [
+            { user: { equals: user.id } },
+            { course: { equals: course.id } },
+            { status: { equals: "revoked" } },
+          ],
+        },
+        limit: 1,
+        depth: 0,
+        overrideAccess: true,
+      });
+      if (revoked.docs[0]) return null;
+      if (!cookieAccess) return null;
+    }
+
+    const { listOpenedModuleSlugs } = await import("@/lib/academy/progress");
+    const dbOpened = await listOpenedModuleSlugs(user.id, course.id);
+    const opened = [...new Set([...(cookieAccess?.opened || []), ...dbOpened])];
+
+    return {
+      courseId: String(course.id),
+      slug,
+      exp: cookieAccess?.exp || Date.now() + TTL_MS,
+      opened,
+    };
+  } catch {
+    return cookieAccess;
+  }
+}
+
 export async function setCourseAccess(token: CourseAccessToken): Promise<void> {
   const jar = await cookies();
   jar.set(cookieName(token.slug), encode(token), {

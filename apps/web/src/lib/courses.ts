@@ -245,10 +245,12 @@ export async function getCourseBySlug(slug: string): Promise<CoursePublic | null
     });
     const found = result.docs[0] as unknown as CourseDoc | undefined;
     if (!found) return null;
-    const access = await getCourseAccess(slug);
+    const { resolveCourseAccess } = await import("@/lib/academy/unlock");
+    const access = await resolveCourseAccess(slug);
     return mapCourse(found, access);
   }
-  const access = await getCourseAccess(slug);
+  const { resolveCourseAccess } = await import("@/lib/academy/unlock");
+  const access = await resolveCourseAccess(slug);
   return mapCourse(doc, access);
 }
 

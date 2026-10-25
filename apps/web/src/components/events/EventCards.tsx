@@ -85,6 +85,9 @@ export function EventCards({
                 }`}
               >
                 Next up
+                {featured.eventType && featured.eventType !== "other"
+                  ? ` · ${featured.eventType.replace("-", " ")}`
+                  : ""}
                 {featured.dateLabel ? ` · ${featured.dateLabel}` : ""}
               </p>
               <h3

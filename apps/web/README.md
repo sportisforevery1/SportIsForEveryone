@@ -130,6 +130,26 @@ Fresh database (once):
 PAYLOAD_DATABASE_PUSH=true npm run payload -- run src/scripts/push-schema.ts
 ```
 
+### Roles (one Users table)
+
+Everyone lives under **Admin → Settings → Users** (same auth for site + CMS).
+
+| Role | Who | Access |
+|---|---|---|
+| **Super admin** | Seeded only (`ensure-super-admin`) | Full CMS + create/edit users + assign roles |
+| **Editor** | Staff (Oumou, etc.) | Content CMS — **not** Users |
+| **Learner** | Regular public accounts (`/signup`) | Site account (Academy / orders) — **no** `/admin` |
+
+**Rules**
+- Public `/signup` is always **Learner**. Nobody can register as editor/super-admin.
+- Only a **super admin** can promote someone to editor or super-admin (or demote).
+- Seed/rotate the super-admin with `ADMIN_EMAIL` + `ADMIN_PASSWORD` via `ensure-super-admin` — do not share that password in chat.
+- **Shop** guest checkout and **Join the database** submissions work without an account. Accounts are optional (progress + order history).
+
+**Admin save 403:** use the URL that matches `NEXT_PUBLIC_SITE_URL` (or a CSRF-allowlisted alias: eta / zeta). Log in again on that host after switching.
+
+Free Render Postgres sleeps / feels slow — expected on Hobby until upgraded.
+
 After the first deploy:
 
 1. Open `/admin` and create the editor user.

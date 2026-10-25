@@ -3,14 +3,23 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import { Link } from "@/i18n/navigation";
+
 type UnlockFormProps = {
   slug: string;
   accessHint: string | null;
   forgotCodeHref: string;
   unlocked: boolean;
+  loggedIn?: boolean;
 };
 
-export function UnlockForm({ slug, accessHint, forgotCodeHref, unlocked }: UnlockFormProps) {
+export function UnlockForm({
+  slug,
+  accessHint,
+  forgotCodeHref,
+  unlocked,
+  loggedIn = false,
+}: UnlockFormProps) {
   const router = useRouter();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -71,6 +80,18 @@ export function UnlockForm({ slug, accessHint, forgotCodeHref, unlocked }: Unloc
           Modules with a course code are open on this device for about 90 days. Sequential modules
           open as you work through them.
         </p>
+        {!loggedIn ? (
+          <p className="mt-4 text-sm leading-relaxed text-sife-white/80">
+            Save progress across devices —{" "}
+            <Link
+              href={`/signup?next=${encodeURIComponent(`/academy/${slug}`)}`}
+              className="font-semibold text-sife-lime underline-offset-4 hover:underline"
+            >
+              create an account
+            </Link>
+            .
+          </p>
+        ) : null}
         <button
           type="button"
           onClick={onLock}

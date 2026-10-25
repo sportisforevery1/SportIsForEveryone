@@ -8,6 +8,7 @@ import { MotionRoot } from "@/components/motion/MotionRoot";
 import { CartDrawer } from "@/components/shop/CartDrawer";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { getSessionUser } from "@/lib/auth/session";
 import { CartProvider } from "@/lib/shop-cart";
 import { defaultMetadata } from "@/lib/seo";
 import "../globals.css";
@@ -28,6 +29,7 @@ export default async function PublicLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const t = await getTranslations("chrome");
+  const user = await getSessionUser();
 
   return (
     <html lang={locale} className={`${archivo.variable} h-full`} suppressHydrationWarning>
@@ -46,7 +48,7 @@ export default async function PublicLayout({
             </a>
             <MotionRoot>
               <Suspense>
-                <SiteHeader />
+                <SiteHeader loggedIn={Boolean(user)} />
               </Suspense>
               <main id="main" className="flex w-full min-w-0 flex-1 flex-col overflow-x-clip">
                 {children}

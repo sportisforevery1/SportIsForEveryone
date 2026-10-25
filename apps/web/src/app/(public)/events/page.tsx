@@ -18,7 +18,11 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function EventsPage() {
-  const [events, t] = await Promise.all([getEventsIndex(), getTranslations("chrome")]);
+  const [events, t, tEvents] = await Promise.all([
+    getEventsIndex(),
+    getTranslations("chrome"),
+    getTranslations("events"),
+  ]);
 
   return (
     <>
@@ -26,29 +30,30 @@ export default async function EventsPage() {
         label={t("events")}
         heading={events.heading}
         subheading={events.subheading}
+        compact
       />
 
       <nav
-        aria-label="Event sections"
-        className="flex flex-wrap gap-x-6 gap-y-2 border-y border-sife-white/15 px-4 py-3.5 sm:px-5 md:px-12"
+        aria-label={tEvents("sections")}
+        className="flex flex-wrap justify-center gap-x-6 gap-y-2 border-y border-sife-cream/15 px-5 py-4 md:justify-start md:px-12"
       >
         <a
           href="#upcoming"
-          className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-sife-lime hover:text-sife-white"
+          className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-sife-lime hover:text-sife-white"
         >
-          Upcoming
+          {tEvents("upcoming")}
         </a>
         <a
           href="#past"
-          className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-sife-white/70 hover:text-sife-lime"
+          className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-sife-white/70 hover:text-sife-lime"
         >
-          Previous
+          {tEvents("previous")}
         </a>
         <Link
           href="/work-with-us"
-          className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-sife-white/70 hover:text-sife-lime"
+          className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-sife-white/70 hover:text-sife-lime"
         >
-          Host with us
+          {tEvents("host")}
         </Link>
       </nav>
 
@@ -56,21 +61,21 @@ export default async function EventsPage() {
         {events.upcoming.length > 0 ? (
           <EventCards
             events={events.upcoming}
-            label="Calendar"
-            title="What's next"
+            label={tEvents("calendar")}
+            title={tEvents("whatsNext")}
             featuredFirst
             eager
           />
         ) : (
-          <EmptyState label="Upcoming" title={events.subheading} />
+          <EmptyState label={tEvents("upcoming")} title={events.subheading} />
         )}
       </div>
 
       <div id="past" className="scroll-mt-[7.5rem]">
         <EventCards
           events={events.past}
-          label="Archive"
-          title="Previous gatherings"
+          label={tEvents("archive")}
+          title={tEvents("previousGatherings")}
           tone="cream"
         />
       </div>

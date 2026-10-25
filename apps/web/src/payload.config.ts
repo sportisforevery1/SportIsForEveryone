@@ -8,6 +8,7 @@ import sharp from "sharp";
 
 import { Collaborations } from "./collections/Collaborations";
 import { CourseEnrolments } from "./collections/CourseEnrolments";
+import { CourseProgress } from "./collections/CourseProgress";
 import { Courses } from "./collections/Courses";
 import { Events } from "./collections/Events";
 import { Films } from "./collections/Films";
@@ -75,6 +76,7 @@ export default buildConfig({
     Events,
     Courses,
     CourseEnrolments,
+    CourseProgress,
     InstagramPosts,
     Projects,
     Tags,

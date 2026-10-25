@@ -16,8 +16,8 @@ export const Events: CollectionConfig = {
   admin: {
     group: "Content",
     useAsTitle: "title",
-    defaultColumns: ["title", "startDate", "timing", "location", "updatedAt"],
-    description: "Upcoming gatherings and past hikes, screenings, and sessions.",
+    defaultColumns: ["title", "startDate", "timing", "eventType", "location", "updatedAt"],
+    description: "Dated gatherings — talks, hikes, runs, open sessions, camps. Optional join link for video calls.",
   },
   access: {
     create: authenticated,
@@ -72,6 +72,29 @@ export const Events: CollectionConfig = {
             {
               name: "location",
               type: "text",
+            },
+            {
+              name: "eventType",
+              type: "select",
+              defaultValue: "other",
+              options: [
+                { label: "Talk", value: "talk" },
+                { label: "Hike", value: "hike" },
+                { label: "Run", value: "run" },
+                { label: "Open session", value: "open-session" },
+                { label: "Camp", value: "camp" },
+                { label: "Other", value: "other" },
+              ],
+              admin: {
+                description: "Camps and open sessions are Events — not a separate nav item.",
+              },
+            },
+            {
+              name: "joinUrl",
+              type: "text",
+              admin: {
+                description: "Zoom / Meet / other link shared with attendees (opens in a new tab).",
+              },
             },
             {
               name: "timing",

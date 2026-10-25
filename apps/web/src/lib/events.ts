@@ -5,6 +5,8 @@ import { getPublishedPage } from "@/lib/pages";
 import { published } from "@/lib/query";
 import type { Event } from "@/payload-types";
 
+export type EventType = "talk" | "hike" | "run" | "open-session" | "camp" | "other";
+
 export type PublicEvent = {
   id: number;
   title: string;
@@ -14,6 +16,8 @@ export type PublicEvent = {
   location: string | null;
   dateLabel: string;
   timing: Event["timing"];
+  eventType: EventType;
+  joinUrl: string | null;
   image: MediaRef | null;
   body: Event["body"];
   seoTitle: string | null;
@@ -137,6 +141,8 @@ function toPublicEvent(event: Event): PublicEvent {
     location: event.location || null,
     dateLabel: formatEventDate(event.startDate, event.endDate),
     timing: event.timing,
+    eventType: ((event as Event & { eventType?: EventType }).eventType || "other") as EventType,
+    joinUrl: (event as Event & { joinUrl?: string | null }).joinUrl?.trim() || null,
     image: mediaSrc(event.cover),
     body: event.body,
     seoTitle: event.seo?.title || null,

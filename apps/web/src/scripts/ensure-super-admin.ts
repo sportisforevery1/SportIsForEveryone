@@ -44,6 +44,7 @@ async function upsertUser(input: {
       collection: "users",
       id: existing.docs[0].id,
       overrideAccess: true,
+      context: { allowElevatedRole: true },
       data: {
         role: input.role,
         name: input.name,
@@ -61,6 +62,7 @@ async function upsertUser(input: {
   await payload.create({
     collection: "users",
     overrideAccess: true,
+    context: { allowElevatedRole: true },
     data: {
       email: input.email,
       password: input.password,

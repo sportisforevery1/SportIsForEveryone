@@ -49,10 +49,11 @@ function Dropdown({
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ loggedIn = false }: { loggedIn?: boolean }) {
   const [open, setOpen] = useState(false);
   const t = useTranslations("chrome");
   const tNav = useTranslations("nav");
+  const tAccount = useTranslations("account");
 
   return (
     <header className="sticky top-0 z-50 border-b border-sife-lime/15 bg-sife-black/90 backdrop-blur-md">
@@ -88,6 +89,9 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-4 lg:flex">
           <LanguageSwitcher />
+          <Link href={loggedIn ? "/account" : "/login"} className="nav-link">
+            {loggedIn ? tAccount("label") : tAccount("login")}
+          </Link>
           <CartButton />
           <Link href={nav.database.href} className="btn-coral">
             {tNav("database")}
@@ -117,6 +121,9 @@ export function SiteHeader() {
         >
           <div className="flex flex-col gap-5 text-sm uppercase tracking-[0.14em] text-sife-white">
             <LanguageSwitcher />
+            <Link href={loggedIn ? "/account" : "/login"} onClick={() => setOpen(false)}>
+              {loggedIn ? tAccount("label") : tAccount("login")}
+            </Link>
             <p className="text-sife-lime">{t("watch")}</p>
             {nav.watch.items.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
