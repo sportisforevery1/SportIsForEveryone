@@ -52,7 +52,7 @@ export async function signupAction(
     collection: "users",
     data: { email, password },
   });
-  if (!login.token) return { error: "errorLogin" };
+  if (!login.token || !login.user) return { error: "errorLogin" };
   await setAuthCookie(login.token, login.exp);
   await linkEnrolmentsForEmail(email, login.user.id);
 
@@ -77,9 +77,9 @@ export async function loginAction(
       collection: "users",
       data: { email, password },
     });
-    if (!login.token) return { error: "errorLogin" };
+    if (!login.token || !login.user) return { error: "errorLogin" };
     await setAuthCookie(login.token, login.exp);
-    role = login.user?.role;
+    role = login.user.role;
     if (role === "learner") {
       await linkEnrolmentsForEmail(email, login.user.id);
     }
