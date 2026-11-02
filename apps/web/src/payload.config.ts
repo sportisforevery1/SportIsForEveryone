@@ -37,6 +37,8 @@ const csrfOrigins = [
       siteUrl,
       process.env.PAYLOAD_CSRF_EXTRA,
       "http://localhost:3000",
+      "https://sportisforeveryone.org",
+      "https://www.sportisforeveryone.org",
       "https://sport-is-for-everyone-zeta.vercel.app",
       "https://sport-is-for-everyone-eta.vercel.app",
       "https://sport-is-for-everyone.vercel.app",
