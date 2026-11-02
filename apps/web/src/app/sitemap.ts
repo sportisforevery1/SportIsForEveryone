@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { listPublicCourses } from "@/lib/courses";
 import { absoluteUrl } from "@/lib/seo";
+import { isShopPublic } from "@/lib/site-settings";
 
 const paths = [
   "/",
@@ -37,13 +38,17 @@ function entriesFor(path: string): MetadataRoute.Sitemap {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const courses = await listPublicCourses().catch(() => []);
+  const [courses, shopPublic] = await Promise.all([
+    listPublicCourses().catch(() => []),
+    isShopPublic().catch(() => false),
+  ]);
   const coursePaths = courses.flatMap((course) => [
     `/academy/${course.slug}`,
     ...course.modules
       .filter((m) => m.unlockMode === "always")
       .map((m) => `/academy/${course.slug}/${m.slug}`),
   ]);
+  const publicPaths = shopPublic ? paths : paths.filter((path) => path !== "/shop");
 
-  return [...paths, ...coursePaths].flatMap(entriesFor);
+  return [...publicPaths, ...coursePaths].flatMap(entriesFor);
 }

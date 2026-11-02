@@ -565,7 +565,7 @@ export interface Story {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Dated gatherings — talks, hikes, runs, open sessions, camps. Optional join link for video calls.
+ * Dated gatherings — talks, hikes, runs, open sessions, camps. Optional Zoom/Meet join link. “Also list on Academy” is opt-in only.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
@@ -583,13 +583,21 @@ export interface Event {
    */
   eventType?: ('talk' | 'hike' | 'run' | 'open-session' | 'camp' | 'other') | null;
   /**
-   * Zoom / Meet / other link shared with attendees (opens in a new tab).
+   * Zoom, Google Meet, or any call link. Learners open it in a new tab — no embedded video.
    */
   joinUrl?: string | null;
   /**
    * Shown on the events index. Independent of draft/publish.
    */
   timing: 'upcoming' | 'past';
+  /**
+   * Off by default. She chooses which gatherings appear under Academy — most events stay on the Events calendar only.
+   */
+  showOnAcademy?: boolean | null;
+  /**
+   * Optional. When set, this gathering also appears on that course’s Academy page.
+   */
+  relatedCourse?: (number | null) | Course;
   body?: {
     root: {
       type: string;
@@ -621,7 +629,7 @@ export interface Event {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Academy programs (e.g. Consistency Academy). Access codes unlock module bodies for learners — never shown on the public site.
+ * Academy programs. Access codes unlock modules. Opening a chapter is not completing it — add a quiz or learners tap Mark complete. Sequential chapters unlock only after the previous chapter is completed.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "courses".
@@ -671,7 +679,7 @@ export interface Course {
    */
   accessHint?: string | null;
   /**
-   * Ordered lessons. Unlock mode controls when the body is visible.
+   * Ordered lessons. Sequential = previous chapter must be completed (quiz passed or Mark complete), not just opened.
    */
   modules?:
     | {
@@ -736,6 +744,35 @@ export interface Course {
           };
           [k: string]: unknown;
         } | null;
+        /**
+         * Optional. If questions are set, learners must answer all correctly to complete this chapter and unlock the next sequential one. Leave empty to use “Mark chapter complete” instead.
+         */
+        quiz?: {
+          /**
+           * Shown above the quiz.
+           */
+          prompt?: string | null;
+          questions?:
+            | {
+                question: string;
+                choices?:
+                  | {
+                      label: string;
+                      /**
+                       * Mark exactly one choice as correct per question.
+                       */
+                      correct?: boolean | null;
+                      id?: string | null;
+                    }[]
+                  | null;
+                /**
+                 * Optional — shown after they submit (right or wrong).
+                 */
+                explanation?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+        };
         id?: string | null;
       }[]
     | null;
@@ -812,7 +849,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * Modules a learner has opened (sequential unlock source of truth).
+ * Per-learner chapter state. Opened = visited. Completed = quiz passed or Mark complete (gates sequential unlock).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "course-progress".
@@ -823,7 +860,14 @@ export interface CourseProgress {
   course: number | Course;
   moduleSlug: string;
   openedAt: string;
+  /**
+   * Set when the chapter is finished (quiz or Mark complete).
+   */
   completedAt?: string | null;
+  /**
+   * Set when the module quiz is passed.
+   */
+  quizPassedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1401,6 +1445,8 @@ export interface EventsSelect<T extends boolean = true> {
   eventType?: T;
   joinUrl?: T;
   timing?: T;
+  showOnAcademy?: T;
+  relatedCourse?: T;
   body?: T;
   seo?:
     | T
@@ -1454,6 +1500,25 @@ export interface CoursesSelect<T extends boolean = true> {
               id?: T;
             };
         body?: T;
+        quiz?:
+          | T
+          | {
+              prompt?: T;
+              questions?:
+                | T
+                | {
+                    question?: T;
+                    choices?:
+                      | T
+                      | {
+                          label?: T;
+                          correct?: T;
+                          id?: T;
+                        };
+                    explanation?: T;
+                    id?: T;
+                  };
+            };
         id?: T;
       };
   seo?:
@@ -1496,6 +1561,7 @@ export interface CourseProgressSelect<T extends boolean = true> {
   moduleSlug?: T;
   openedAt?: T;
   completedAt?: T;
+  quizPassedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1799,6 +1865,10 @@ export interface Site {
   youtubeUrl?: string | null;
   defaultOgImage?: (number | null) | Media;
   /**
+   * When off, /shop is hidden from the site (nav, footer, directory) and returns 404. Turn on when editions are ready to sell.
+   */
+  shopPublic?: boolean | null;
+  /**
    * Optional override of the public nav. Leave empty to keep the built-in IA.
    */
   nav?:
@@ -1842,6 +1912,7 @@ export interface SiteSelect<T extends boolean = true> {
   instagramUrl?: T;
   youtubeUrl?: T;
   defaultOgImage?: T;
+  shopPublic?: T;
   nav?:
     | T
     | {

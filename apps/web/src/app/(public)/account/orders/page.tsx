@@ -7,6 +7,7 @@ import { ensureLoggedIn } from "@/lib/auth/actions";
 import { getSessionUser } from "@/lib/auth/session";
 import { getCms } from "@/lib/cms";
 import { formatEur } from "@/lib/shop-model";
+import { isShopPublic } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "My orders | Sport is for Everyone",
@@ -14,7 +15,11 @@ export const metadata: Metadata = {
 
 export default async function AccountOrdersPage() {
   await ensureLoggedIn("/account/orders");
-  const [user, t] = await Promise.all([getSessionUser(), getTranslations("account")]);
+  const [user, t, shopPublic] = await Promise.all([
+    getSessionUser(),
+    getTranslations("account"),
+    isShopPublic(),
+  ]);
 
   const payload = await getCms();
   const orders = user
@@ -57,11 +62,13 @@ export default async function AccountOrdersPage() {
             ))}
           </ul>
         )}
-        <p className="mt-10">
-          <Link href="/shop" className="text-xs font-bold uppercase tracking-[0.16em] text-sife-navy">
-            {t("browseShop")} →
-          </Link>
-        </p>
+        {shopPublic ? (
+          <p className="mt-10">
+            <Link href="/shop" className="text-xs font-bold uppercase tracking-[0.16em] text-sife-navy">
+              {t("browseShop")} →
+            </Link>
+          </p>
+        ) : null}
       </div>
     </section>
   );

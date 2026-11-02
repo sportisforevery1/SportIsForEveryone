@@ -5,9 +5,10 @@ import { Link } from "@/i18n/navigation";
 import { navMessageKey } from "@/i18n/nav";
 import { contact, footerLinks, manifesto, socials } from "@/lib/site";
 
-export async function SiteFooter() {
+export async function SiteFooter({ shopPublic = false }: { shopPublic?: boolean }) {
   const t = await getTranslations("footer");
   const tNav = await getTranslations("nav");
+  const links = shopPublic ? footerLinks : footerLinks.filter((link) => link.href !== "/shop");
 
   return (
     <footer className="mt-auto bg-sife-bg-deep text-sife-white">
@@ -30,7 +31,7 @@ export async function SiteFooter() {
             {t("explore")}
           </p>
           <ul className="space-y-2">
-            {footerLinks.map((link) => (
+            {links.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="nav-link text-sm">
                   {tNav(navMessageKey(link.href))}

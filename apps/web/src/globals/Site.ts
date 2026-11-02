@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidateTag } from "next/cache";
 
 import { anyone } from "../access/anyone";
 import { authenticated } from "../access/authenticated";
@@ -7,12 +8,20 @@ export const Site: GlobalConfig = {
   slug: "site",
   label: "Site",
   admin: {
-    description: "Manifesto, contact, socials, and chrome copy used across the public site.",
+    description:
+      "Manifesto, contact, socials, shop visibility, and chrome copy used across the public site.",
     group: "Settings",
   },
   access: {
     read: anyone,
     update: authenticated,
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateTag("site-settings", { expire: 0 });
+      },
+    ],
   },
   fields: [
     {
@@ -71,6 +80,17 @@ export const Site: GlobalConfig = {
       type: "upload",
       relationTo: "media",
       label: "Default Open Graph image",
+    },
+    {
+      name: "shopPublic",
+      type: "checkbox",
+      label: "Shop is public",
+      defaultValue: false,
+      admin: {
+        description:
+          "When off, /shop is hidden from the site (nav, footer, directory) and returns 404. Turn on when editions are ready to sell.",
+        position: "sidebar",
+      },
     },
     {
       name: "nav",

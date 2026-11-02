@@ -5,9 +5,11 @@ import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { Reveal } from "@/components/motion/Reveal";
 import { Link } from "@/i18n/navigation";
 import { directory, numbered } from "@/lib/site";
+import { isShopPublic } from "@/lib/site-settings";
 
 export async function DirectoryIndex() {
-  const t = await getTranslations("home");
+  const [t, shopPublic] = await Promise.all([getTranslations("home"), isShopPublic()]);
+  const entries = shopPublic ? directory : directory.filter((entry) => entry.href !== "/shop");
 
   return (
     <section className="sife-section px-5 md:px-12">
@@ -15,7 +17,7 @@ export async function DirectoryIndex() {
         <CategoryLabel>{t("findWayLabel")}</CategoryLabel>
         <h2 className="sife-display mt-3">{t("findWayTitle")}</h2>
         <ul className="mt-10 border-t border-sife-white/20">
-          {directory.map((entry, index) => (
+          {entries.map((entry, index) => (
             <li
               key={entry.href}
               className="group relative grid items-center gap-x-8 gap-y-4 border-b border-sife-white/20 py-6 md:grid-cols-[3rem_minmax(0,1fr)_minmax(0,1fr)] lg:grid-cols-[4.5rem_minmax(0,26.25rem)_minmax(0,1fr)_13.75rem]"

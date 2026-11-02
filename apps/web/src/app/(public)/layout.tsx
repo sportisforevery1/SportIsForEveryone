@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Archivo } from "next/font/google";
@@ -11,6 +12,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { getSessionUser } from "@/lib/auth/session";
 import { CartProvider } from "@/lib/shop-cart";
 import { defaultMetadata } from "@/lib/seo";
+import { isShopPublic } from "@/lib/site-settings";
 import "../globals.css";
 
 const archivo = Archivo({
@@ -29,7 +31,7 @@ export default async function PublicLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const t = await getTranslations("chrome");
-  const user = await getSessionUser();
+  const [user, shopPublic] = await Promise.all([getSessionUser(), isShopPublic()]);
 
   return (
     <html lang={locale} className={`${archivo.variable} h-full`} suppressHydrationWarning>
@@ -48,16 +50,17 @@ export default async function PublicLayout({
             </a>
             <MotionRoot>
               <Suspense>
-                <SiteHeader loggedIn={Boolean(user)} />
+                <SiteHeader loggedIn={Boolean(user)} shopPublic={shopPublic} />
               </Suspense>
               <main id="main" className="flex w-full min-w-0 flex-1 flex-col overflow-x-clip">
                 {children}
               </main>
-              <SiteFooter />
-              <CartDrawer />
+              <SiteFooter shopPublic={shopPublic} />
+              {shopPublic ? <CartDrawer /> : null}
             </MotionRoot>
           </CartProvider>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );

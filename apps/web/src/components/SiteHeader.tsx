@@ -49,7 +49,13 @@ function Dropdown({
   );
 }
 
-export function SiteHeader({ loggedIn = false }: { loggedIn?: boolean }) {
+export function SiteHeader({
+  loggedIn = false,
+  shopPublic = false,
+}: {
+  loggedIn?: boolean;
+  shopPublic?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const t = useTranslations("chrome");
   const tNav = useTranslations("nav");
@@ -81,9 +87,11 @@ export function SiteHeader({ loggedIn = false }: { loggedIn?: boolean }) {
           <Link href={nav.events.href} className="nav-link">
             {t("events")}
           </Link>
-          <Link href={nav.shop.href} className="nav-link">
-            {tNav("shop")}
-          </Link>
+          {shopPublic ? (
+            <Link href={nav.shop.href} className="nav-link">
+              {tNav("shop")}
+            </Link>
+          ) : null}
           <Dropdown label={t("about")} items={nav.about.items} />
         </nav>
 
@@ -92,7 +100,7 @@ export function SiteHeader({ loggedIn = false }: { loggedIn?: boolean }) {
           <Link href={loggedIn ? "/account" : "/login"} className="nav-link">
             {loggedIn ? tAccount("label") : tAccount("login")}
           </Link>
-          <CartButton />
+          {shopPublic ? <CartButton /> : null}
           <Link href={nav.database.href} className="btn-coral">
             {tNav("database")}
           </Link>
@@ -142,9 +150,11 @@ export function SiteHeader({ loggedIn = false }: { loggedIn?: boolean }) {
             <Link href={nav.events.href} onClick={() => setOpen(false)}>
               {t("events")}
             </Link>
-            <Link href={nav.shop.href} onClick={() => setOpen(false)}>
-              {tNav("shop")}
-            </Link>
+            {shopPublic ? (
+              <Link href={nav.shop.href} onClick={() => setOpen(false)}>
+                {tNav("shop")}
+              </Link>
+            ) : null}
             <p className="text-sife-lime">{t("about")}</p>
             {nav.about.items.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
@@ -154,9 +164,11 @@ export function SiteHeader({ loggedIn = false }: { loggedIn?: boolean }) {
             <Link href={nav.database.href} className="btn-coral w-fit" onClick={() => setOpen(false)}>
               {tNav("database")}
             </Link>
-            <div className="pt-2">
-              <CartButton />
-            </div>
+            {shopPublic ? (
+              <div className="pt-2">
+                <CartButton />
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}

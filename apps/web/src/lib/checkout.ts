@@ -6,6 +6,7 @@ import { getLocale } from "next-intl/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { getCms } from "@/lib/cms";
 import { withLocale } from "@/i18n/path";
+import { isShopPublic } from "@/lib/site-settings";
 
 export type CheckoutState = { error: "errorRequired" | "errorEmail" | "errorStock" | "errorCart" } | null;
 
@@ -32,6 +33,9 @@ function parseItems(raw: string): PostedItem[] {
 
 export async function submitOrder(_prev: CheckoutState, formData: FormData): Promise<CheckoutState> {
   const locale = await getLocale();
+  if (!(await isShopPublic())) {
+    return { error: "errorCart" };
+  }
   if (read(formData, "company")) {
     redirect(withLocale("/shop/thanks", locale));
   }
