@@ -8,12 +8,18 @@ export type SiteSettings = {
 };
 
 async function loadSiteSettings(): Promise<SiteSettings> {
-  const payload = await getCms();
-  const site = await payload.findGlobal({ slug: "site", depth: 0 });
-  return {
-    // Missing / null → private (safe default for pitch / until admin opts in).
-    shopPublic: Boolean(site.shopPublic),
-  };
+  try {
+    const payload = await getCms();
+    const site = await payload.findGlobal({ slug: "site", depth: 0 });
+    return {
+      // Missing / null → private (safe default for pitch / until admin opts in).
+      shopPublic: Boolean(site.shopPublic),
+    };
+  } catch (error) {
+    // Schema not pushed yet, DB blip, etc. Prefer private shop over a site-wide 500.
+    console.error("site-settings: failed to load Site global", error);
+    return { shopPublic: false };
+  }
 }
 
 export function getSiteSettings(): Promise<SiteSettings> {
@@ -21,8 +27,12 @@ export function getSiteSettings(): Promise<SiteSettings> {
 }
 
 export async function isShopPublic(): Promise<boolean> {
-  const settings = await getSiteSettings();
-  return settings.shopPublic;
+  try {
+    const settings = await getSiteSettings();
+    return settings.shopPublic;
+  } catch {
+    return false;
+  }
 }
 
 /** Block public shop pages when the Site global has shop turned off. */
