@@ -120,8 +120,9 @@ export default buildConfig({
         media: true,
       },
       token: process.env.BLOB_READ_WRITE_TOKEN || "",
-      // Keep true for Admin uploads on Vercel (4.5MB limit). Seed/repair use server + Blob SDK.
-      clientUploads: true,
+      // false = upload via Payload → Blob put() (same-origin). Avoids vercel-blob-client-upload-route
+      // CORS/"Failed to fetch" when Admin is on the custom domain. Keep files under ~4.5MB (Vercel body limit).
+      clientUploads: false,
     }),
   ],
 });
