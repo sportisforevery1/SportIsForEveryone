@@ -1,8 +1,8 @@
+# Paid Render Postgres stays awake without a cron.
+# Keep as manual-only so failed pings do not email every 10 minutes.
 name: Keep Render Postgres awake
 
 on:
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -10,5 +10,5 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - name: Ping staging database
-        run: curl -fsS --max-time 25 "https://sport-is-for-everyone.vercel.app/api/health"
+      - name: Ping production health (DB)
+        run: curl -fsS --max-time 25 "https://sportisforeveryone.org/api/health"

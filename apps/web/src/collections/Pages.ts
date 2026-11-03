@@ -1,4 +1,5 @@
 import type { CollectionConfig, Condition, UnnamedTab } from "payload";
+import { revalidateTag } from "next/cache";
 
 import { authenticated } from "../access/authenticated";
 import { authenticatedOrPublished } from "../access/authenticatedOrPublished";
@@ -250,6 +251,20 @@ export const Pages: CollectionConfig = {
     featuredField,
     publishedAtField,
   ],
-  hooks: stampPublishedAt,
+  hooks: {
+    ...stampPublishedAt,
+    afterChange: [
+      ({ doc }) => {
+        try {
+          revalidateTag("page", { expire: 0 });
+          if (typeof doc?.slug === "string" && doc.slug) {
+            revalidateTag(doc.slug, { expire: 0 });
+          }
+        } catch (error) {
+          console.error("pages afterChange revalidate failed", error);
+        }
+      },
+    ],
+  },
   versions: editorialVersions,
 };

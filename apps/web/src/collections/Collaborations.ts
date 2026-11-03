@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateTag } from "next/cache";
 
 import { authenticated } from "../access/authenticated";
 import { authenticatedOrPublished } from "../access/authenticatedOrPublished";
@@ -71,6 +72,17 @@ export const Collaborations: CollectionConfig = {
     featuredField,
     publishedAtField,
   ],
-  hooks: stampPublishedAt,
+  hooks: {
+    ...stampPublishedAt,
+    afterChange: [
+      () => {
+        try {
+          revalidateTag("collaborations-published", { expire: 0 });
+        } catch (error) {
+          console.error("collaborations afterChange revalidate failed", error);
+        }
+      },
+    ],
+  },
   versions: editorialVersions,
 };

@@ -39,8 +39,8 @@ export default async function WorkWithUsPage({ searchParams }: WorkPageProps) {
         subheading={page.subheading}
         compact
       />
+      <WorkPoints points={page.points} />
       <CollaborationPortfolio items={page.collaborations} />
-      <WorkPoints />
       <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
         <Reveal>
           <EnglishOriginalNoteInk />
