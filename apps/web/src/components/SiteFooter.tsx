@@ -11,7 +11,7 @@ export async function SiteFooter({ shopPublic = false }: { shopPublic?: boolean 
   const links = shopPublic ? footerLinks : footerLinks.filter((link) => link.href !== "/shop");
 
   return (
-    <footer className="mt-auto bg-sife-bg-deep text-sife-white">
+    <footer className="mt-auto bg-sife-navy text-sife-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1.2fr_1fr_1fr_1.2fr] md:px-12">
         <div className="md:col-span-1">
           <Image
