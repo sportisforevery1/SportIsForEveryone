@@ -5,8 +5,10 @@ import { CategoryLabel } from "@/components/editorial/CategoryLabel";
 import { PageHero } from "@/components/editorial/PageHero";
 import { Reveal } from "@/components/motion/Reveal";
 import { Link } from "@/i18n/navigation";
+import { AcademyGatherings } from "@/components/academy/AcademyGatherings";
 import { getAcademyPageData } from "@/lib/academy";
 import { listPublicCourses, type CoursePublic } from "@/lib/courses";
+import { listAcademyEvents } from "@/lib/events";
 import { cmsPageMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
@@ -49,25 +51,9 @@ function FeaturedCourse({ course }: { course: CoursePublic }) {
             {course.summary}
           </p>
 
-          <ul className="mt-8 space-y-3">
-            {course.modules.slice(0, 4).map((mod) => (
-              <li
-                key={mod.id}
-                className="flex gap-3 text-base leading-relaxed text-sife-ink/80"
-              >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-sife-coral" aria-hidden />
-                <span>
-                  <span className="font-semibold text-sife-ink">{mod.title}</span>
-                  {" — "}
-                  {mod.teaser}
-                </span>
-              </li>
-            ))}
-          </ul>
-
           <div className="mt-10 flex flex-col gap-4 border-t border-sife-ink/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-md text-sm leading-relaxed text-sife-ink/70">
-              Open the syllabus, unlock with your access code, or inquire about the next cohort.
+              Open the program page to unlock with your access code, or inquire about the next cohort.
             </p>
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:shrink-0">
               <Link href={`/academy/${course.slug}`} className="btn-coral text-center">
@@ -88,10 +74,11 @@ function FeaturedCourse({ course }: { course: CoursePublic }) {
 }
 
 export default async function AcademyPage() {
-  const [tChrome, academy, courses] = await Promise.all([
+  const [tChrome, academy, courses, academyEvents] = await Promise.all([
     getTranslations("chrome"),
     getAcademyPageData(),
     listPublicCourses(),
+    listAcademyEvents(),
   ]);
 
   const featured =
@@ -145,6 +132,35 @@ export default async function AcademyPage() {
           </Reveal>
         </section>
       )}
+
+      <section className="sife-section border-t border-sife-ink/10 bg-sife-cream px-5 text-sife-ink md:px-12">
+        <Reveal>
+          <div className="mx-auto max-w-5xl">
+            {academyEvents.length > 0 ? (
+              <AcademyGatherings events={academyEvents} heading="Selected gatherings" />
+            ) : (
+              <>
+                <CategoryLabel tone="navy">Gatherings</CategoryLabel>
+                <h2 className="mt-3 text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold uppercase leading-[0.95] tracking-[-0.04em]">
+                  Come together
+                </h2>
+                <p className="mt-3 max-w-md text-base leading-relaxed text-sife-ink/75">
+                  Live sessions and opted-in Academy gatherings appear here when scheduled. Everything
+                  else stays on the Events calendar.
+                </p>
+              </>
+            )}
+            <p className="mt-10">
+              <Link
+                href="/events"
+                className="text-xs font-bold uppercase tracking-[0.16em] text-sife-coral"
+              >
+                Full events calendar →
+              </Link>
+            </p>
+          </div>
+        </Reveal>
+      </section>
 
       <section className="sife-section border-t border-sife-cream/10 bg-sife-navy px-5 text-sife-white md:px-12">
         <Reveal>
@@ -200,25 +216,6 @@ export default async function AcademyPage() {
               </p>
             </li>
           </ul>
-        </Reveal>
-      </section>
-
-      <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
-        <Reveal>
-          <div className="mx-auto flex max-w-5xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <CategoryLabel tone="navy">Gatherings</CategoryLabel>
-              <p className="mt-3 max-w-md text-base leading-relaxed text-sife-ink/75">
-                Live Academy sessions and related events also appear on the Events calendar.
-              </p>
-            </div>
-            <Link
-              href="/events"
-              className="text-xs font-bold uppercase tracking-[0.16em] text-sife-coral"
-            >
-              View events →
-            </Link>
-          </div>
         </Reveal>
       </section>
     </>

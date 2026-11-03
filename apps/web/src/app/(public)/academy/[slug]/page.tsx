@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { AcademyGatherings } from "@/components/academy/AcademyGatherings";
 import { ModuleList } from "@/components/academy/ModuleList";
 import { UnlockForm } from "@/components/academy/UnlockForm";
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
@@ -10,6 +11,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Link } from "@/i18n/navigation";
 import { getSessionUser } from "@/lib/auth/session";
 import { getCourseBySlug, listPublicCourses } from "@/lib/courses";
+import { listCourseAcademyEvents } from "@/lib/events";
 
 export const revalidate = 60;
 
@@ -39,6 +41,13 @@ export default async function CoursePage({ params }: Props) {
   const { slug } = await params;
   const [course, user] = await Promise.all([getCourseBySlug(slug), getSessionUser()]);
   if (!course) notFound();
+
+  let courseEvents: Awaited<ReturnType<typeof listCourseAcademyEvents>> = [];
+  try {
+    courseEvents = await listCourseAcademyEvents(course.id);
+  } catch {
+    courseEvents = [];
+  }
 
   return (
     <>
@@ -103,13 +112,29 @@ export default async function CoursePage({ params }: Props) {
               />
             </div>
 
-            <div className="mt-16">
-              <CategoryLabel tone="navy">Modules</CategoryLabel>
-              <h2 className="mt-3 text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold uppercase leading-[0.95] tracking-[-0.04em]">
-                Syllabus
-              </h2>
-              <ModuleList courseSlug={course.slug} modules={course.modules} />
-            </div>
+            {course.unlocked ? (
+              <div className="mt-16">
+                <CategoryLabel tone="navy">Modules</CategoryLabel>
+                <h2 className="mt-3 text-[clamp(1.6rem,3.5vw,2.4rem)] font-semibold uppercase leading-[0.95] tracking-[-0.04em]">
+                  Syllabus
+                </h2>
+                <ModuleList courseSlug={course.slug} modules={course.modules} />
+              </div>
+            ) : (
+              <div className="mt-16 border-t border-sife-ink/15 pt-10">
+                <CategoryLabel tone="navy">Access</CategoryLabel>
+                <p className="mt-3 max-w-xl text-base leading-relaxed text-sife-ink/75">
+                  Module videos and the full syllabus open after you unlock with your access code.
+                  Prefer another space? Ask us about cohort options.
+                </p>
+              </div>
+            )}
+
+            <AcademyGatherings
+              events={courseEvents}
+              heading="Upcoming sessions"
+              emptyHint={false}
+            />
 
             <div className="mt-12 flex flex-col gap-4 bg-sife-navy px-5 py-6 text-sife-white sm:flex-row sm:items-center sm:px-7">
               <div className="min-w-0 flex-1">

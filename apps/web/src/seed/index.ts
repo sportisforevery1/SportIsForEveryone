@@ -27,8 +27,6 @@ import {
   projects,
   seedDir,
   tags,
-  upcomingPanelBody,
-  upcomingWalkBody,
   whereSheStandsBody,
   workWithUsBody,
 } from "./content";
@@ -384,29 +382,13 @@ const seed = async () => {
     ),
   });
 
-  await upsert("events", "berlin-screening-night", {
-    title: "Berlin screening night",
-    excerpt: "Short films and an open talk on inclusion in urban sport. Seed upcoming event.",
-    cover: mediaIds.hero,
-    startDate: "2026-11-14T17:30:00.000Z",
-    location: "Berlin, Germany",
-    timing: "upcoming",
-    featured: true,
-    body: upcomingPanelBody,
-  });
-
-  await upsert("events", "city-edges-slow-walk", {
-    title: "City edges slow walk",
-    excerpt: "An easy-pace weekend walk with a short reading and tea. Seed upcoming event.",
-    cover: mediaIds.roots,
-    startDate: "2026-12-06T09:00:00.000Z",
-    location: "Berlin, Germany",
-    timing: "upcoming",
-    featured: false,
-    body: upcomingWalkBody,
-  });
-
+  // Do not create or overwrite upcoming demo events — editors rename/delete these in CMS.
+  // Past archive seeds may still upsert for local layout QA.
   for (const event of demoEvents) {
+    if (event.timing === "upcoming") {
+      console.log(`Skip upcoming demo event (CMS-owned): ${event.slug}`);
+      continue;
+    }
     await upsert("events", event.slug, {
       title: event.title,
       excerpt: event.excerpt,
@@ -415,6 +397,8 @@ const seed = async () => {
       location: event.location,
       timing: event.timing,
       featured: event.featured ?? false,
+      eventType: event.eventType ?? "other",
+      joinUrl: event.joinUrl,
       body: event.body,
     });
   }
@@ -754,6 +738,7 @@ const seed = async () => {
       heroManifesto: "Making sport socially, culturally & structurally for everyone",
       manifesto: "Making sport culturally, socially & structurally for everyone",
       contactEmail: "Hi@sportisforeveryone.org",
+      shopPublic: false,
       instagramUrl: "https://instagram.com/sportisforevery1",
       youtubeUrl: "https://www.youtube.com/@SportisforEvery1",
       defaultOgImage: mediaIds.emblemLime,
@@ -798,12 +783,35 @@ const seed = async () => {
     },
   });
 
-  await upsert("courses", consistencyAcademySeed.slug, {
+  const academyCourse = await upsert("courses", consistencyAcademySeed.slug, {
     ...consistencyAcademySeed,
   });
   console.log(
     `Course: ${consistencyAcademySeed.title} (code ${consistencyAcademySeed.accessCode})`,
   );
+
+  // Link opted-in Academy gatherings after the course exists (events seed earlier).
+  const academyOpen = await payload.find({
+    collection: "events",
+    where: { slug: { equals: "academy-open-session" } },
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+  });
+  if (academyOpen.docs[0] && academyCourse?.id) {
+    await payload.update({
+      collection: "events",
+      id: academyOpen.docs[0].id,
+      overrideAccess: true,
+      data: {
+        showOnAcademy: true,
+        relatedCourse: academyCourse.id,
+        joinUrl: "https://zoom.us/j/example-sife-academy",
+        eventType: "open-session",
+        timing: "upcoming",
+      },
+    });
+  }
 
   await seedInstagramPosts(payload);
 

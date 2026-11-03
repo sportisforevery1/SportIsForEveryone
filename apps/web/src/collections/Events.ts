@@ -17,7 +17,8 @@ export const Events: CollectionConfig = {
     group: "Content",
     useAsTitle: "title",
     defaultColumns: ["title", "startDate", "timing", "eventType", "location", "updatedAt"],
-    description: "Dated gatherings — talks, hikes, runs, open sessions, camps. Optional join link for video calls.",
+    description:
+      "Dated gatherings — talks, hikes, runs, open sessions, camps. Optional Zoom/Meet join link. “Also list on Academy” is opt-in only.",
   },
   access: {
     create: authenticated,
@@ -93,7 +94,8 @@ export const Events: CollectionConfig = {
               name: "joinUrl",
               type: "text",
               admin: {
-                description: "Zoom / Meet / other link shared with attendees (opens in a new tab).",
+                description:
+                  "Zoom, Google Meet, or any call link. Learners open it in a new tab — no embedded video.",
               },
             },
             {
@@ -107,6 +109,26 @@ export const Events: CollectionConfig = {
               ],
               admin: {
                 description: "Shown on the events index. Independent of draft/publish.",
+              },
+            },
+            {
+              name: "showOnAcademy",
+              type: "checkbox",
+              label: "Also list on Academy",
+              defaultValue: false,
+              admin: {
+                description:
+                  "Off by default. She chooses which gatherings appear under Academy — most events stay on the Events calendar only.",
+              },
+            },
+            {
+              name: "relatedCourse",
+              type: "relationship",
+              relationTo: "courses",
+              admin: {
+                condition: (_, siblingData) => Boolean(siblingData?.showOnAcademy),
+                description:
+                  "Optional. When set, this gathering also appears on that course’s Academy page.",
               },
             },
             {

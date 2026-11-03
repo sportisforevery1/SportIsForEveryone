@@ -1,10 +1,13 @@
 import { getCms } from "@/lib/cms";
 import { cmsCache } from "@/lib/cms-cache";
 import type { EditorialItem } from "@/lib/editorial";
+import { SEED_EVENT_SLUGS } from "@/lib/events";
 import { mediaSrc, type MediaRef } from "@/lib/media";
 import { published } from "@/lib/query";
 import { heroManifesto, manifesto as fallbackManifesto } from "@/lib/site";
 import type { Event, Film, Interview, Story } from "@/payload-types";
+
+const seedSlugNotIn = { slug: { not_in: [...SEED_EVENT_SLUGS] } };
 
 export type { EditorialItem };
 
@@ -88,14 +91,14 @@ async function loadHomeData(): Promise<HomeData> {
     }),
     payload.find({
       collection: "events",
-      where: { and: [published, { timing: { equals: "upcoming" } }] },
+      where: { and: [published, { timing: { equals: "upcoming" } }, seedSlugNotIn] },
       depth: 1,
       limit: 3,
       sort: "startDate",
     }),
     payload.find({
       collection: "events",
-      where: { and: [published, { timing: { equals: "past" } }] },
+      where: { and: [published, { timing: { equals: "past" } }, seedSlugNotIn] },
       depth: 1,
       limit: 4,
       sort: "-startDate",

@@ -21,18 +21,6 @@ export const Media: CollectionConfig = {
       required: true,
     },
   ],
-  upload: {
-    mimeTypes: ["image/*"],
-    // Compress on upload without extra DB size columns (imageSizes needs a DB push first).
-    resizeOptions: {
-      width: 2400,
-      height: 2400,
-      fit: "inside",
-      withoutEnlargement: true,
-    },
-    formatOptions: {
-      format: "webp",
-      options: { quality: 78 },
-    },
-  },
+  // Keep simple until Blob uploads are confirmed healthy; then re-add WebP resize carefully.
+  upload: true,
 };
