@@ -212,7 +212,12 @@ function mapModules(
     unlockMode: asUnlockMode(m.unlockMode),
   }));
   const openedSet = new Set(access?.opened || []);
-  const completedSet = new Set(access?.completed || []);
+  // `completed` lands when unlock cookies support it; until then treat opened as done.
+  const completedSet = new Set(
+    (access as CourseAccessToken & { completed?: string[] })?.completed ||
+      access?.opened ||
+      [],
+  );
 
   return raw.map((m, index) => {
     const slug = m.slug as string;
