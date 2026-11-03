@@ -5,7 +5,7 @@ import { getCms } from "@/lib/cms";
 /** Lightweight check: Blob token present + whether recent media URLs are on Blob. No secrets returned. */
 export async function GET() {
   const blobConfigured = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || null;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || null; // siteUrl canonical check
 
   try {
     const payload = await getCms();
