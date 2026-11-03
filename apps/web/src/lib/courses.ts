@@ -1,6 +1,5 @@
 import { cmsCache } from "@/lib/cms-cache";
 import { getCms } from "@/lib/cms";
-import { progressPercent } from "@/lib/academy/progress";
 import {
   canViewModule,
   type CourseAccessToken,
@@ -8,6 +7,11 @@ import {
 } from "@/lib/academy/unlock";
 import { mediaSrc, type MediaRef } from "@/lib/media";
 import { contact } from "@/lib/site";
+
+function progressPercent(completed: number, total: number): number {
+  if (total <= 0) return 0;
+  return Math.round((completed / total) * 100);
+}
 
 export type CourseStatus = "building" | "waitlist" | "open" | "archived";
 
