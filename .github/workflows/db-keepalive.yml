@@ -1,30 +1,45 @@
-# Free Render Postgres expires unless upgraded (paid compute stays awake).
-# This ping is a soft keep-warm only — it must not fail the workflow (no email spam).
-# Vercel production deploy on push is separate and unaffected.
+# Soft keep-warm for Render Postgres while the instance is still Free.
+# Paid compute is what actually prevents expiry (Free ends ~30 days).
+#
+# History: old cron used sport-is-for-everyone.vercel.app/api/health which often
+# returns 503 (curl -f → red X → email spam). Custom domain health is healthy.
+# This job always exits 0 so Actions stays green; CI/CD deploy on push is separate.
 name: Keep Render Postgres awake
 
 on:
   schedule:
-    # Every 6 hours — enough to touch free DB without flooding Actions.
-    - cron: "0 */6 * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 3
     steps:
-      - name: Ping production health (DB)
+      - name: Ping production health (custom domain + vercel.app)
         run: |
           set +e
-          for i in 1 2 3; do
-            code=$(curl -sS -o /tmp/health.json -w "%{http_code}" --max-time 25 \
-              "https://sportisforeveryone.org/api/health" || echo "000")
-            echo "attempt=$i http=$code body=$(cat /tmp/health.json 2>/dev/null)"
-            if [ "$code" = "200" ]; then
-              exit 0
-            fi
-            sleep 5
+          urls=(
+            "https://sportisforeveryone.org/api/health"
+            "https://www.sportisforeveryone.org/api/health"
+            "https://sport-is-for-everyone.vercel.app/api/health"
+          )
+          ok=0
+          for url in "${urls[@]}"; do
+            for i in 1 2 3; do
+              code=$(curl -sS -o /tmp/health.json -w "%{http_code}" --max-time 25 "$url" || echo "000")
+              body=$(cat /tmp/health.json 2>/dev/null | tr -d '\n' | head -c 200)
+              echo "url=$url attempt=$i http=$code body=$body"
+              if [ "$code" = "200" ]; then
+                ok=1
+                break 2
+              fi
+              sleep 4
+            done
           done
-          echo "Health did not return 200; leaving workflow green to avoid email spam."
+          if [ "$ok" = "1" ]; then
+            echo "Keep-alive ping succeeded."
+          else
+            echo "Keep-alive ping soft-failed (no 200). Workflow stays green to avoid email spam."
+          fi
           exit 0
