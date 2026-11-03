@@ -108,6 +108,11 @@ const seed = async () => {
     console.log(`Media: ${mediaFiles[key].file}`);
   }
 
+  /**
+   * createOnly: never overwrite CMS edits / deletes that editors already made.
+   * Use for films, stories, interviews, events, people — production is editor-owned.
+   * Pages/globals/tags may still refresh copy for layout QA when not createOnly.
+   */
   const upsert = async (
     collection:
       | "pages"
@@ -122,7 +127,7 @@ const seed = async () => {
       | "courses",
     slug: string,
     data: Record<string, unknown>,
-    options: { drafts?: boolean } = { drafts: true },
+    options: { drafts?: boolean; createOnly?: boolean } = { drafts: true },
   ) => {
     const existing = await payload.find({
       collection,
@@ -141,7 +146,22 @@ const seed = async () => {
             publishedAt: new Date().toISOString(),
           };
 
+    const editorOwned = [
+      "films",
+      "stories",
+      "interviews",
+      "events",
+      "people",
+      "collaborations",
+      "courses",
+    ].includes(collection);
+    const createOnly = options.createOnly ?? editorOwned;
+
     if (existing.docs[0]) {
+      if (createOnly) {
+        console.log(`Skip existing (CMS-owned): ${collection}/${slug}`);
+        return existing.docs[0];
+      }
       // Force a published update so Lexical body/excerpt refresh (draft versions can leave stale public reads).
       return payload.update({
         collection,

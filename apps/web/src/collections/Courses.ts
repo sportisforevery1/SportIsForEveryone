@@ -18,7 +18,7 @@ export const Courses: CollectionConfig = {
     useAsTitle: "title",
     defaultColumns: ["title", "programStatus", "featured", "updatedAt"],
     description:
-      "Academy programs (e.g. Consistency Academy). Access codes unlock module bodies for learners — never shown on the public site.",
+      "Academy programs. Access codes unlock modules. Opening a chapter is not completing it — add a quiz or learners tap Mark complete. Sequential chapters unlock only after the previous chapter is completed.",
   },
   access: {
     create: authenticated,
@@ -78,6 +78,31 @@ export const Courses: CollectionConfig = {
               name: "cover",
               type: "upload",
               relationTo: "media",
+              admin: {
+                description: "Hero still for Academy featured + course landing. No modules required.",
+              },
+            },
+            {
+              name: "gallery",
+              type: "array",
+              labels: { singular: "Photo", plural: "Workshop photos" },
+              admin: {
+                description:
+                  "Workshop / session stills — show on Academy featured and the course page without creating modules. Add 1–6 images.",
+              },
+              fields: [
+                {
+                  name: "image",
+                  type: "upload",
+                  relationTo: "media",
+                  required: true,
+                },
+                {
+                  name: "caption",
+                  type: "text",
+                  admin: { description: "Optional. Shown under the photo on the course page." },
+                },
+              ],
             },
             {
               name: "infoBody",
@@ -123,7 +148,8 @@ export const Courses: CollectionConfig = {
               type: "array",
               labels: { singular: "Module", plural: "Modules" },
               admin: {
-                description: "Ordered lessons. Unlock mode controls when the body is visible.",
+                description:
+                  "Ordered lessons. Sequential = previous chapter must be completed (quiz passed or Mark complete), not just opened.",
               },
               fields: [
                 { name: "title", type: "text", required: true },
@@ -149,7 +175,10 @@ export const Courses: CollectionConfig = {
                   options: [
                     { label: "Always open (public)", value: "always" },
                     { label: "Needs course unlock code", value: "with_course" },
-                    { label: "Sequential (after previous module)", value: "sequential" },
+                    {
+                      label: "Sequential (after previous chapter completed)",
+                      value: "sequential",
+                    },
                   ],
                 },
                 {
@@ -210,6 +239,62 @@ export const Courses: CollectionConfig = {
                     description:
                       "Chapter notes (right panel). Keep scannable — headings + short lists work best beside video.",
                   },
+                },
+                {
+                  name: "quiz",
+                  type: "group",
+                  admin: {
+                    description:
+                      "Optional. If questions are set, learners must answer all correctly to complete this chapter and unlock the next sequential one. Leave empty to use “Mark chapter complete” instead.",
+                  },
+                  fields: [
+                    {
+                      name: "prompt",
+                      type: "text",
+                      defaultValue: "Check your understanding",
+                      admin: { description: "Shown above the quiz." },
+                    },
+                    {
+                      name: "questions",
+                      type: "array",
+                      labels: { singular: "Question", plural: "Questions" },
+                      fields: [
+                        {
+                          name: "question",
+                          type: "textarea",
+                          required: true,
+                        },
+                        {
+                          name: "choices",
+                          type: "array",
+                          minRows: 2,
+                          labels: { singular: "Choice", plural: "Choices" },
+                          fields: [
+                            {
+                              name: "label",
+                              type: "text",
+                              required: true,
+                            },
+                            {
+                              name: "correct",
+                              type: "checkbox",
+                              defaultValue: false,
+                              admin: {
+                                description: "Mark exactly one choice as correct per question.",
+                              },
+                            },
+                          ],
+                        },
+                        {
+                          name: "explanation",
+                          type: "textarea",
+                          admin: {
+                            description: "Optional — shown after they submit (right or wrong).",
+                          },
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },

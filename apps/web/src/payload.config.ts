@@ -115,14 +115,17 @@ export default buildConfig({
   sharp,
   plugins: [
     vercelBlobStorage({
+      // Must stay true whenever the token exists — otherwise Payload writes /api/media/file/*
+      // onto ephemeral Vercel disk and Admin preview dies on Save.
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       collections: {
         media: true,
       },
       token: process.env.BLOB_READ_WRITE_TOKEN || "",
-      // false = upload via Payload → Blob put() (same-origin). Avoids vercel-blob-client-upload-route
-      // CORS/"Failed to fetch" when Admin is on the custom domain. Keep files under ~4.5MB (Vercel body limit).
-      clientUploads: false,
+      // Client → Blob keeps files off the 4.5MB serverless body limit. Requires
+      // NEXT_PUBLIC_SITE_URL=https://sportisforeveryone.org so the client route is same-origin.
+      clientUploads: true,
+      addRandomSuffix: true,
     }),
   ],
 });

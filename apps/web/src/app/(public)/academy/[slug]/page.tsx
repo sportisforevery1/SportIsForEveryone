@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { AcademyGatherings } from "@/components/academy/AcademyGatherings";
@@ -12,6 +13,7 @@ import { Link } from "@/i18n/navigation";
 import { getSessionUser } from "@/lib/auth/session";
 import { getCourseBySlug, listPublicCourses } from "@/lib/courses";
 import { listCourseAcademyEvents } from "@/lib/events";
+import { isCdnMediaSrc } from "@/lib/media";
 
 export const revalidate = 60;
 
@@ -100,6 +102,46 @@ export default async function CoursePage({ params }: Props) {
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-sife-ink/80">
                 {course.summary}
               </p>
+            )}
+
+            {(course.cover || course.gallery.length > 0) && (
+              <div className="mt-12">
+                <CategoryLabel tone="navy">Workshop photos</CategoryLabel>
+                <ul className="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+                  {course.cover ? (
+                    <li className="relative aspect-[4/3] overflow-hidden bg-sife-navy/10 sm:col-span-2 md:col-span-2">
+                      <Image
+                        src={course.cover.src}
+                        alt={course.cover.alt}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 66vw"
+                        unoptimized={!isCdnMediaSrc(course.cover.src)}
+                      />
+                    </li>
+                  ) : null}
+                  {course.gallery.map((item, index) => (
+                    <li
+                      key={`${item.image.src}-${index}`}
+                      className="relative aspect-[4/3] overflow-hidden bg-sife-navy/10"
+                    >
+                      <Image
+                        src={item.image.src}
+                        alt={item.caption || item.image.alt}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        unoptimized={!isCdnMediaSrc(item.image.src)}
+                      />
+                      {item.caption ? (
+                        <p className="absolute inset-x-0 bottom-0 bg-sife-navy/80 px-3 py-2 text-xs text-sife-white">
+                          {item.caption}
+                        </p>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             <div className="mt-12">

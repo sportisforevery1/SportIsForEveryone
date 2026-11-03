@@ -1,8 +1,8 @@
 import { cmsCache } from "@/lib/cms-cache";
 import { getCms } from "@/lib/cms";
+import { progressPercent } from "@/lib/academy/progress";
 import {
   canViewModule,
-  getCourseAccess,
   type CourseAccessToken,
   type ModuleUnlockMode,
 } from "@/lib/academy/unlock";
@@ -21,6 +21,19 @@ export type CourseModuleImage = {
   caption: string | null;
 };
 
+/** Public quiz — correct answers never included. */
+export type CourseModuleQuizPublic = {
+  prompt: string | null;
+  questions: Array<{
+    id: string;
+    question: string;
+    choices: Array<{ id: string; label: string }>;
+    explanation: string | null;
+  }>;
+};
+
+export type ModuleProgressStatus = "locked" | "ready" | "in_progress" | "done";
+
 export type CourseModulePublic = {
   id: string;
   title: string;
@@ -28,17 +41,23 @@ export type CourseModulePublic = {
   teaser: string;
   unlockMode: ModuleUnlockMode;
   estimatedMinutes: number | null;
-  /** CMS has videos (URLs hidden while locked). */
   hasVideo: boolean;
-  /** CMS has images (assets hidden while locked). */
   hasImages: boolean;
-  /** Video list only when unlocked. */
+  hasQuiz: boolean;
+  /** Quiz without correct flags — only when unlocked. */
+  quiz: CourseModuleQuizPublic | null;
   videos: CourseModuleVideo[];
-  /** Images only when unlocked. */
   images: CourseModuleImage[];
-  /** Full body only when unlocked for this request. */
   body: unknown | null;
   locked: boolean;
+  opened: boolean;
+  completed: boolean;
+  status: ModuleProgressStatus;
+};
+
+export type CourseGalleryItem = {
+  image: MediaRef;
+  caption: string | null;
 };
 
 export type CoursePublic = {
@@ -53,11 +72,15 @@ export type CoursePublic = {
   ctaLabel: string;
   featured: boolean;
   cover: MediaRef | null;
+  /** Public workshop stills — no unlock / modules required. */
+  gallery: CourseGalleryItem[];
   infoBody: unknown | null;
   accessHint: string | null;
-  /** Whether this browser has a valid unlock cookie. */
   unlocked: boolean;
   modules: CourseModulePublic[];
+  completedCount: number;
+  moduleCount: number;
+  progressPercent: number;
   inquireHref: string;
   forgotCodeHref: string;
 };
@@ -74,6 +97,7 @@ type CourseDoc = {
   ctaLabel?: string | null;
   featured?: boolean | null;
   cover?: unknown;
+  gallery?: Array<{ image?: unknown; caption?: string | null; id?: string | null } | null> | null;
   infoBody?: unknown;
   accessCode?: string | null;
   accessHint?: string | null;
@@ -91,6 +115,19 @@ type CourseDoc = {
       id?: string | null;
     } | null> | null;
     body?: unknown;
+    quiz?: {
+      prompt?: string | null;
+      questions?: Array<{
+        id?: string | null;
+        question?: string | null;
+        explanation?: string | null;
+        choices?: Array<{
+          id?: string | null;
+          label?: string | null;
+          correct?: boolean | null;
+        } | null> | null;
+      } | null> | null;
+    } | null;
   } | null> | null;
   _status?: string | null;
 };
@@ -114,10 +151,48 @@ function asUnlockMode(value: string | null | undefined): ModuleUnlockMode {
   return "with_course";
 }
 
-/** Strip secrets before any public mapping. */
 function stripSecret(doc: CourseDoc): CourseDoc {
   const { accessCode: _code, ...rest } = doc;
   return rest;
+}
+
+function mapQuizPublic(
+  quiz: NonNullable<NonNullable<CourseDoc["modules"]>[number]>["quiz"],
+): CourseModuleQuizPublic | null {
+  const questions = (quiz?.questions || [])
+    .filter((q): q is NonNullable<typeof q> => Boolean(q?.question?.trim()))
+    .map((q, qi) => {
+      const choices = (q.choices || [])
+        .filter((c): c is NonNullable<typeof c> => Boolean(c?.label?.trim()))
+        .map((c, ci) => ({
+          id: c.id || `c-${qi}-${ci}`,
+          label: c.label!.trim(),
+        }));
+      if (choices.length < 2) return null;
+      return {
+        id: q.id || `q-${qi}`,
+        question: q.question!.trim(),
+        choices,
+        explanation: q.explanation?.trim() || null,
+      };
+    })
+    .filter((q): q is NonNullable<typeof q> => Boolean(q));
+  if (questions.length === 0) return null;
+  return {
+    prompt: quiz?.prompt?.trim() || "Check your understanding",
+    questions,
+  };
+}
+
+function moduleStatus(opts: {
+  locked: boolean;
+  opened: boolean;
+  completed: boolean;
+}): ModuleProgressStatus {
+  if (opts.locked) return "locked";
+  if (opts.completed) return "done";
+  if (opts.opened) return "in_progress";
+  return "ready";
 }
 
 function mapModules(
@@ -132,6 +207,8 @@ function mapModules(
     slug: m.slug as string,
     unlockMode: asUnlockMode(m.unlockMode),
   }));
+  const openedSet = new Set(access?.opened || []);
+  const completedSet = new Set(access?.completed || []);
 
   return raw.map((m, index) => {
     const slug = m.slug as string;
@@ -152,6 +229,10 @@ function mapModules(
         };
       })
       .filter((entry): entry is CourseModuleImage => Boolean(entry));
+    const quizPublic = mapQuizPublic(m.quiz);
+    const opened = openedSet.has(slug) || completedSet.has(slug);
+    const completed = completedSet.has(slug);
+    const locked = !unlocked;
     return {
       id: m.id || `${slug}-${index}`,
       title: m.title as string,
@@ -161,18 +242,38 @@ function mapModules(
       estimatedMinutes: m.estimatedMinutes ?? null,
       hasVideo: videos.length > 0,
       hasImages: images.length > 0,
+      hasQuiz: Boolean(quizPublic),
+      quiz: includeBodies && unlocked ? quizPublic : null,
       videos: includeBodies && unlocked ? videos : [],
       images: includeBodies && unlocked ? images : [],
       body: includeBodies && unlocked ? (m.body ?? null) : null,
-      locked: !unlocked,
+      locked,
+      opened,
+      completed,
+      status: moduleStatus({ locked, opened, completed }),
     };
   });
+}
+
+function mapGallery(doc: CourseDoc): CourseGalleryItem[] {
+  return (doc.gallery || [])
+    .map((entry) => {
+      const image = mediaSrc(entry?.image as never);
+      if (!image) return null;
+      return {
+        image,
+        caption: entry?.caption?.trim() || null,
+      };
+    })
+    .filter((entry): entry is CourseGalleryItem => Boolean(entry));
 }
 
 function mapCourse(doc: CourseDoc, access: CourseAccessToken | null): CoursePublic | null {
   if (!doc.title || !doc.slug || !doc.summary) return null;
   const status = asStatus(doc.programStatus ?? doc.status);
   const safe = stripSecret(doc);
+  const modules = mapModules(doc, access, true);
+  const completedCount = modules.filter((m) => m.completed).length;
   return {
     id: String(doc.id),
     title: doc.title,
@@ -185,10 +286,14 @@ function mapCourse(doc: CourseDoc, access: CourseAccessToken | null): CoursePubl
     ctaLabel: doc.ctaLabel?.trim() || "Inquire",
     featured: Boolean(doc.featured),
     cover: mediaSrc(doc.cover as never),
+    gallery: mapGallery(doc),
     infoBody: safe.infoBody ?? null,
     accessHint: doc.accessHint?.trim() || "Code from your welcome email",
     unlocked: Boolean(access),
-    modules: mapModules(doc, access, true),
+    modules,
+    completedCount,
+    moduleCount: modules.length,
+    progressPercent: progressPercent(completedCount, modules.length),
     inquireHref: `mailto:${contact.email}?subject=${encodeURIComponent(`Academy — ${doc.title}`)}`,
     forgotCodeHref: `mailto:${contact.email}?subject=${encodeURIComponent(
       `Forgot Academy code — ${doc.title}`,
@@ -217,22 +322,18 @@ async function loadPublishedCourses(): Promise<CourseDoc[]> {
 }
 
 export function getPublishedCourses(): Promise<CourseDoc[]> {
-  return cmsCache(["courses", "v3"], loadPublishedCourses);
+  return cmsCache(["courses", "v4-quiz"], loadPublishedCourses);
 }
 
-/** Public course list without reading unlock cookies (safe for sitemap / static params). */
 export async function listPublicCourses(): Promise<CoursePublic[]> {
   const docs = await getPublishedCourses();
-  return docs
-    .map((doc) => mapCourse(doc, null))
-    .filter((c): c is CoursePublic => Boolean(c));
+  return docs.map((doc) => mapCourse(doc, null)).filter((c): c is CoursePublic => Boolean(c));
 }
 
 export async function getCourseBySlug(slug: string): Promise<CoursePublic | null> {
   const docs = await getPublishedCourses();
   const doc = docs.find((d) => d.slug === slug);
   if (!doc) {
-    // Direct fetch in case cache is cold after seed
     const payload = await getCms();
     const result = await payload.find({
       collection: "courses",
@@ -254,7 +355,60 @@ export async function getCourseBySlug(slug: string): Promise<CoursePublic | null
   return mapCourse(doc, access);
 }
 
-/** Server-only: verify unlock code against CMS (never call from client loaders). */
+/** Server-only: full module quiz with correct flags for grading. */
+export async function getModuleQuizForGrading(
+  slug: string,
+  moduleSlug: string,
+): Promise<{
+  courseId: string | number;
+  questions: Array<{
+    id: string;
+    question: string;
+    explanation: string | null;
+    choices: Array<{ id: string; label: string; correct: boolean }>;
+  }>;
+} | null> {
+  const payload = await getCms();
+  const result = await payload.find({
+    collection: "courses",
+    where: {
+      and: [{ slug: { equals: slug } }, { _status: { equals: "published" } }],
+    },
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+  });
+  const doc = result.docs[0] as unknown as CourseDoc | undefined;
+  if (!doc) return null;
+  const mod = (doc.modules || []).find((m) => m?.slug === moduleSlug);
+  if (!mod?.quiz?.questions?.length) return null;
+  const questions = (mod.quiz.questions || [])
+    .filter((q): q is NonNullable<typeof q> => Boolean(q?.question?.trim()))
+    .map((q, qi) => {
+      const choices = (q.choices || [])
+        .filter((c): c is NonNullable<typeof c> => Boolean(c?.label?.trim()))
+        .map((c, ci) => ({
+          id: c.id || `c-${qi}-${ci}`,
+          label: c.label!.trim(),
+          correct: Boolean(c.correct),
+        }));
+      return {
+        id: q.id || `q-${qi}`,
+        question: q.question!.trim(),
+        explanation: q.explanation?.trim() || null,
+        choices,
+      };
+    })
+    .filter((q) => q.choices.length >= 2 && q.choices.some((c) => c.correct));
+  if (questions.length === 0) return null;
+  return { courseId: doc.id, questions };
+}
+
+export async function moduleHasQuiz(slug: string, moduleSlug: string): Promise<boolean> {
+  const graded = await getModuleQuizForGrading(slug, moduleSlug);
+  return Boolean(graded);
+}
+
 export async function verifyCourseAccessCode(
   slug: string,
   code: string,
@@ -276,4 +430,3 @@ export async function verifyCourseAccessCode(
   if (!codesMatch(code, doc.accessCode)) return { ok: false, reason: "invalid" };
   return { ok: true, courseId: String(doc.id) };
 }
-

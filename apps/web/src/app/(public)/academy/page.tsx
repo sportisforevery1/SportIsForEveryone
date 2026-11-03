@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 import { CategoryLabel } from "@/components/editorial/CategoryLabel";
@@ -9,6 +10,7 @@ import { AcademyGatherings } from "@/components/academy/AcademyGatherings";
 import { getAcademyPageData } from "@/lib/academy";
 import { listPublicCourses, type CoursePublic } from "@/lib/courses";
 import { listAcademyEvents } from "@/lib/events";
+import { isCdnMediaSrc } from "@/lib/media";
 import { cmsPageMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
@@ -36,23 +38,65 @@ function StatusPill({ label, tone = "coral" }: { label: string; tone?: "coral" |
 }
 
 function FeaturedCourse({ course }: { course: CoursePublic }) {
+  const stills = [
+    ...(course.cover ? [{ image: course.cover, caption: null as string | null }] : []),
+    ...course.gallery,
+  ].slice(0, 4);
+  const hero = stills[0] ?? null;
+  const grid = stills.slice(1, 4);
+
   return (
-    <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
+    <section className="sife-section bg-sife-navy px-5 text-sife-white md:px-12">
       <Reveal eager>
         <div className="mx-auto max-w-5xl">
           <div className="flex flex-wrap items-center gap-3">
-            <CategoryLabel tone="navy">Featured program</CategoryLabel>
-            <StatusPill label={course.statusLabel} />
+            <CategoryLabel>Featured program</CategoryLabel>
+            <StatusPill label={course.statusLabel} tone="lime" />
           </div>
-          <h2 className="mt-4 text-[clamp(1.85rem,4.5vw,3.25rem)] font-semibold uppercase leading-[0.92] tracking-[-0.04em]">
+          <h2 className="mt-4 text-[clamp(1.85rem,4.5vw,3.25rem)] font-semibold uppercase leading-[0.92] tracking-[-0.04em] text-sife-white">
             {course.title}
           </h2>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-sife-ink/80">
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-sife-lime/90">
             {course.summary}
           </p>
 
-          <div className="mt-10 flex flex-col gap-4 border-t border-sife-ink/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-md text-sm leading-relaxed text-sife-ink/70">
+          {hero ? (
+            <div className="mt-10 space-y-3">
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-sife-true-black/30">
+                <Image
+                  src={hero.image.src}
+                  alt={hero.image.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 1024px"
+                  priority
+                  unoptimized={!isCdnMediaSrc(hero.image.src)}
+                />
+              </div>
+              {grid.length > 0 ? (
+                <ul className="grid grid-cols-3 gap-3">
+                  {grid.map((item, index) => (
+                    <li
+                      key={`${item.image.src}-${index}`}
+                      className="relative aspect-[4/3] overflow-hidden bg-sife-true-black/30"
+                    >
+                      <Image
+                        src={item.image.src}
+                        alt={item.caption || item.image.alt}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 33vw, 320px"
+                        unoptimized={!isCdnMediaSrc(item.image.src)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="mt-10 flex flex-col gap-4 border-t border-sife-lime/25 pt-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-md text-sm leading-relaxed text-sife-white/70">
               Open the program page to unlock with your access code, or inquire about the next cohort.
             </p>
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:shrink-0">
@@ -61,7 +105,7 @@ function FeaturedCourse({ course }: { course: CoursePublic }) {
               </Link>
               <a
                 href={course.inquireHref}
-                className="inline-flex items-center justify-center border border-sife-navy/30 px-4 py-2 text-[0.72rem] font-bold uppercase tracking-[0.16em] text-sife-navy"
+                className="inline-flex items-center justify-center border border-sife-lime/40 px-4 py-2 text-[0.72rem] font-bold uppercase tracking-[0.16em] text-sife-lime"
               >
                 {course.ctaLabel}
               </a>
@@ -113,14 +157,14 @@ export default async function AcademyPage() {
       {featured ? (
         <FeaturedCourse course={featured} />
       ) : (
-        <section className="sife-section bg-sife-cream px-5 text-sife-ink md:px-12">
+        <section className="sife-section bg-sife-navy px-5 text-sife-white md:px-12">
           <Reveal eager>
             <div className="mx-auto max-w-5xl">
-              <CategoryLabel tone="navy">Featured program</CategoryLabel>
+              <CategoryLabel>Featured program</CategoryLabel>
               <h2 className="mt-4 text-[clamp(1.85rem,4.5vw,3.25rem)] font-semibold uppercase leading-[0.92] tracking-[-0.04em]">
                 {academy.featured.title}
               </h2>
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-sife-ink/80">
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-sife-lime/90">
                 {academy.featured.summary}
               </p>
               <p className="mt-8">
@@ -172,10 +216,7 @@ export default async function AcademyPage() {
 
           <ul className="mt-12 grid gap-8 md:grid-cols-2">
             {upcomingPrograms.map((program) => (
-              <li
-                key={program.id}
-                className="border-t border-sife-lime/30 pt-6"
-              >
+              <li key={program.id} className="border-t border-sife-lime/30 pt-6">
                 <StatusPill label={program.statusLabel} tone="lime" />
                 <h3 className="mt-4 text-2xl font-semibold uppercase tracking-[-0.03em]">
                   {program.title}
