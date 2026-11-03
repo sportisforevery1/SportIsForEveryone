@@ -1,8 +1,12 @@
-# Paid Render Postgres stays awake without a cron.
-# Keep as manual-only so failed pings do not email every 10 minutes.
+# Free Render Postgres expires unless upgraded (paid compute stays awake).
+# This ping is a soft keep-warm only — it must not fail the workflow (no email spam).
+# Vercel production deploy on push is separate and unaffected.
 name: Keep Render Postgres awake
 
 on:
+  schedule:
+    # Every 6 hours — enough to touch free DB without flooding Actions.
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -11,4 +15,16 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: Ping production health (DB)
-        run: curl -fsS --max-time 25 "https://sportisforeveryone.org/api/health"
+        run: |
+          set +e
+          for i in 1 2 3; do
+            code=$(curl -sS -o /tmp/health.json -w "%{http_code}" --max-time 25 \
+              "https://sportisforeveryone.org/api/health" || echo "000")
+            echo "attempt=$i http=$code body=$(cat /tmp/health.json 2>/dev/null)"
+            if [ "$code" = "200" ]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Health did not return 200; leaving workflow green to avoid email spam."
+          exit 0
