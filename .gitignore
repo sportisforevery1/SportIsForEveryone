@@ -39,6 +39,11 @@ pnpm-debug.log*
 # Hosting
 .vercel/
 
+# Local docs / notes — not shipped on remote (keep README.md only)
+docs/
+*.md
+!README.md
+!**/README.md
+
 # Stray leftover scaffold (the app lives in apps/web)
 /web/
-)
